@@ -25,10 +25,9 @@
       <section class="scene-row">
         <div class="environment-panel">
           <div class="environment-frame">
-            <!-- Swap this src for your S3 URL when ready -->
             <img
               id="environment-image"
-              src="assets/pub-room-placeholder.jpg"
+              src="https://levmiserables.s3.eu-north-1.amazonaws.com/images/sunflyblank800600.png"
               alt="The back room of the Lev Miserables pub"
             />
           </div>
@@ -53,18 +52,8 @@
         </div>
 
         <aside class="icons-panel">
-          <h2 class="panel-title">Icons / trophies</h2>
-          <div class="icon-grid">
-            <div class="icon-slot" title="Thirst level">
-              🍺
-            </div>
-            <div class="icon-slot" title="Reputation">
-              ⭐
-            </div>
-            <div class="icon-slot" title="Mystery token">
-              ❓
-            </div>
-          </div>
+          <!-- No title; just an image row we populate via JS -->
+          <div id="icon-row" class="icon-row"></div>
         </aside>
       </section>
 
