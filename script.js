@@ -1,13 +1,20 @@
 const actionLog = document.getElementById("action-log");
 const dialogueText = document.getElementById("dialogue-text");
 const environmentImage = document.getElementById("environment-image");
+const iconRow = document.getElementById("icon-row");
+
+const FULL_PINT_URL =
+  "https://levmiserables.s3.eu-north-1.amazonaws.com/images/guinesspint_full.gif";
+const EMPTY_PINT_URL =
+  "https://levmiserables.s3.eu-north-1.amazonaws.com/images/guinesspint_empty.gif";
+
+let drinkCount = 0;
 
 const actionEffects = {
   "order-drink": {
     log: "You order a drink. The bartender eyes you carefully.",
     dialogue:
-      '"What\'s your poison?" the bartender asks, polishing a glass that has seen better decades.',
-    // environment: "https://your-s3-bucket/pub-room-bar-closeup.jpg"
+      '"What\'s your poison?" the bartender asks, polishing a glass that has seen better decades.'
   },
   "talk-bartender": {
     log: "You strike up a conversation with the bartender.",
@@ -33,6 +40,26 @@ function appendToLog(text) {
   actionLog.scrollTop = actionLog.scrollHeight;
 }
 
+function addDrinkIcon() {
+  drinkCount += 1;
+
+  const slot = document.createElement("div");
+  slot.className = "drink-slot";
+
+  const img = document.createElement("img");
+  img.className = "drink-image";
+  img.src = FULL_PINT_URL;
+  img.alt = `Pint of stout #${drinkCount}`;
+
+  slot.appendChild(img);
+  iconRow.appendChild(slot);
+
+  // After 3 seconds, the pint becomes empty
+  setTimeout(() => {
+    img.src = EMPTY_PINT_URL;
+  }, 3000);
+}
+
 function handleActionClick(event) {
   const button = event.target.closest(".action-button");
   if (!button) return;
@@ -44,10 +71,12 @@ function handleActionClick(event) {
   appendToLog(effect.log);
   dialogueText.textContent = effect.dialogue;
 
-  // If we later want to change the environment image:
-  // if (effect.environment) {
-  //   environmentImage.src = effect.environment;
-  // }
+  if (actionKey === "order-drink") {
+    addDrinkIcon();
+  }
+
+  // Later we can change environment images per action if we like:
+  // if (effect.environment) environmentImage.src = effect.environment;
 }
 
 document
