@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Lev Miserables – Pub Room</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="game-shell">
+
+    <!-- HEADER: location + status -->
+    <header class="game-header">
+      <div class="header-main">
+        <span class="location-name">Pub – Back Room</span>
+      </div>
+      <div class="header-status">
+        <span>Time: Evening</span>
+        <span>Reputation: Neutral</span>
+      </div>
+    </header>
+
+    <main class="game-main">
+      <!-- ROW 1: Environment + Action log -->
+      <section class="scene-row">
+        <div class="environment-panel">
+          <div class="environment-frame">
+            <!-- Swap this src for your S3 URL when ready -->
+            <img
+              id="environment-image"
+              src="assets/pub-room-placeholder.jpg"
+              alt="The back room of the Lev Miserables pub"
+            />
+          </div>
+        </div>
+
+        <aside class="log-panel">
+          <h2 class="panel-title">Action log</h2>
+          <ul id="action-log" class="log-list">
+            <li>You step into the back room of the pub.</li>
+            <li>The door clicks shut behind you.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <!-- ROW 2: Dialogue + Icons/trophies -->
+      <section class="lower-row">
+        <div class="dialogue-panel">
+          <h2 class="panel-title">Dialogue</h2>
+          <div id="dialogue-text" class="dialogue-text">
+            The air smells of spilled beer and mislaid ambitions.
+          </div>
+        </div>
+
+        <aside class="icons-panel">
+          <h2 class="panel-title">Icons / trophies</h2>
+          <div class="icon-grid">
+            <div class="icon-slot" title="Thirst level">
+              🍺
+            </div>
+            <div class="icon-slot" title="Reputation">
+              ⭐
+            </div>
+            <div class="icon-slot" title="Mystery token">
+              ❓
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <!-- ROW 3: Options / actions -->
+      <section class="actions-panel">
+        <h2 class="visually-hidden">Options and actions</h2>
+        <div class="actions-row">
+          <button class="action-button" data-action="order-drink">
+            Order a drink
+          </button>
+          <button class="action-button" data-action="talk-bartender">
+            Talk to the bartender
+          </button>
+          <button class="action-button" data-action="inspect-room">
+            Inspect the room
+          </button>
+          <button class="action-button" data-action="wait">
+            Wait and see
+          </button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
