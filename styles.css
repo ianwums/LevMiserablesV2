@@ -105,24 +105,25 @@ body {
 
 /* -------------------------
    KARAOKE TEXT OVERLAY
-   (bottom-right of Sunfly screen)
+   (fits inside the green box you drew)
 -------------------------- */
 
-/* Positioned over the bottom-right empty yellow area of the Sunfly screen.
-   Tweak top/left/width/height for perfect alignment if needed. */
+/* This box is positioned over the green rectangle on the Sunfly screen.
+   It centers text inside that area. Adjust top/left/width/height slightly
+   if you need pixel-perfect alignment. */
 .karaoke-song-details {
   position: absolute;
-  top: 22%;     /* overall vertical position on the TV */
-  left: 52%;    /* horizontal start (further right = larger %) */
-  width: 33%;   /* width of the text box */
-  height: 20%;  /* height of the text box */
+  top: 34%;     /* vertical placement of the green box */
+  left: 57%;    /* horizontal placement of the green box */
+  width: 26%;   /* width of the green box */
+  height: 21%;  /* height of the green box */
 
   display: none;              /* toggled via JS */
   flex-direction: column;
-  justify-content: flex-end;  /* hug the bottom of the box */
-  align-items: flex-end;      /* align text to the right */
-  text-align: right;
-  padding: 3%;
+  justify-content: center;    /* center vertically */
+  align-items: center;        /* center horizontally */
+  text-align: center;
+  padding: 4%;
   pointer-events: none;
 }
 
@@ -130,8 +131,8 @@ body {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  font-size: clamp(0.7rem, 2.1vw, 1.2rem);
-  color: #0044cc;             /* blue-ish, like classic karaoke screens */
+  font-size: clamp(0.7rem, 2vw, 1.2rem);
+  color: #0044cc;             /* blue-ish karaoke title */
   text-shadow: 1px 1px 0 #ffff66;
 }
 
@@ -140,7 +141,7 @@ body {
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  font-size: clamp(0.6rem, 1.7vw, 1rem);
+  font-size: clamp(0.6rem, 1.6vw, 1rem);
   color: #000000;
   text-shadow: 1px 1px 0 #ffff99;
 }
