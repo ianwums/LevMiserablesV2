@@ -72,16 +72,30 @@
           </div>
         </div>
 
-        <!-- Action log -->
-        <aside class="log-panel">
-          <h2 class="panel-title">History</h2>
-          <ul id="action-log" class="log-list">
-            <li>You step into the bar.</li>
-          </ul>
-        </aside>
+        <!-- Right-hand column: History + Trophies stacked -->
+        <div class="side-column">
+          <!-- Action log / History -->
+          <aside class="log-panel">
+            <h2 class="panel-title">History</h2>
+            <ul id="action-log" class="log-list">
+              <li>You step into the bar.</li>
+            </ul>
+          </aside>
+
+          <!-- Spacer to give 10% vertical gap between history and trophies -->
+          <div class="side-spacer"></div>
+
+          <!-- Trophies (icons) -->
+          <aside class="icons-panel">
+            <h2 class="panel-title">Trophies</h2>
+            <div id="icon-row" class="icon-row">
+              <!-- Drink images etc. -->
+            </div>
+          </aside>
+        </div>
       </section>
 
-      <!-- Dialogue + icons row -->
+      <!-- Dialogue row (full width, right side intentionally empty for now) -->
       <section class="lower-row">
         <section class="dialogue-panel">
           <h2 class="panel-title">Dialogue</h2>
@@ -89,16 +103,9 @@
             The bar hums with low conversation and clinking glasses.
           </div>
         </section>
-
-        <aside class="icons-panel">
-          <h2 class="panel-title">Trophies</h2>
-          <div id="icon-row" class="icon-row">
-            <!-- Drink images etc. -->
-          </div>
-        </aside>
       </section>
 
-      <!-- Actions -->
+      <!-- Actions (title removed, panel hidden when no actions) -->
       <section class="actions-panel">
         <div id="actions-row" class="actions-row">
           <!-- Populated by script.js -->
