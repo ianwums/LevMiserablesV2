@@ -35,6 +35,9 @@ const KARAOKE_END_LOG_MESSAGES = [
   "That's My Dad!"
 ];
 
+// Track last message index so we don't repeat immediately
+let lastKaraokeEndIndex = null;
+
 // State
 let currentRoom = "bar"; // "bar" | "karaoke"
 let currentSongId = SONG_LIST.length ? SONG_LIST[0].id : null;
@@ -91,10 +94,18 @@ function stopCurrentAudio() {
   }
 }
 
-// Pick a random karaoke end-of-song log line
+// Pick a random karaoke end-of-song log line (no immediate repeats)
 function getRandomKaraokeEndLogMessage() {
-  if (!KARAOKE_END_LOG_MESSAGES.length) return "";
-  const index = Math.floor(Math.random() * KARAOKE_END_LOG_MESSAGES.length);
+  const len = KARAOKE_END_LOG_MESSAGES.length;
+  if (!len) return "";
+  if (len === 1) return KARAOKE_END_LOG_MESSAGES[0];
+
+  let index;
+  do {
+    index = Math.floor(Math.random() * len);
+  } while (index === lastKaraokeEndIndex);
+
+  lastKaraokeEndIndex = index;
   return KARAOKE_END_LOG_MESSAGES[index];
 }
 
