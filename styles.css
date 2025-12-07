@@ -484,6 +484,7 @@ body {
 
 /* -------------------------
    FLOATING PINT EFFECT
+   (cross-fade full -> empty)
 -------------------------- */
 
 .environment-pint-float {
@@ -491,13 +492,35 @@ body {
   left: 13.5%;
   top: 77%;
   transform: translate(-50%, -100%);
-  max-height: 60px;
-  height: auto;
+  height: 60px;          /* matches “50% size” we settled on */
   width: auto;
   pointer-events: none;
   opacity: 1;
-  transition: opacity 1s ease-out;
   z-index: 45;
+  transition: opacity 0.8s ease-out; /* used for final fade */
+}
+
+/* Two stacked layers inside the wrapper */
+.environment-pint-full,
+.environment-pint-empty {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: auto;
+  transition: opacity 0.9s ease-in-out;
+}
+
+.environment-pint-empty {
+  opacity: 0;
+}
+
+.environment-pint-empty.is-visible {
+  opacity: 1;
+}
+
+.environment-pint-full.is-fading {
+  opacity: 0;
 }
 
 .environment-pint-float.fade-out {
