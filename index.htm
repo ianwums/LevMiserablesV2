@@ -12,11 +12,11 @@
     <!-- HEADER: location + status -->
     <header class="game-header">
       <div class="header-main">
-        <span class="location-name">Pub – Back Room</span>
+        <span class="location-name" id="location-name">Pub – Bar</span>
       </div>
       <div class="header-status">
-        <span>Time: Evening</span>
-        <span>Reputation: Neutral</span>
+        <span id="time-label">Time: Evening</span>
+        <span id="reputation-label">Reputation: Neutral</span>
       </div>
     </header>
 
@@ -24,20 +24,36 @@
       <!-- ROW 1: Environment + Action log -->
       <section class="scene-row">
         <div class="environment-panel">
-          <div class="environment-frame">
+          <div class="environment-frame" id="environment-frame">
+            <!-- Base environment image (bar / karaoke room) -->
             <img
-              id="environment-image"
-              src="https://levmiserables.s3.eu-north-1.amazonaws.com/images/sunflyblank800600.png"
-              alt="The back room of the Lev Miserables pub"
+              id="environment-base"
+              src="https://levmiserables.s3.eu-north-1.amazonaws.com/images/unionbarpixel.png"
+              alt="Pub environment"
             />
+
+            <!-- Karaoke overlay: only visible in karaoke room -->
+            <div id="karaoke-overlay" class="karaoke-overlay">
+              <!-- Sunfly screen on top of the green area -->
+              <img
+                id="karaoke-screen-img"
+                class="karaoke-screen-img"
+                src="https://levmiserables.s3.eu-north-1.amazonaws.com/images/sunflyblank800600.png"
+                alt="Karaoke screen"
+              />
+              <!-- Song details (toggled on/off) -->
+              <div id="karaoke-song-details" class="karaoke-song-details">
+                <div class="song-title">EVERYDAY IS LIKE SUNDAY</div>
+                <div class="song-artist">MORRISSEY</div>
+              </div>
+            </div>
           </div>
         </div>
 
         <aside class="log-panel">
           <h2 class="panel-title">Action log</h2>
           <ul id="action-log" class="log-list">
-            <li>You step into the back room of the pub.</li>
-            <li>The door clicks shut behind you.</li>
+            <li>You step into the bar.</li>
           </ul>
         </aside>
       </section>
@@ -47,12 +63,12 @@
         <div class="dialogue-panel">
           <h2 class="panel-title">Dialogue</h2>
           <div id="dialogue-text" class="dialogue-text">
-            The air smells of spilled beer and mislaid ambitions.
+            The bar hums with low conversation and clinking glasses.
           </div>
         </div>
 
         <aside class="icons-panel">
-          <!-- No title; just an image row we populate via JS -->
+          <!-- Just images / icons (drinks, trophies, etc.) -->
           <div id="icon-row" class="icon-row"></div>
         </aside>
       </section>
@@ -60,19 +76,8 @@
       <!-- ROW 3: Options / actions -->
       <section class="actions-panel">
         <h2 class="visually-hidden">Options and actions</h2>
-        <div class="actions-row">
-          <button class="action-button" data-action="order-drink">
-            Order a drink
-          </button>
-          <button class="action-button" data-action="talk-bartender">
-            Talk to the bartender
-          </button>
-          <button class="action-button" data-action="inspect-room">
-            Inspect the room
-          </button>
-          <button class="action-button" data-action="wait">
-            Wait and see
-          </button>
+        <div class="actions-row" id="actions-row">
+          <!-- Buttons are injected by script.js depending on room -->
         </div>
       </section>
     </main>
