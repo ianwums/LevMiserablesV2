@@ -89,6 +89,18 @@ const HOTSPOTS = {
       heightPercent: (50 / 600) * 100,
       hoverText: "Pick a song",
       actionKey: "open-song-list"
+    },
+    {
+      id: "karaoke-back-to-bar",
+      // centre: (75, 50) => top-left (50, 25)
+      // xPercent = 50 / 800 * 100 = 6.25
+      // yPercent = 25 / 600 * 100 ≈ 4.1667
+      xPercent: 6.25,
+      yPercent: 4.1667,
+      widthPercent: (50 / 800) * 100,
+      heightPercent: (50 / 600) * 100,
+      hoverText: "Back to Bar",
+      actionKey: "back-to-bar"
     }
   ]
 };
@@ -365,16 +377,22 @@ function getActionsForRoom() {
     ];
   }
 
-  // Karaoke room: just Song list + back
-  return [
-    { key: "open-song-list", label: "Song list" },
-    { key: "back-to-bar", label: "Go back to bar" }
-  ];
+  // Karaoke room: all interactions via hotspots only
+  return [];
 }
 
 function renderActions() {
   const actions = getActionsForRoom();
+  const actionsPanel = actionsRow.closest(".actions-panel");
+
   actionsRow.innerHTML = "";
+
+  if (!actions || actions.length === 0) {
+    if (actionsPanel) {
+      actionsPanel.style.display = "none";
+    }
+    return;
+  }
 
   actions.forEach((action) => {
     const button = document.createElement("button");
@@ -383,6 +401,10 @@ function renderActions() {
     button.textContent = action.label;
     actionsRow.appendChild(button);
   });
+
+  if (actionsPanel) {
+    actionsPanel.style.display = "";
+  }
 }
 
 // -------------------------
