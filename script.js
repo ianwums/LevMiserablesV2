@@ -30,6 +30,7 @@ SONG_LIST.forEach((song) => {
 let currentRoom = "bar"; // "bar" | "karaoke"
 let currentSongId = SONG_LIST.length ? SONG_LIST[0].id : null;
 let drinkCount = 0;
+let currentAudio = null; // active audio playback (if any)
 
 // -------------------------
 // Utilities
@@ -66,6 +67,19 @@ function addDrinkIcon() {
   setTimeout(() => {
     img.src = EMPTY_PINT_URL;
   }, 3000);
+}
+
+// Stop any currently playing audio
+function stopCurrentAudio() {
+  if (currentAudio) {
+    try {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+    } catch (e) {
+      // ignore
+    }
+    currentAudio = null;
+  }
 }
 
 function adjustSongFontSizes(titleText) {
@@ -118,6 +132,9 @@ function goToRoom(room, options = {}) {
 
     dialogueText.textContent =
       "The bar hums with low conversation and clinking glasses.";
+
+    // Leaving karaoke: stop audio and clear the karaoke screen
+    stopCurrentAudio();
     setSongDetailsVisible(false);
   } else if (room === "karaoke") {
     locationNameEl.textContent = "Karaoke Room";
@@ -125,6 +142,7 @@ function goToRoom(room, options = {}) {
     appendToLog("You step into the karaoke room.");
     dialogueText.textContent =
       "A small crowd hovers near the screen, waiting for their turn to murder a classic.";
+    // Karaoke overlay will be managed per-song
   }
 
   renderActions();
@@ -194,6 +212,7 @@ function handleActionClick(event) {
 
   const actionKey = button.dataset.action;
 
+  // Move between rooms
   if (actionKey === "go-karaoke") {
     goToRoom("karaoke");
     return;
@@ -203,28 +222,76 @@ function handleActionClick(event) {
     return;
   }
 
+  // Karaoke: song selection
   if (actionKey.startsWith("play:") && currentRoom === "karaoke") {
     const songId = actionKey.split(":")[1];
     const song = SONGS_BY_ID[songId];
     if (!song) return;
 
+    // Any new selection stops whatever is playing
+    stopCurrentAudio();
+
+    // If customDialogue is provided, only update dialogue + log
     if (song.customDialogue && song.customDialogue.trim().length > 0) {
       appendToLog(
         `You select "${song.title}" by ${song.artist}, but Rockin Ronnie hesitates.`
       );
       dialogueText.textContent = song.customDialogue;
+      // Karaoke screen / audio remain as they were
       return;
     }
 
+    // Normal song behaviour
+    const hasAudio =
+      song.mp3Url && typeof song.mp3Url === "string" && song.mp3Url.trim() !== "";
+
+    // Update overlay with song title/artist
     setCurrentSong(song.id);
     setSongDetailsVisible(true);
 
     appendToLog(`You queue up "${song.title}" by ${song.artist}.`);
     dialogueText.textContent = getSelectDialogue(song);
-    // mp3Url will be used here later for actual audio playback.
+
+    if (hasAudio) {
+      // Play the audio once; overlay visible only while it plays
+      const audio = new Audio(song.mp3Url);
+      currentAudio = audio;
+
+      audio.addEventListener("ended", () => {
+        // Only clear if this is still the active audio instance
+        if (currentAudio === audio) {
+          setSongDetailsVisible(false);
+          appendToLog("The track ends and the karaoke screen clears.");
+          currentAudio = null;
+        }
+      });
+
+      audio.addEventListener("error", () => {
+        if (currentAudio === audio) {
+          setSongDetailsVisible(false);
+          appendToLog("The speakers crackle, but nothing plays.");
+          currentAudio = null;
+        }
+      });
+
+      audio
+        .play()
+        .catch(() => {
+          if (currentAudio === audio) {
+            setSongDetailsVisible(false);
+            appendToLog("The speakers crackle, but nothing plays.");
+            currentAudio = null;
+          }
+        });
+    } else {
+      // No audio available: keep overlay visible (legacy behaviour)
+      // You can change this if you prefer a timeout-based clear.
+    }
+
     return;
   }
 
+  // Bar-only actions (currently just "order-drink")
   const effect = commonActionEffects[actionKey];
   if (effect) {
     appendToLog(effect.log);
