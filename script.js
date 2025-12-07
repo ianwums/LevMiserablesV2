@@ -19,86 +19,23 @@ const FULL_PINT_URL =
 const EMPTY_PINT_URL =
   "https://levmiserables.s3.eu-north-1.amazonaws.com/images/guinesspint_empty.gif";
 
-// Karaoke songs
-const SONGS = {
-  morrissey: {
-    id: "morrissey",
-    titleDisplay: "Everyday Is Like Sunday",
-    artistDisplay: "Morrissey",
-    titleText: "EVERYDAY IS LIKE SUNDAY",
-    artistText: "MORRISSEY"
-  },
-  kitchen: {
-    id: "kitchen",
-    titleDisplay: "You'll Always Find Me In The Kitchen At Parties",
-    artistDisplay: "Jona Lewie",
-    titleText: "YOU'LL ALWAYS FIND ME IN THE KITCHEN AT PARTIES",
-    artistText: "JONA LEWIE"
-  }
-};
+// Karaoke songs come from songs.js
+const SONG_LIST = (window.KARAOKE_SONGS || []).slice();
+const SONGS_BY_ID = {};
+SONG_LIST.forEach((song) => {
+  SONGS_BY_ID[song.id] = song;
+});
 
 // State
 let currentRoom = "bar"; // "bar" | "karaoke"
 let songDetailsVisible = false;
-let currentSongId = "morrissey";
+let currentSongId = SONG_LIST.length ? SONG_LIST[0].id : null;
 let drinkCount = 0;
 
-// --- Actions available per room --- //
-function getActionsForRoom() {
-  if (currentRoom === "bar") {
-    return [
-      { key: "order-drink", label: "Order a drink" },
-      { key: "talk-bartender", label: "Talk to the bartender" },
-      { key: "inspect-room", label: "Inspect the room" },
-      { key: "wait", label: "Wait and see" },
-      { key: "go-karaoke", label: "Karaoke" }
-    ];
-  }
+// -------------------------
+// Utilities
+// -------------------------
 
-  // Karaoke room
-  return [
-    {
-      key: "play-morrissey",
-      label: 'Play "Everyday Is Like Sunday"'
-    },
-    {
-      key: "play-kitchen",
-      label: 'Play "Kitchen At Parties"'
-    },
-    {
-      key: "toggle-song-details",
-      label: songDetailsVisible ? "Hide song details" : "Show song details"
-    },
-    { key: "wait", label: "Wait and see" },
-    { key: "back-to-bar", label: "Go back to bar" }
-  ];
-}
-
-// --- Action effects shared between rooms --- //
-const commonActionEffects = {
-  "order-drink": {
-    log: "You order a drink. The bartender eyes you carefully.",
-    dialogue:
-      '"What\'s your poison?" the bartender asks, polishing a glass that has seen better decades.'
-  },
-  "talk-bartender": {
-    log: "You strike up a conversation with the bartender.",
-    dialogue:
-      '"You don\'t look like the usual crowd," they say. "Looking for trouble or trying to avoid it?"'
-  },
-  "inspect-room": {
-    log: "You look around the room, taking in the details.",
-    dialogue:
-      "The bar is cluttered with mismatched stools, old posters and a mirror that has heard too many secrets."
-  },
-  wait: {
-    log: "You wait. The pub creaks and murmurs around you.",
-    dialogue:
-      "Time passes, and with it the noise of the front bar swells and ebbs like a tired tide."
-  }
-};
-
-// --- Utilities --- //
 function appendToLog(text) {
   const li = document.createElement("li");
   li.textContent = text;
@@ -145,12 +82,17 @@ function adjustSongFontSizes(titleText) {
 
 // Set the current song text into the overlay
 function setCurrentSong(songId) {
-  const song = SONGS[songId];
+  const song = SONGS_BY_ID[songId];
+  if (!song) return;
+
   currentSongId = songId;
 
-  songTitleEl.textContent = song.titleText;
-  songArtistEl.textContent = song.artistText;
-  adjustSongFontSizes(song.titleText);
+  const titleText = song.title.toUpperCase();
+  const artistText = song.artist.toUpperCase();
+
+  songTitleEl.textContent = titleText;
+  songArtistEl.textContent = artistText;
+  adjustSongFontSizes(titleText);
 }
 
 // Show/hide overlay
@@ -180,7 +122,66 @@ function goToRoom(room) {
   renderActions();
 }
 
-// --- Rendering --- //
+// -------------------------
+// Actions & effects
+// -------------------------
+
+// Actions shared between rooms
+const commonActionEffects = {
+  "order-drink": {
+    log: "You order a drink. The bartender eyes you carefully.",
+    dialogue:
+      '"What\'s your poison?" the bartender asks, polishing a glass that has seen better decades.'
+  },
+  "talk-bartender": {
+    log: "You strike up a conversation with the bartender.",
+    dialogue:
+      '"You don\'t look like the usual crowd," they say. "Looking for trouble or trying to avoid it?"'
+  },
+  "inspect-room": {
+    log: "You look around the room, taking in the details.",
+    dialogue:
+      "The bar is cluttered with mismatched stools, old posters and a mirror that has heard too many secrets."
+  },
+  wait: {
+    log: "You wait. The pub creaks and murmurs around you.",
+    dialogue:
+      "Time passes, and with it the noise of the front bar swells and ebbs like a tired tide."
+  }
+};
+
+// Actions available per room
+function getActionsForRoom() {
+  if (currentRoom === "bar") {
+    return [
+      { key: "order-drink", label: "Order a drink" },
+      { key: "talk-bartender", label: "Talk to the bartender" },
+      { key: "inspect-room", label: "Inspect the room" },
+      { key: "wait", label: "Wait and see" },
+      { key: "go-karaoke", label: "Karaoke" }
+    ];
+  }
+
+  // Karaoke room
+  const songActions = SONG_LIST.filter(
+    (song) => song.enabled !== false
+  ).map((song) => ({
+    key: `play:${song.id}`,
+    label: `Sing "${song.title}" by ${song.artist}`
+  }));
+
+  return [
+    ...songActions,
+    {
+      key: "toggle-song-details",
+      label: songDetailsVisible ? "Hide song details" : "Show song details"
+    },
+    { key: "wait", label: "Wait and see" },
+    { key: "back-to-bar", label: "Go back to bar" }
+  ];
+}
+
+// Render buttons
 function renderActions() {
   const actions = getActionsForRoom();
   actionsRow.innerHTML = "";
@@ -194,7 +195,7 @@ function renderActions() {
   });
 }
 
-// --- Action handling --- //
+// Handle clicks
 function handleActionClick(event) {
   const button = event.target.closest(".action-button");
   if (!button) return;
@@ -211,28 +212,32 @@ function handleActionClick(event) {
     return;
   }
 
-  // Karaoke: choose songs
-  if (actionKey === "play-morrissey" && currentRoom === "karaoke") {
-    const song = SONGS.morrissey;
-    setCurrentSong(song.id);
-    setSongDetailsVisible(true);
-    appendToLog(
-      `You queue up "${song.titleDisplay}" by ${song.artistDisplay}.`
-    );
-    dialogueText.textContent =
-      "The intro crackles through the speakers as the screen flashes MORRISSEY.";
-    return;
-  }
+  // Karaoke: song selection (play:* keys)
+  if (actionKey.startsWith("play:") && currentRoom === "karaoke") {
+    const songId = actionKey.split(":")[1];
+    const song = SONGS_BY_ID[songId];
+    if (!song) return;
 
-  if (actionKey === "play-kitchen" && currentRoom === "karaoke") {
-    const song = SONGS.kitchen;
+    // If customDialogue is provided, show that ONLY (no playback / overlay change)
+    if (song.customDialogue && song.customDialogue.trim().length > 0) {
+      appendToLog(
+        `You select "${song.title}" by ${song.artist}, but the system hesitates.`
+      );
+      dialogueText.textContent = song.customDialogue;
+      // (No call to setCurrentSong or audio playback here)
+      return;
+    }
+
+    // Normal song behaviour (no audio yet, but overlay + dialogue)
     setCurrentSong(song.id);
     setSongDetailsVisible(true);
-    appendToLog(
-      `You queue up "${song.titleDisplay}" by ${song.artistDisplay}.`
-    );
+
+    appendToLog(`You queue up "${song.title}" by ${song.artist}.`);
     dialogueText.textContent =
-      "The crowd murmurs appreciatively as the familiar synth line kicks in.";
+      "The intro crackles through the speakers as the screen flashes " +
+      song.artist.toUpperCase() +
+      ".";
+    // mp3Url will be used here later for actual playback.
     return;
   }
 
@@ -241,14 +246,16 @@ function handleActionClick(event) {
     const nowVisible = !songDetailsVisible;
     setSongDetailsVisible(nowVisible);
 
-    const currentSong = SONGS[currentSongId];
+    const song = SONGS_BY_ID[currentSongId];
+    const title = song ? song.title : "the next track";
+
     appendToLog(
       nowVisible
-        ? `Song details appear on the karaoke screen (${currentSong.titleDisplay}).`
+        ? `Song details appear on the karaoke screen (${title}).`
         : "The karaoke screen clears, waiting for the next song."
     );
     dialogueText.textContent = nowVisible
-      ? `The screen announces: ${currentSong.titleDisplay.toUpperCase()} – ${currentSong.artistDisplay.toUpperCase()}.`
+      ? `The screen announces: ${song.title.toUpperCase()} – ${song.artist.toUpperCase()}.`
       : "The crowd grumbles as the text fades, eager for the next track.";
     return;
   }
@@ -265,12 +272,18 @@ function handleActionClick(event) {
   }
 }
 
-// --- Init --- //
+// -------------------------
+// Init
+// -------------------------
+
 window.addEventListener("DOMContentLoaded", () => {
   actionsRow.addEventListener("click", handleActionClick);
 
-  // Initial setup
-  setCurrentSong("morrissey");  // default song text/size
+  // Initial song text/size from first song in the list (if any)
+  if (currentSongId) {
+    setCurrentSong(currentSongId);
+  }
+
   goToRoom("bar");
   setSongDetailsVisible(false); // hidden by default
 });
