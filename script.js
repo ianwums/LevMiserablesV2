@@ -48,13 +48,16 @@ const KARAOKE_END_LOG_MESSAGES = [
 let lastKaraokeEndIndex = null;
 
 // Hotspot configuration (percentages relative to 800x600 image)
+// We treat these as top-left of a 50x50 circle.
 const HOTSPOTS = {
   bar: [
     {
       id: "bar-order-drink",
-      // bottom-left-ish
-      xPercent: 6, // from left
-      yPercent: 75, // from top
+      // centre: (177, 334) on 800x600 => top-left (152, 309)
+      // xPercent = 152 / 800 * 100 = 19
+      // yPercent = 309 / 600 * 100 = 51.5
+      xPercent: 19,
+      yPercent: 51.5,
       widthPercent: (50 / 800) * 100, // ≈6.25%
       heightPercent: (50 / 600) * 100, // ≈8.33%
       hoverText: "Order drink",
@@ -62,9 +65,11 @@ const HOTSPOTS = {
     },
     {
       id: "bar-karaoke-room",
-      // bottom-right-ish
-      xPercent: 85, // from left
-      yPercent: 78, // from top
+      // centre: (651, 296) => top-left (626, 271)
+      // xPercent = 626 / 800 * 100 = 78.25
+      // yPercent = 271 / 600 * 100 ≈ 45.1667
+      xPercent: 78.25,
+      yPercent: 45.1667,
       widthPercent: (50 / 800) * 100,
       heightPercent: (50 / 600) * 100,
       hoverText: "Karaoke Room",
@@ -180,6 +185,13 @@ function setSongDetailsVisible(visible) {
   karaokeSongDetails.style.display = visible ? "flex" : "none";
 }
 
+// Clear hover UI (label) – useful when changing rooms
+function clearHoverUI() {
+  if (hoverLabel) {
+    hoverLabel.classList.remove("is-visible");
+  }
+}
+
 // -------------------------
 // Hotspots
 // -------------------------
@@ -217,6 +229,9 @@ function renderHotspotsForRoom(roomId) {
 function goToRoom(room, options = {}) {
   const { initial = false } = options;
   currentRoom = room;
+
+  // Whenever we change environments, clear any hover text
+  clearHoverUI();
 
   if (room === "bar") {
     locationNameEl.textContent = "Pub – Bar";
@@ -504,12 +519,24 @@ window.addEventListener("DOMContentLoaded", () => {
 
           const hotRect = hotspot.getBoundingClientRect();
           const centerX = hotRect.left + hotRect.width / 2 - frameRect.left;
-          // previously -18; now another 7px up => -25
-          const tentativeTop = hotRect.top - frameRect.top - 25;
-          const top = Math.max(tentativeTop, 0);
+
+          // First, temporarily position label to get its height
+          hoverLabel.style.left = `${centerX}px`;
+          hoverLabel.style.top = `0px`;
+          const labelRect = hoverLabel.getBoundingClientRect();
+          const labelHeight = labelRect.height || 0;
+
+          // We want label bottom to be at least 10px above hotspot top
+          const desiredBottom =
+            hotRect.top - frameRect.top - 10; // 10px above hotspot
+          let labelTop = desiredBottom - labelHeight;
+
+          if (labelTop < 0) {
+            labelTop = 0;
+          }
 
           hoverLabel.style.left = `${centerX}px`;
-          hoverLabel.style.top = `${top}px`;
+          hoverLabel.style.top = `${labelTop}px`;
         } else {
           hoverLabel.classList.remove("is-visible");
         }
@@ -520,9 +547,7 @@ window.addEventListener("DOMContentLoaded", () => {
       if (customCursorEl) {
         customCursorEl.style.display = "none";
       }
-      if (hoverLabel) {
-        hoverLabel.classList.remove("is-visible");
-      }
+      clearHoverUI();
     });
   }
 
