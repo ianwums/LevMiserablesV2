@@ -32,6 +32,21 @@ window.KARAOKE_SONGS = [
       "The crowd murmurs appreciatively as the familiar synth line kicks in."
   }
 
+
+  {
+    id: "rollercoaster",
+    title: "Life is a Rollercoaster",
+    artist: "Ronan Keating",
+    enabled: true,
+    mp3Url:
+      "https://levmiserables.s3.eu-north-1.amazonaws.com/audio/karaoke_rollercoaster.mp3", 
+    customDialogue: "",
+
+    selectDialogue:
+      "Now THAT is a PROPER song."
+  }
+
+  
   // Example of a disabled / not-yet-available song:
   // {
   //   id: "coming_soon",
