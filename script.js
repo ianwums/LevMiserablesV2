@@ -172,7 +172,7 @@ function handleActionClick(event) {
     return;
   }
 
-  // Common actions (contextual per room but same text for now)
+  // Common actions
   const effect = commonActionEffects[actionKey];
   if (effect) {
     appendToLog(effect.log);
@@ -181,16 +181,14 @@ function handleActionClick(event) {
     if (actionKey === "order-drink" && currentRoom === "bar") {
       addDrinkIcon();
     }
-
-    return;
   }
 }
 
 // --- Init --- //
-document
-  .getElementById("actions-row")
-  .addEventListener("click", handleActionClick);
+window.addEventListener("DOMContentLoaded", () => {
+  actionsRow.addEventListener("click", handleActionClick);
 
-// Initial setup
-goToRoom("bar");
-setSongDetailsVisible(false); // hidden by default
+  // Initial setup
+  goToRoom("bar");
+  setSongDetailsVisible(false); // hidden by default
+});
