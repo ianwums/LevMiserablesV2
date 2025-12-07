@@ -215,8 +215,6 @@ body {
   background: #14151f;
   display: flex;
   flex-direction: column;
-
-  /* FIXED HEIGHT: 48% of environment height */
   height: calc(var(--env-height) * 0.48);
   min-height: calc(var(--env-height) * 0.48);
   max-height: calc(var(--env-height) * 0.48);
@@ -282,8 +280,6 @@ body {
   background: #14151f;
   display: flex;
   flex-direction: column;
-
-  /* FIXED HEIGHT: 48% of environment height */
   height: calc(var(--env-height) * 0.48);
   min-height: calc(var(--env-height) * 0.48);
   max-height: calc(var(--env-height) * 0.48);
@@ -357,6 +353,46 @@ body {
 }
 
 /* -------------------------
+   DRINKS MENU (simple version)
+-------------------------- */
+
+.drink-menu {
+  margin-top: 6px;
+  display: none;          /* toggled via JS */
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.drink-menu.is-visible {
+  display: flex;
+}
+
+.drink-menu-button {
+  border-radius: 999px;
+  border: 1px solid #555;
+  padding: 6px 12px;
+  background: #181927;
+  color: inherit;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.1s ease-out, border-color 0.1s ease-out,
+    box-shadow 0.05s ease-out, transform 0.05s ease-out;
+}
+
+.drink-menu-button:hover {
+  background: #27293b;
+  border-color: #7a7cff;
+  box-shadow: 0 0 6px rgba(122, 124, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+.drink-menu-button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* -------------------------
    SONG LIST OVERLAY
 -------------------------- */
 
@@ -378,7 +414,6 @@ body {
   pointer-events: none;
 }
 
-/* Coordinates box for song list */
 .song-list-overlay-inner {
   position: absolute;
   left: 53.625%;
@@ -484,7 +519,6 @@ body {
 
 /* -------------------------
    FLOATING PINT EFFECT
-   (cross-fade full -> empty)
 -------------------------- */
 
 .environment-pint-float {
@@ -492,15 +526,14 @@ body {
   left: 13.5%;
   top: 77%;
   transform: translate(-50%, -100%);
-  height: 60px;          /* matches “50% size” we settled on */
+  height: 60px;
   width: auto;
   pointer-events: none;
   opacity: 1;
   z-index: 45;
-  transition: opacity 0.8s ease-out; /* used for final fade */
+  transition: opacity 0.8s ease-out;
 }
 
-/* Two stacked layers inside the wrapper */
 .environment-pint-full,
 .environment-pint-empty {
   position: absolute;
@@ -598,7 +631,8 @@ body {
     flex-direction: column;
   }
 
-  .action-button {
+  .action-button,
+  .drink-menu-button {
     width: 100%;
     text-align: left;
   }
