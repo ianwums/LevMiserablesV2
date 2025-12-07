@@ -52,13 +52,23 @@ const HOTSPOTS = {
   bar: [
     {
       id: "bar-order-drink",
-      // roughly bottom-left; tweak as needed
+      // bottom-left-ish
       xPercent: 6, // from left
       yPercent: 75, // from top
       widthPercent: (50 / 800) * 100, // ≈6.25%
       heightPercent: (50 / 600) * 100, // ≈8.33%
       hoverText: "Order drink",
       actionKey: "order-drink"
+    },
+    {
+      id: "bar-karaoke-room",
+      // bottom-right-ish
+      xPercent: 85, // from left
+      yPercent: 78, // from top
+      widthPercent: (50 / 800) * 100,
+      heightPercent: (50 / 600) * 100,
+      hoverText: "Karaoke Room",
+      actionKey: "go-karaoke"
     }
   ],
   karaoke: []
@@ -494,8 +504,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
           const hotRect = hotspot.getBoundingClientRect();
           const centerX = hotRect.left + hotRect.width / 2 - frameRect.left;
-          // Move label ~12px higher than before: was -6, now -18
-          const tentativeTop = hotRect.top - frameRect.top - 18;
+          // previously -18; now another 7px up => -25
+          const tentativeTop = hotRect.top - frameRect.top - 25;
           const top = Math.max(tentativeTop, 0);
 
           hoverLabel.style.left = `${centerX}px`;
