@@ -1,4 +1,4 @@
-// Simple data-only config for karaoke songs.
+// Data-only config for karaoke songs.
 // Edit this file to add/remove songs or toggle them on/off.
 
 window.KARAOKE_SONGS = [
@@ -9,7 +9,20 @@ window.KARAOKE_SONGS = [
     enabled: true, // set to false to hide from UI
     mp3Url:
       "", // e.g. "https://levmiserables.s3.../everyday_is_like_sunday.mp3"
-    customDialogue: "" // if non-empty, ONLY this dialogue is shown when selected
+
+    // If populated, selecting this song will show ONLY this dialogue
+    // and will not change the overlay or play audio.
+    customDialogue: "",
+
+    // Dialogue that appears in the dialogue panel when the song is selected
+    // (normal play behaviour).
+    selectDialogue:
+      "The intro crackles through the speakers as the screen flashes MORRISSEY.",
+
+    // Dialogue that appears when the player toggles "Show song details"
+    // while this song is the current one.
+    detailsDialogue:
+      "The screen announces: EVERYDAY IS LIKE SUNDAY – MORRISSEY."
   },
   {
     id: "kitchen",
@@ -18,7 +31,13 @@ window.KARAOKE_SONGS = [
     enabled: true,
     mp3Url:
       "", // e.g. "https://levmiserables.s3.../kitchen_at_parties.mp3"
-    customDialogue: "" // e.g. "The host looks worried. This track isn't ready yet."
+    customDialogue: "",
+
+    selectDialogue:
+      "The crowd murmurs appreciatively as the familiar synth line kicks in.",
+
+    detailsDialogue:
+      "The screen announces: YOU'LL ALWAYS FIND ME IN THE KITCHEN AT PARTIES – JONA LEWIE."
   }
 
   // Example of a disabled / not-yet-available song:
@@ -29,6 +48,8 @@ window.KARAOKE_SONGS = [
   //   enabled: false,
   //   mp3Url: "",
   //   customDialogue:
-  //     "The song list flickers. This track hasn't arrived at the bar yet."
+  //     "The song list flickers. This track hasn't arrived at the bar yet.",
+  //   selectDialogue: "",
+  //   detailsDialogue: ""
   // }
 ];
