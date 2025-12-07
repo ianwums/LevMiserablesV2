@@ -76,7 +76,20 @@ const HOTSPOTS = {
       actionKey: "go-karaoke"
     }
   ],
-  karaoke: []
+  karaoke: [
+    {
+      id: "karaoke-pick-song",
+      // centre: (638, 448) => top-left (613, 423)
+      // xPercent = 613 / 800 * 100 = 76.625
+      // yPercent = 423 / 600 * 100 = 70.5
+      xPercent: 76.625,
+      yPercent: 70.5,
+      widthPercent: (50 / 800) * 100,
+      heightPercent: (50 / 600) * 100,
+      hoverText: "Pick a song",
+      actionKey: "open-song-list"
+    }
+  ]
 };
 
 // State
@@ -523,7 +536,9 @@ window.addEventListener("DOMContentLoaded", () => {
           // Temporarily position to measure height
           hoverLabel.style.left = `${centerX}px`;
           hoverLabel.style.top = `0px`;
-          const labelRect = hoverLabel.getBoundingClientRect();
+          const labelRect = hoverLabel.getBoundingClientClientRect
+            ? hoverLabel.getBoundingClientRect()
+            : { height: 0 };
           const labelHeight = labelRect.height || 0;
 
           // Label bottom should be at least 10px above hotspot top
