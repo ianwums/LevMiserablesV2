@@ -132,7 +132,7 @@ function updateTrophyTitle() {
   trophyTitleEl.textContent = `TROPHIES: ${total}`;
 }
 
-// Trophy pints: now always remain full
+// Trophy pints: always remain full
 function addDrinkIcon() {
   drinkCount += 1;
   drinkTrophyCount += 1;
@@ -150,32 +150,43 @@ function addDrinkIcon() {
   iconRow.appendChild(slot);
 }
 
-// Floating pint visual in environment at (108,462)
-// Full for 3s, empty for 3s, then fade/remove
+// Floating pint visual in environment at (roughly) (108, 462)
+// Cross-fade: full 0–3s, cross-fade 3–4s, empty 4–6s, then fade out + remove
 function showFloatingPint() {
   if (!environmentFrame) return;
 
-  const img = document.createElement("img");
-  img.src = FULL_PINT_URL;
-  img.alt = "Fresh pint";
-  img.className = "environment-pint-float";
+  const wrapper = document.createElement("div");
+  wrapper.className = "environment-pint-float";
 
-  environmentFrame.appendChild(img);
+  const fullImg = document.createElement("img");
+  fullImg.src = FULL_PINT_URL;
+  fullImg.alt = "Fresh pint";
+  fullImg.className = "environment-pint-full";
 
-  // Switch to empty after 3 seconds
+  const emptyImg = document.createElement("img");
+  emptyImg.src = EMPTY_PINT_URL;
+  emptyImg.alt = "Empty pint";
+  emptyImg.className = "environment-pint-empty";
+
+  wrapper.appendChild(fullImg);
+  wrapper.appendChild(emptyImg);
+  environmentFrame.appendChild(wrapper);
+
+  // After 3 seconds, cross-fade full -> empty
   setTimeout(() => {
-    img.src = EMPTY_PINT_URL;
+    fullImg.classList.add("is-fading");
+    emptyImg.classList.add("is-visible");
   }, 3000);
 
-  // Start fading out near the end of the empty phase
+  // Start fading the whole wrapper near the end of the empty phase
   setTimeout(() => {
-    img.classList.add("fade-out");
+    wrapper.classList.add("fade-out");
   }, 5500);
 
-  // Remove after 6 seconds total
+  // Remove after ~6.3s total
   setTimeout(() => {
-    img.remove();
-  }, 6000);
+    wrapper.remove();
+  }, 6300);
 }
 
 function stopCurrentAudio() {
