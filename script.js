@@ -51,6 +51,14 @@ const KARAOKE_END_LOG_MESSAGES = [
 
 let lastKaraokeEndIndex = null;
 
+// Guinness dialogue lines (random each time)
+const GUINNESS_DIALOGUE_LINES = [
+  "Mags hands you a Guinness topped with a Musical Note.",
+  "Mags hands you a Guinness topped with a Shamrock.",
+  "Mags hands you a Guinness topped with a Heart.",
+  "Mags hands you a Guinness topped with MUFC."
+];
+
 // Hotspots
 const HOTSPOTS = {
   bar: [
@@ -203,7 +211,6 @@ function showFloatingJagerbomb() {
   wrapper.appendChild(img);
   environmentFrame.appendChild(wrapper);
 
-  // Fade out after a short time
   setTimeout(() => {
     wrapper.classList.add("fade-out");
   }, 2500);
@@ -257,6 +264,13 @@ function getRandomKaraokeEndLogMessage() {
 
   lastKaraokeEndIndex = index;
   return KARAOKE_END_LOG_MESSAGES[index];
+}
+
+function getRandomGuinnessDialogue() {
+  const len = GUINNESS_DIALOGUE_LINES.length;
+  if (!len) return "Guinness. A classic choice.";
+  const index = Math.floor(Math.random() * len);
+  return GUINNESS_DIALOGUE_LINES[index];
 }
 
 function adjustSongFontSizes(titleText) {
@@ -345,13 +359,12 @@ function handleDrinkChoice(drinkId) {
 
   if (drinkId === "guinness") {
     appendToLog("You order a pint of Guinness.");
-    dialogueText.textContent = "Guinness. A classic choice.";
+    dialogueText.textContent = getRandomGuinnessDialogue();
     addTrophyIcon(FULL_PINT_URL, "Pint of Guinness");
     showFloatingPint();
   } else if (drinkId === "jagerbomb") {
     appendToLog("You order a Jägerbomb.");
-    dialogueText.textContent =
-      "Red Bull, mystery liqueur and bad decisions. Excellent.";
+    dialogueText.textContent = "Julie looks on approvingly.";
     addTrophyIcon(JAGERBOMB_URL, "Jägerbomb");
     showFloatingJagerbomb();
   }
@@ -454,8 +467,9 @@ function hideSongListOverlay() {
 // -------------------------
 
 function getActionsForRoom() {
+  // Bar now has *no* action buttons; ordering is via hotspot only
   if (currentRoom === "bar") {
-    return [{ key: "order-drink", label: "Order a drink" }];
+    return [];
   }
   return [];
 }
