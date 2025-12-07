@@ -2,6 +2,11 @@
    GLOBAL
 -------------------------- */
 
+:root {
+  /* Updated dynamically from JS based on environment height */
+  --env-height: 400px;
+}
+
 *,
 *::before,
 *::after {
@@ -103,7 +108,7 @@ body {
   display: grid;
   grid-template-columns: minmax(0, 2.3fr) minmax(260px, 1fr);
   gap: 12px;
-  align-items: stretch; /* make right column match environment height */
+  align-items: flex-start;
 }
 
 /* Environment / image panel */
@@ -137,24 +142,12 @@ body {
   display: block;
 }
 
-/* Right-hand column: stack history + spacer + trophies
-   so they share the same total height as the environment panel */
+/* Right-hand column: stack history and trophies
+   We clamp their max-heights based on env height via --env-height. */
 .side-column {
   display: flex;
   flex-direction: column;
-  height: 100%;
-}
-
-/* Spacer between history and trophies to represent ~10% height */
-.side-spacer {
-  flex: 0 0 10%;
-}
-
-/* History and trophies each get ~40% of column height */
-.side-column .log-panel,
-.side-column .icons-panel {
-  flex: 0 0 40%;
-  min-height: 0; /* allow flexbox to actually shrink and enable scrolling */
+  gap: 8px;
 }
 
 /* -------------------------
@@ -227,7 +220,10 @@ body {
   background: #14151f;
   display: flex;
   flex-direction: column;
-  min-height: 0; /* important for flex-based height */
+
+  /* Clamp height to 40% of environment height, scroll inside when exceeded */
+  max-height: calc(var(--env-height) * 0.4);
+  min-height: 0;
 }
 
 .panel-title {
@@ -246,7 +242,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  overflow-y: auto; /* scroll instead of growing */
+  overflow-y: auto; /* scroll instead of growing panel */
   scrollbar-width: thin;
   flex: 1;
 }
@@ -257,7 +253,7 @@ body {
 }
 
 /* -------------------------
-   DIALOGUE + (future) right space
+   DIALOGUE
 -------------------------- */
 
 .lower-row {
@@ -290,7 +286,10 @@ body {
   background: #14151f;
   display: flex;
   flex-direction: column;
-  min-height: 0; /* allow scrolling child */
+
+  /* Clamp to 40% of environment height, scroll contents */
+  max-height: calc(var(--env-height) * 0.4);
+  min-height: 0;
 }
 
 .icon-row {
@@ -300,7 +299,7 @@ body {
   align-items: flex-end;
   min-height: 0;
   max-height: 100%;
-  overflow-y: auto; /* scroll instead of growing */
+  overflow-y: auto; /* scroll instead of growing panel */
 }
 
 .drink-slot {
