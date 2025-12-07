@@ -79,11 +79,11 @@ const HOTSPOTS = {
   karaoke: [
     {
       id: "karaoke-pick-song",
-      // centre: (638, 448) => top-left (613, 423)
-      // xPercent = 613 / 800 * 100 = 76.625
-      // yPercent = 423 / 600 * 100 = 70.5
-      xPercent: 76.625,
-      yPercent: 70.5,
+      // centre: (647, 514) => top-left (622, 489)
+      // xPercent = 622 / 800 * 100 = 77.75
+      // yPercent = 489 / 600 * 100 = 81.5
+      xPercent: 77.75,
+      yPercent: 81.5,
       widthPercent: (50 / 800) * 100,
       heightPercent: (50 / 600) * 100,
       hoverText: "Pick a song",
