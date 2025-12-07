@@ -17,12 +17,7 @@ window.KARAOKE_SONGS = [
     // Dialogue that appears in the dialogue panel when the song is selected
     // (normal play behaviour).
     selectDialogue:
-      "Unlike Stephen Patrick Morrissey, you do not let your public down.",
-
-    // Dialogue that appears when the player toggles "Show song details"
-    // while this song is the current one.
-    detailsDialogue:
-      "The screen announces: EVERYDAY IS LIKE SUNDAY – MORRISSEY."
+      "The intro crackles through the speakers as the screen flashes MORRISSEY."
   },
   {
     id: "kitchen",
@@ -34,10 +29,7 @@ window.KARAOKE_SONGS = [
     customDialogue: "",
 
     selectDialogue:
-      "The crowd murmurs appreciatively as the familiar synth line kicks in.",
-
-    detailsDialogue:
-      "The screen announces: YOU'LL ALWAYS FIND ME IN THE KITCHEN AT PARTIES – JONA LEWIE."
+      "The crowd murmurs appreciatively as the familiar synth line kicks in."
   }
 
   // Example of a disabled / not-yet-available song:
@@ -49,7 +41,6 @@ window.KARAOKE_SONGS = [
   //   mp3Url: "",
   //   customDialogue:
   //     "The song list flickers. This track hasn't arrived at the bar yet.",
-  //   selectDialogue: "",
-  //   detailsDialogue: ""
+  //   selectDialogue: ""
   // }
 ];
