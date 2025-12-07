@@ -470,6 +470,29 @@ body {
 }
 
 /* -------------------------
+   FLOATING PINT EFFECT
+   (bottom-centre at 200,450 in 800x600 space)
+-------------------------- */
+
+.environment-pint-float {
+  position: absolute;
+  left: 25%;   /* 200 / 800 * 100 */
+  top: 75%;    /* 450 / 600 * 100 */
+  transform: translate(-50%, -100%); /* bottom-centre anchored */
+  max-height: 120px;
+  height: auto;
+  width: auto;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 1s ease-out;
+  z-index: 45; /* above base image / overlays, below cursor */
+}
+
+.environment-pint-float.fade-out {
+  opacity: 0;
+}
+
+/* -------------------------
    ENVIRONMENT HOVER LABEL
 -------------------------- */
 
