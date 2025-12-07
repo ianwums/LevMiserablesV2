@@ -12,6 +12,7 @@ const environmentFrame = document.getElementById("environment-frame");
 const hoverLabel = document.getElementById("environment-hover-label");
 const muteButton = document.getElementById("mute-button");
 const trophyTitleEl = document.getElementById("trophy-title");
+const drinkMenu = document.getElementById("drink-menu");
 
 // Song list overlay DOM
 const songListOverlay = document.getElementById("song-list-overlay");
@@ -27,6 +28,8 @@ const FULL_PINT_URL =
   "https://levmiserables.s3.eu-north-1.amazonaws.com/images/guinesspint_full.gif";
 const EMPTY_PINT_URL =
   "https://levmiserables.s3.eu-north-1.amazonaws.com/images/guinesspint_empty.gif";
+const JAGERBOMB_URL =
+  "https://levmiserables.s3.eu-north-1.amazonaws.com/images/Ja%CC%88gerbombPixel.png";
 const POINTER_URL =
   "https://levmiserables.s3.eu-north-1.amazonaws.com/UI_Elements/pointer.gif";
 
@@ -98,8 +101,7 @@ const HOTSPOTS = {
 
 // State
 let currentRoom = "bar";
-let drinkCount = 0;
-let drinkTrophyCount = 0; // trophies from drinks
+let trophyCount = 0;
 let currentAudio = null;
 let customCursorEl = null;
 let isMuted = false;
@@ -122,7 +124,7 @@ function appendToLog(text) {
 }
 
 function getTotalTrophies() {
-  return drinkTrophyCount;
+  return trophyCount;
 }
 
 function updateTrophyTitle() {
@@ -131,10 +133,9 @@ function updateTrophyTitle() {
   trophyTitleEl.textContent = `TROPHIES: ${total}`;
 }
 
-// Trophy pints: always remain full
-function addDrinkIcon() {
-  drinkCount += 1;
-  drinkTrophyCount += 1;
+// Generic trophy helper – can be reused for other items later
+function addTrophyIcon(src, alt) {
+  trophyCount += 1;
   updateTrophyTitle();
 
   const slot = document.createElement("div");
@@ -142,8 +143,8 @@ function addDrinkIcon() {
 
   const img = document.createElement("img");
   img.className = "drink-image";
-  img.src = FULL_PINT_URL;
-  img.alt = `Pint of stout #${drinkCount}`;
+  img.src = src;
+  img.alt = alt;
 
   slot.appendChild(img);
   iconRow.appendChild(slot);
@@ -158,12 +159,12 @@ function showFloatingPint() {
 
   const fullImg = document.createElement("img");
   fullImg.src = FULL_PINT_URL;
-  fullImg.alt = "Fresh pint";
+  fullImg.alt = "Pint of Guinness";
   fullImg.className = "environment-pint-full";
 
   const emptyImg = document.createElement("img");
   emptyImg.src = EMPTY_PINT_URL;
-  emptyImg.alt = "Empty pint";
+  emptyImg.alt = "Empty glass";
   emptyImg.className = "environment-pint-empty";
 
   wrapper.appendChild(fullImg);
@@ -185,6 +186,31 @@ function showFloatingPint() {
   setTimeout(() => {
     wrapper.remove();
   }, 6300);
+}
+
+// Jägerbomb: just fade away (no empty glass)
+function showFloatingJagerbomb() {
+  if (!environmentFrame) return;
+
+  const wrapper = document.createElement("div");
+  wrapper.className = "environment-pint-float";
+
+  const img = document.createElement("img");
+  img.src = JAGERBOMB_URL;
+  img.alt = "Jägerbomb";
+  img.className = "environment-pint-full";
+
+  wrapper.appendChild(img);
+  environmentFrame.appendChild(wrapper);
+
+  // Fade out after a short time
+  setTimeout(() => {
+    wrapper.classList.add("fade-out");
+  }, 2500);
+
+  setTimeout(() => {
+    wrapper.remove();
+  }, 3300);
 }
 
 function stopCurrentAudio() {
@@ -299,6 +325,39 @@ function renderHotspotsForRoom(roomId) {
 }
 
 // -------------------------
+// Drinks menu helpers
+// -------------------------
+
+function showDrinkMenu() {
+  if (!drinkMenu) return;
+  drinkMenu.classList.add("is-visible");
+}
+
+function hideDrinkMenu() {
+  if (!drinkMenu) return;
+  drinkMenu.classList.remove("is-visible");
+}
+
+// Handle a specific drink choice
+function handleDrinkChoice(drinkId) {
+  if (currentRoom !== "bar") return;
+  hideDrinkMenu();
+
+  if (drinkId === "guinness") {
+    appendToLog("You order a pint of Guinness.");
+    dialogueText.textContent = "Guinness. A classic choice.";
+    addTrophyIcon(FULL_PINT_URL, "Pint of Guinness");
+    showFloatingPint();
+  } else if (drinkId === "jagerbomb") {
+    appendToLog("You order a Jägerbomb.");
+    dialogueText.textContent =
+      "Red Bull, mystery liqueur and bad decisions. Excellent.";
+    addTrophyIcon(JAGERBOMB_URL, "Jägerbomb");
+    showFloatingJagerbomb();
+  }
+}
+
+// -------------------------
 // Room transitions
 // -------------------------
 
@@ -307,6 +366,7 @@ function goToRoom(room, options = {}) {
   currentRoom = room;
 
   clearHoverUI();
+  hideDrinkMenu();
 
   if (room === "bar") {
     locationNameEl.textContent = "THE UNION - BAR AREA";
@@ -392,13 +452,6 @@ function hideSongListOverlay() {
 // -------------------------
 // Actions & effects
 // -------------------------
-
-const commonActionEffects = {
-  "order-drink": {
-    log: "You order a drink, Steve cackles.",
-    dialogue: "Mags smiles and points the card machine your way."
-  }
-};
 
 function getActionsForRoom() {
   if (currentRoom === "bar") {
@@ -509,21 +562,13 @@ function performAction(actionKey) {
     goToRoom("bar");
     return;
   }
-
   if (actionKey === "open-song-list" && currentRoom === "karaoke") {
     showSongListOverlay();
     return;
   }
-
-  const effect = commonActionEffects[actionKey];
-  if (effect) {
-    appendToLog(effect.log);
-    dialogueText.textContent = effect.dialogue;
-
-    if (actionKey === "order-drink" && currentRoom === "bar") {
-      addDrinkIcon();
-      showFloatingPint();
-    }
+  if (actionKey === "order-drink" && currentRoom === "bar") {
+    showDrinkMenu();
+    return;
   }
 }
 
@@ -541,6 +586,16 @@ function handleActionClick(event) {
 
 window.addEventListener("DOMContentLoaded", () => {
   actionsRow.addEventListener("click", handleActionClick);
+
+  if (drinkMenu) {
+    drinkMenu.addEventListener("click", (event) => {
+      const btn = event.target.closest(".drink-menu-button");
+      if (!btn) return;
+      const drinkId = btn.dataset.drinkId;
+      if (!drinkId) return;
+      handleDrinkChoice(drinkId);
+    });
+  }
 
   if (muteButton) {
     muteButton.addEventListener("click", () => {
