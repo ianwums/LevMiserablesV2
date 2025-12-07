@@ -132,7 +132,7 @@ body {
   justify-content: center;    /* center vertically in the box */
   align-items: center;        /* center horizontally */
   text-align: center;
-  padding: 3%;
+  padding: 1%;
   overflow: hidden;           /* ensure nothing spills outside */
   pointer-events: none;
 }
@@ -141,7 +141,8 @@ body {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  font-size: clamp(0.6rem, 1.6vw, 1rem);
+  font-size: 0.7rem;          /* base, overridden dynamically */
+  line-height: 1.1;
   color: #0044cc;             /* blue-ish karaoke title */
   text-shadow: 1px 1px 0 #ffff66;
 }
@@ -151,7 +152,8 @@ body {
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  font-size: clamp(0.5rem, 1.3vw, 0.9rem);
+  font-size: 0.55rem;         /* base, overridden dynamically */
+  line-height: 1.1;
   color: #000000;
   text-shadow: 1px 1px 0 #ffff99;
 }
