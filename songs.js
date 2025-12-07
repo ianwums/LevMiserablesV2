@@ -17,7 +17,7 @@ window.KARAOKE_SONGS = [
     // Dialogue that appears in the dialogue panel when the song is selected
     // (normal play behaviour).
     selectDialogue:
-      "The intro crackles through the speakers as the screen flashes MORRISSEY.",
+      "Unlike Stephen Patrick Morrissey, you do not let your public down.",
 
     // Dialogue that appears when the player toggles "Show song details"
     // while this song is the current one.
