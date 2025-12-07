@@ -28,7 +28,6 @@ SONG_LIST.forEach((song) => {
 
 // State
 let currentRoom = "bar"; // "bar" | "karaoke"
-let songDetailsVisible = false;
 let currentSongId = SONG_LIST.length ? SONG_LIST[0].id : null;
 let drinkCount = 0;
 
@@ -95,11 +94,9 @@ function setCurrentSong(songId) {
   adjustSongFontSizes(titleText);
 }
 
-// Show/hide overlay
+// Show/hide overlay when needed
 function setSongDetailsVisible(visible) {
-  songDetailsVisible = visible;
   karaokeSongDetails.style.display = visible ? "flex" : "none";
-  renderActions(); // update button labels
 }
 
 function goToRoom(room) {
@@ -110,38 +107,26 @@ function goToRoom(room) {
     appendToLog("You head back to the bar.");
     dialogueText.textContent =
       "The bar hums with low conversation and clinking glasses.";
-    setSongDetailsVisible(false); // hide if coming back from karaoke
+    setSongDetailsVisible(false); // hide overlay outside karaoke
   } else if (room === "karaoke") {
     locationNameEl.textContent = "Karaoke Room";
     environmentBaseImg.src = KARAOKE_ROOM_IMAGE;
     appendToLog("You step into the karaoke room.");
     dialogueText.textContent =
       "A small crowd hovers near the screen, waiting for their turn to murder a classic.";
+    // overlay remains as-is until a song is picked
   }
 
   renderActions();
 }
 
-// Helpers to get song-specific dialogue, with generic fallbacks
+// Helpers to get song-specific dialogue, with generic fallback
 function getSelectDialogue(song) {
   if (song.selectDialogue && song.selectDialogue.trim().length > 0) {
     return song.selectDialogue;
   }
   return (
     "The intro crackles through the speakers as the screen flashes " +
-    song.artist.toUpperCase() +
-    "."
-  );
-}
-
-function getDetailsDialogue(song) {
-  if (song.detailsDialogue && song.detailsDialogue.trim().length > 0) {
-    return song.detailsDialogue;
-  }
-  return (
-    "The screen announces: " +
-    song.title.toUpperCase() +
-    " – " +
     song.artist.toUpperCase() +
     "."
   );
@@ -197,10 +182,6 @@ function getActionsForRoom() {
 
   return [
     ...songActions,
-    {
-      key: "toggle-song-details",
-      label: songDetailsVisible ? "Hide song details" : "Show song details"
-    },
     { key: "wait", label: "Wait and see" },
     { key: "back-to-bar", label: "Go back to bar" }
   ];
@@ -260,28 +241,6 @@ function handleActionClick(event) {
     appendToLog(`You queue up "${song.title}" by ${song.artist}.`);
     dialogueText.textContent = getSelectDialogue(song);
     // mp3Url will be used here later for actual audio playback.
-    return;
-  }
-
-  // Karaoke-specific toggle
-  if (actionKey === "toggle-song-details" && currentRoom === "karaoke") {
-    const nowVisible = !songDetailsVisible;
-    setSongDetailsVisible(nowVisible);
-
-    const song = SONGS_BY_ID[currentSongId];
-    const title = song ? song.title : "the next track";
-
-    appendToLog(
-      nowVisible
-        ? `Song details appear on the karaoke screen (${title}).`
-        : "The karaoke screen clears, waiting for the next song."
-    );
-    if (song && nowVisible) {
-      dialogueText.textContent = getDetailsDialogue(song);
-    } else if (!nowVisible) {
-      dialogueText.textContent =
-        "The crowd grumbles as the text fades, eager for the next track.";
-    }
     return;
   }
 
