@@ -25,6 +25,8 @@ const FULL_PINT_URL =
   "https://levmiserables.s3.eu-north-1.amazonaws.com/images/guinesspint_full.gif";
 const EMPTY_PINT_URL =
   "https://levmiserables.s3.eu-north-1.amazonaws.com/images/guinesspint_empty.gif";
+const POINTER_URL =
+  "https://levmiserables.s3.eu-north-1.amazonaws.com/UI_Elements/pointer.gif";
 
 // Karaoke songs come from songs.js
 const SONG_LIST = (window.KARAOKE_SONGS || []).slice();
@@ -67,6 +69,7 @@ let currentRoom = "bar"; // "bar" | "karaoke"
 let currentSongId = SONG_LIST.length ? SONG_LIST[0].id : null;
 let drinkCount = 0;
 let currentAudio = null; // active audio playback (if any)
+let customCursorEl = null; // our fake cursor image
 
 // -------------------------
 // Utilities
@@ -451,8 +454,15 @@ function handleActionClick(event) {
 window.addEventListener("DOMContentLoaded", () => {
   actionsRow.addEventListener("click", handleActionClick);
 
-  // Hotspot click + hover handling
+  // Set up custom cursor element inside environment frame
   if (environmentFrame) {
+    customCursorEl = document.createElement("img");
+    customCursorEl.src = POINTER_URL;
+    customCursorEl.alt = "";
+    customCursorEl.className = "custom-cursor";
+    environmentFrame.appendChild(customCursorEl);
+
+    // Hotspot click handling
     environmentFrame.addEventListener("click", (event) => {
       const hotspot = event.target.closest(".hotspot");
       if (!hotspot) return;
@@ -462,30 +472,43 @@ window.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // Show/hide in-world hover label based on hotspot under cursor
+    // Cursor movement + hover label
     environmentFrame.addEventListener("mousemove", (event) => {
-      if (!hoverLabel) return;
-      const hotspot = event.target.closest(".hotspot");
-      if (hotspot && hotspot.dataset.hoverText) {
-        hoverLabel.textContent = hotspot.dataset.hoverText;
-        hoverLabel.classList.add("is-visible");
+      const frameRect = environmentFrame.getBoundingClientRect();
 
-        // Position the label just above the hotspot, centred horizontally
-        const frameRect = environmentFrame.getBoundingClientRect();
-        const hotRect = hotspot.getBoundingClientRect();
+      // Move custom cursor
+      if (customCursorEl) {
+        const cx = event.clientX - frameRect.left;
+        const cy = event.clientY - frameRect.top;
+        customCursorEl.style.left = `${cx}px`;
+        customCursorEl.style.top = `${cy}px`;
+        customCursorEl.style.display = "block";
+      }
 
-        const centerX = hotRect.left + hotRect.width / 2 - frameRect.left;
-        const tentativeTop = hotRect.top - frameRect.top - 6; // a few px above
-        const top = Math.max(tentativeTop, 0);
+      // Show/hide label based on hotspot under cursor
+      if (hoverLabel) {
+        const hotspot = event.target.closest(".hotspot");
+        if (hotspot && hotspot.dataset.hoverText) {
+          hoverLabel.textContent = hotspot.dataset.hoverText;
+          hoverLabel.classList.add("is-visible");
 
-        hoverLabel.style.left = `${centerX}px`;
-        hoverLabel.style.top = `${top}px`;
-      } else {
-        hoverLabel.classList.remove("is-visible");
+          const hotRect = hotspot.getBoundingClientRect();
+          const centerX = hotRect.left + hotRect.width / 2 - frameRect.left;
+          const tentativeTop = hotRect.top - frameRect.top - 6; // a few px above
+          const top = Math.max(tentativeTop, 0);
+
+          hoverLabel.style.left = `${centerX}px`;
+          hoverLabel.style.top = `${top}px`;
+        } else {
+          hoverLabel.classList.remove("is-visible");
+        }
       }
     });
 
     environmentFrame.addEventListener("mouseleave", () => {
+      if (customCursorEl) {
+        customCursorEl.style.display = "none";
+      }
       if (hoverLabel) {
         hoverLabel.classList.remove("is-visible");
       }
