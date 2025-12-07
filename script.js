@@ -345,11 +345,15 @@ function renderHotspotsForRoom(roomId) {
 function showDrinkMenu() {
   if (!drinkMenu) return;
   drinkMenu.classList.add("is-visible");
+  // Ensure the panel is visible even if there are no actions
+  renderActions();
 }
 
 function hideDrinkMenu() {
   if (!drinkMenu) return;
   drinkMenu.classList.remove("is-visible");
+  // Re-evaluate whether the panel should still be visible
+  renderActions();
 }
 
 // Handle a specific drink choice
@@ -480,9 +484,14 @@ function renderActions() {
 
   actionsRow.innerHTML = "";
 
-  if (!actions || actions.length === 0) {
+  const hasActions = actions && actions.length > 0;
+  const hasDrinkMenuVisible =
+    drinkMenu && drinkMenu.classList.contains("is-visible");
+
+  if (!hasActions) {
     if (actionsPanel) {
-      actionsPanel.style.display = "none";
+      // Show panel only if the drink menu is visible; otherwise hide.
+      actionsPanel.style.display = hasDrinkMenuVisible ? "" : "none";
     }
     return;
   }
