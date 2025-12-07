@@ -2,7 +2,6 @@
 const actionLog = document.getElementById("action-log");
 const dialogueText = document.getElementById("dialogue-text");
 const environmentBaseImg = document.getElementById("environment-base");
-const karaokeOverlay = document.getElementById("karaoke-overlay");
 const karaokeSongDetails = document.getElementById("karaoke-song-details");
 const actionsRow = document.getElementById("actions-row");
 const iconRow = document.getElementById("icon-row");
@@ -109,14 +108,13 @@ function goToRoom(room) {
   if (room === "bar") {
     locationNameEl.textContent = "Pub – Bar";
     environmentBaseImg.src = BAR_IMAGE;
-    karaokeOverlay.style.display = "none";
     appendToLog("You head back to the bar.");
     dialogueText.textContent =
       "The bar hums with low conversation and clinking glasses.";
+    setSongDetailsVisible(false); // hide if coming back from karaoke
   } else if (room === "karaoke") {
     locationNameEl.textContent = "Karaoke Room";
     environmentBaseImg.src = KARAOKE_ROOM_IMAGE;
-    karaokeOverlay.style.display = "block";
     appendToLog("You step into the karaoke room.");
     dialogueText.textContent =
       "A small crowd hovers near the screen, waiting for their turn to murder a classic.";
