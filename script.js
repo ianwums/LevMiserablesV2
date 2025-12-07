@@ -494,7 +494,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
           const hotRect = hotspot.getBoundingClientRect();
           const centerX = hotRect.left + hotRect.width / 2 - frameRect.left;
-          const tentativeTop = hotRect.top - frameRect.top - 6; // a few px above
+          // Move label ~12px higher than before: was -6, now -18
+          const tentativeTop = hotRect.top - frameRect.top - 18;
           const top = Math.max(tentativeTop, 0);
 
           hoverLabel.style.left = `${centerX}px`;
