@@ -72,7 +72,7 @@ function adjustSongFontSizes(titleText) {
   } else if (len <= 35) {
     titleSizeRem = 0.7; // medium
   } else {
-    titleSizeRem = 0.6; // long title (e.g. Kitchen At Parties)
+    titleSizeRem = 0.6; // long title
   }
   const artistSizeRem = Math.max(titleSizeRem - 0.15, 0.45);
 
@@ -120,6 +120,31 @@ function goToRoom(room) {
   }
 
   renderActions();
+}
+
+// Helpers to get song-specific dialogue, with generic fallbacks
+function getSelectDialogue(song) {
+  if (song.selectDialogue && song.selectDialogue.trim().length > 0) {
+    return song.selectDialogue;
+  }
+  return (
+    "The intro crackles through the speakers as the screen flashes " +
+    song.artist.toUpperCase() +
+    "."
+  );
+}
+
+function getDetailsDialogue(song) {
+  if (song.detailsDialogue && song.detailsDialogue.trim().length > 0) {
+    return song.detailsDialogue;
+  }
+  return (
+    "The screen announces: " +
+    song.title.toUpperCase() +
+    " – " +
+    song.artist.toUpperCase() +
+    "."
+  );
 }
 
 // -------------------------
@@ -224,7 +249,7 @@ function handleActionClick(event) {
         `You select "${song.title}" by ${song.artist}, but the system hesitates.`
       );
       dialogueText.textContent = song.customDialogue;
-      // (No call to setCurrentSong or audio playback here)
+      // Mp3 and overlay are intentionally not touched.
       return;
     }
 
@@ -233,11 +258,8 @@ function handleActionClick(event) {
     setSongDetailsVisible(true);
 
     appendToLog(`You queue up "${song.title}" by ${song.artist}.`);
-    dialogueText.textContent =
-      "The intro crackles through the speakers as the screen flashes " +
-      song.artist.toUpperCase() +
-      ".";
-    // mp3Url will be used here later for actual playback.
+    dialogueText.textContent = getSelectDialogue(song);
+    // mp3Url will be used here later for actual audio playback.
     return;
   }
 
@@ -254,9 +276,12 @@ function handleActionClick(event) {
         ? `Song details appear on the karaoke screen (${title}).`
         : "The karaoke screen clears, waiting for the next song."
     );
-    dialogueText.textContent = nowVisible
-      ? `The screen announces: ${song.title.toUpperCase()} – ${song.artist.toUpperCase()}.`
-      : "The crowd grumbles as the text fades, eager for the next track.";
+    if (song && nowVisible) {
+      dialogueText.textContent = getDetailsDialogue(song);
+    } else if (!nowVisible) {
+      dialogueText.textContent =
+        "The crowd grumbles as the text fades, eager for the next track.";
+    }
     return;
   }
 
