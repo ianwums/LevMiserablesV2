@@ -395,9 +395,8 @@ function hideSongListOverlay() {
 
 const commonActionEffects = {
   "order-drink": {
-    log: "You order a drink. The bartender eyes you carefully.",
-    dialogue:
-      "Mags smiles and points the card machine your way."
+    log: "You order a drink, Steve cackles.",
+    dialogue: "Mags smiles and points the card machine your way."
   }
 };
 
