@@ -9,6 +9,7 @@ const locationNameEl = document.getElementById("location-name");
 const songTitleEl = document.querySelector(".song-title");
 const songArtistEl = document.querySelector(".song-artist");
 const environmentFrame = document.getElementById("environment-frame");
+const hoverLabel = document.getElementById("environment-hover-label");
 
 // Song list overlay DOM
 const songListOverlay = document.getElementById("song-list-overlay");
@@ -181,7 +182,9 @@ function renderHotspotsForRoom(roomId) {
     const el = document.createElement("button");
     el.className = "hotspot";
     el.dataset.actionKey = h.actionKey;
-    el.title = h.hoverText || "";
+    if (h.hoverText) {
+      el.dataset.hoverText = h.hoverText;
+    }
 
     el.style.left = `${h.xPercent}%`;
     el.style.top = `${h.yPercent}%`;
@@ -230,6 +233,7 @@ function goToRoom(room, options = {}) {
   renderHotspotsForRoom(room);
 }
 
+// helper for karaoke dialogue
 function getSelectDialogue(song) {
   if (song.selectDialogue && song.selectDialogue.trim().length > 0) {
     return song.selectDialogue;
@@ -455,6 +459,24 @@ window.addEventListener("DOMContentLoaded", () => {
       const actionKey = hotspot.dataset.actionKey;
       if (actionKey) {
         performAction(actionKey);
+      }
+    });
+
+    // Show/hide in-world hover label based on hotspot under cursor
+    environmentFrame.addEventListener("mousemove", (event) => {
+      if (!hoverLabel) return;
+      const hotspot = event.target.closest(".hotspot");
+      if (hotspot && hotspot.dataset.hoverText) {
+        hoverLabel.textContent = hotspot.dataset.hoverText;
+        hoverLabel.classList.add("is-visible");
+      } else {
+        hoverLabel.classList.remove("is-visible");
+      }
+    });
+
+    environmentFrame.addEventListener("mouseleave", () => {
+      if (hoverLabel) {
+        hoverLabel.classList.remove("is-visible");
       }
     });
   }
