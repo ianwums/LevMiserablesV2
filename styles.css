@@ -98,12 +98,12 @@ body {
   gap: 12px;
 }
 
-/* Row 1: environment + log */
+/* Row 1: environment + right-hand column (history + trophies) */
 .scene-row {
   display: grid;
   grid-template-columns: minmax(0, 2.3fr) minmax(260px, 1fr);
   gap: 12px;
-  align-items: flex-start;
+  align-items: stretch; /* make right column match environment height */
 }
 
 /* Environment / image panel */
@@ -137,6 +137,26 @@ body {
   display: block;
 }
 
+/* Right-hand column: stack history + spacer + trophies
+   so they share the same total height as the environment panel */
+.side-column {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Spacer between history and trophies to represent ~10% height */
+.side-spacer {
+  flex: 0 0 10%;
+}
+
+/* History and trophies each get ~40% of column height */
+.side-column .log-panel,
+.side-column .icons-panel {
+  flex: 0 0 40%;
+  min-height: 0; /* allow flexbox to actually shrink and enable scrolling */
+}
+
 /* -------------------------
    CUSTOM CURSOR (inside environment)
 -------------------------- */
@@ -165,13 +185,13 @@ body {
   width: 15.5%;
   height: 10%;
 
-  display: none;              /* toggled via JS */
+  display: none;
   flex-direction: column;
-  justify-content: center;    /* center vertically in the box */
-  align-items: center;        /* center horizontally */
+  justify-content: center;
+  align-items: center;
   text-align: center;
   padding: 3%;
-  overflow: hidden;           /* ensure nothing spills outside */
+  overflow: hidden;
   pointer-events: none;
 }
 
@@ -179,9 +199,9 @@ body {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  font-size: 0.7rem;          /* base, overridden dynamically */
+  font-size: 0.7rem;
   line-height: 1.1;
-  color: #0044cc;             /* blue-ish karaoke title */
+  color: #0044cc;
   text-shadow: 1px 1px 0 #ffff66;
 }
 
@@ -190,14 +210,14 @@ body {
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  font-size: 0.55rem;         /* base, overridden dynamically */
+  font-size: 0.55rem;
   line-height: 1.1;
   color: #000000;
   text-shadow: 1px 1px 0 #ffff99;
 }
 
 /* -------------------------
-   ACTION LOG
+   HISTORY (ACTION LOG)
 -------------------------- */
 
 .log-panel {
@@ -207,8 +227,7 @@ body {
   background: #14151f;
   display: flex;
   flex-direction: column;
-  min-height: 200px;
-  max-height: 600px; /* stops it pushing everything down */
+  min-height: 0; /* important for flex-based height */
 }
 
 .panel-title {
@@ -227,7 +246,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  overflow-y: auto;
+  overflow-y: auto; /* scroll instead of growing */
   scrollbar-width: thin;
   flex: 1;
 }
@@ -238,17 +257,16 @@ body {
 }
 
 /* -------------------------
-   DIALOGUE + ICONS ROW
+   DIALOGUE + (future) right space
 -------------------------- */
 
 .lower-row {
   display: grid;
-  grid-template-columns: minmax(0, 2.3fr) minmax(220px, 1fr);
+  grid-template-columns: minmax(0, 1fr); /* dialogue full width; right blank for now */
   gap: 12px;
 }
 
-.dialogue-panel,
-.icons-panel {
+.dialogue-panel {
   border: 1px solid #333;
   border-radius: 6px;
   padding: 8px 10px;
@@ -261,13 +279,28 @@ body {
   min-height: 60px;
 }
 
-/* Icons / trophies (image row) */
+/* -------------------------
+   TROPHIES (ICONS)
+-------------------------- */
+
+.icons-panel {
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 8px 10px;
+  background: #14151f;
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* allow scrolling child */
+}
+
 .icon-row {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
   align-items: flex-end;
-  min-height: 40px;
+  min-height: 0;
+  max-height: 100%;
+  overflow-y: auto; /* scroll instead of growing */
 }
 
 .drink-slot {
@@ -345,10 +378,10 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  pointer-events: none; /* clicks go to inner content */
+  pointer-events: none;
 }
 
-/* New coordinates:
+/* Coordinates:
    445,358  652,341  429,583  668,586
    Bounding box ≈ top-left (429,341), width 239, height 245 on 800x600
    => left 53.625%, top 56.8333%, width 29.875%, height 40.8333%
@@ -377,15 +410,14 @@ body {
   display: none;
 }
 
-/* Close "X" styling – sans serif, no extra chrome, cursor inherited
-   so we don't see a second OS pointer */
+/* Close "X" styling */
 .song-list-close-button {
   border: none;
   background: transparent;
   padding: 0;
 
-  cursor: inherit;          /* inherit 'none' from environment frame */
-  font-family: inherit;     /* use the main sans-serif stack */
+  cursor: inherit;
+  font-family: inherit;
   font-size: 0.9rem;
   color: #000000;
 
@@ -407,10 +439,10 @@ body {
   flex-direction: column;
   gap: 2px;
   overflow-y: auto;
-  padding-right: 2px; /* space for scrollbar */
+  padding-right: 2px;
 }
 
-/* Individual song rows – text only, no pills / boxes */
+/* Individual song rows */
 .song-list-item {
   width: 100%;
   border: none;
@@ -419,13 +451,13 @@ body {
   padding: 2px 0;
   text-align: left;
 
-  cursor: inherit;          /* inherit 'none' so only custom cursor shows */
+  cursor: inherit;
   display: flex;
   justify-content: flex-start;
   align-items: baseline;
   gap: 4px;
 
-  font-family: inherit;     /* inherit body sans-serif */
+  font-family: inherit;
   font-size: 0.8rem;
   color: #000000;
 
@@ -444,7 +476,6 @@ body {
   opacity: 0.9;
 }
 
-/* Simple hover treatment: underline instead of changing background */
 .song-list-item:hover {
   text-decoration: underline;
 }
@@ -459,10 +490,9 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.35);
   background: rgba(255, 255, 255, 0.08);
   padding: 0;
-  cursor: inherit; /* follow the custom cursor behaviour */
+  cursor: inherit;
 }
 
-/* subtle brightness / highlight over the image when hovering a hotspot */
 .hotspot:hover {
   background: rgba(255, 255, 255, 0.18);
   border-color: rgba(255, 255, 255, 0.75);
@@ -478,14 +508,14 @@ body {
   position: absolute;
   left: 13.5%;   /* 108 / 800 * 100 */
   top: 77%;      /* 462 / 600 * 100 */
-  transform: translate(-50%, -100%); /* bottom-centre anchored */
+  transform: translate(-50%, -100%);
   max-height: 60px; /* 50% of previous 120px */
   height: auto;
   width: auto;
   pointer-events: none;
   opacity: 1;
   transition: opacity 1s ease-out;
-  z-index: 45; /* above base image / overlays, below cursor */
+  z-index: 45;
 }
 
 .environment-pint-float.fade-out {
@@ -498,7 +528,6 @@ body {
 
 .environment-hover-label {
   position: absolute;
-  /* top/left are set dynamically from JS */
   transform: translateX(-50%);
   padding: 2px 8px;
   pointer-events: none;
@@ -507,12 +536,10 @@ body {
 
   font-family: "Times New Roman", "TimesNewRoman", serif;
   font-size: 0.9rem;
-  color: #000000; /* black text */
-
+  color: #000000;
   text-align: center;
   white-space: nowrap;
 
-  /* white-ish shadow for contrast */
   text-shadow:
     0 1px 2px #ffffff,
     1px 0 2px #ffffff,
