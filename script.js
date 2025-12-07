@@ -210,7 +210,7 @@ function handleActionClick(event) {
 
     if (song.customDialogue && song.customDialogue.trim().length > 0) {
       appendToLog(
-        `You select "${song.title}" by ${song.artist}, but the system hesitates.`
+        `You select "${song.title}" by ${song.artist}, but Rockin Ronnie hesitates.`
       );
       dialogueText.textContent = song.customDialogue;
       return;
