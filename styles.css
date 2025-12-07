@@ -105,26 +105,35 @@ body {
 
 /* -------------------------
    KARAOKE TEXT OVERLAY
-   (exactly inside the small green box you drew)
+   (within the 376–500 x 125–185 box)
 -------------------------- */
 
-/* Green box in your 800x600 reference:
-   x: 250–500, y: 125–201
-   -> left: 31.25%, top: 20.83%, width: 31.25%, height: 12.67%
+/*
+  Image: 800x600
+  Box corners:
+    (376,125), (500,125), (376,185), (500,185)
+
+  Converted to percentages:
+    left  = 376 / 800 = 47%
+    top   = 125 / 600 ≈ 20.83%
+    width = 124 / 800 = 15.5%
+    height=  60 / 600 = 10%
 */
+
 .karaoke-song-details {
   position: absolute;
   top: 20.83%;
-  left: 31.25%;
-  width: 31.25%;
-  height: 12.67%;
+  left: 47%;
+  width: 15.5%;
+  height: 10%;
 
   display: none;              /* toggled via JS */
   flex-direction: column;
   justify-content: center;    /* center vertically in the box */
   align-items: center;        /* center horizontally */
   text-align: center;
-  padding: 2%;
+  padding: 3%;
+  overflow: hidden;           /* ensure nothing spills outside */
   pointer-events: none;
 }
 
@@ -132,7 +141,7 @@ body {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  font-size: clamp(0.7rem, 2vw, 1.2rem);
+  font-size: clamp(0.6rem, 1.6vw, 1rem);
   color: #0044cc;             /* blue-ish karaoke title */
   text-shadow: 1px 1px 0 #ffff66;
 }
@@ -142,7 +151,7 @@ body {
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  font-size: clamp(0.6rem, 1.6vw, 1rem);
+  font-size: clamp(0.5rem, 1.3vw, 0.9rem);
   color: #000000;
   text-shadow: 1px 1px 0 #ffff99;
 }
