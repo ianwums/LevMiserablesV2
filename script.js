@@ -54,11 +54,11 @@ const HOTSPOTS = {
   bar: [
     {
       id: "bar-order-drink",
-      // centre: (177, 334) => top-left (152, 309)
-      // xPercent = 152 / 800 * 100 = 19
-      // yPercent = 309 / 600 * 100 = 51.5
-      xPercent: 19,
-      yPercent: 51.5,
+      // centre: (200, 400) => top-left (175, 375)
+      // xPercent = 175 / 800 * 100 = 21.875
+      // yPercent = 375 / 600 * 100 = 62.5
+      xPercent: 21.875,
+      yPercent: 62.5,
       widthPercent: (50 / 800) * 100, // ≈6.25%
       heightPercent: (50 / 600) * 100, // ≈8.33%
       hoverText: "Order drink",
