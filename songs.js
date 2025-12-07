@@ -30,7 +30,7 @@ window.KARAOKE_SONGS = [
 
     selectDialogue:
       "The crowd murmurs appreciatively as the familiar synth line kicks in."
-  }
+  },
 
 
   {
