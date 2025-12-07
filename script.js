@@ -243,7 +243,7 @@ function handleActionClick(event) {
     // If customDialogue is provided, show that ONLY (no playback / overlay change)
     if (song.customDialogue && song.customDialogue.trim().length > 0) {
       appendToLog(
-        `You select "${song.title}" by ${song.artist}, but the system hesitates.`
+        `You select "${song.title}" by ${song.artist}, but Rockin Ronnie hesitates.`
       );
       dialogueText.textContent = song.customDialogue;
       // Mp3 and overlay are intentionally not touched.
