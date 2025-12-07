@@ -105,24 +105,24 @@ body {
 
 /* -------------------------
    KARAOKE TEXT OVERLAY
-   (on top of baked-in Sunfly screen)
+   (bottom-right of Sunfly screen)
 -------------------------- */
 
-/* Positioned over the TV screen area in KaraokeRoomPixel.png.
-   Tweak top/left/width/height for perfect alignment. */
+/* Positioned over the bottom-right empty yellow area of the Sunfly screen.
+   Tweak top/left/width/height for perfect alignment if needed. */
 .karaoke-song-details {
   position: absolute;
-  top: 17%;    /* move up/down */
-  left: 28%;   /* move left/right */
-  width: 44%;  /* change width */
-  height: 16%; /* change height */
+  top: 22%;     /* overall vertical position on the TV */
+  left: 52%;    /* horizontal start (further right = larger %) */
+  width: 33%;   /* width of the text box */
+  height: 20%;  /* height of the text box */
 
   display: none;              /* toggled via JS */
   flex-direction: column;
-  justify-content: flex-end;  /* push text towards bottom of TV */
-  align-items: center;
-  text-align: center;
-  padding: 4%;
+  justify-content: flex-end;  /* hug the bottom of the box */
+  align-items: flex-end;      /* align text to the right */
+  text-align: right;
+  padding: 3%;
   pointer-events: none;
 }
 
@@ -130,17 +130,17 @@ body {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  font-size: clamp(0.8rem, 2.4vw, 1.4rem);
+  font-size: clamp(0.7rem, 2.1vw, 1.2rem);
   color: #0044cc;             /* blue-ish, like classic karaoke screens */
   text-shadow: 1px 1px 0 #ffff66;
 }
 
 .song-artist {
-  margin-top: 0.2em;
+  margin-top: 0.1em;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  font-size: clamp(0.7rem, 2vw, 1.1rem);
+  font-size: clamp(0.6rem, 1.7vw, 1rem);
   color: #000000;
   text-shadow: 1px 1px 0 #ffff99;
 }
