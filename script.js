@@ -11,7 +11,7 @@ const songArtistEl = document.querySelector(".song-artist");
 const environmentFrame = document.getElementById("environment-frame");
 const hoverLabel = document.getElementById("environment-hover-label");
 
-// Song list overlay DOM
+// Song list overlay DOM (now in-environment)
 const songListOverlay = document.getElementById("song-list-overlay");
 const songListContainer = document.getElementById("song-list-container");
 const songListCloseBtn = document.getElementById("song-list-close");
@@ -48,12 +48,12 @@ const KARAOKE_END_LOG_MESSAGES = [
 let lastKaraokeEndIndex = null;
 
 // Hotspot configuration (percentages relative to 800x600 image)
-// We treat these as top-left of a 50x50 circle.
+// These are TOP-LEFT of a 50x50 circle, using your centre coords.
 const HOTSPOTS = {
   bar: [
     {
       id: "bar-order-drink",
-      // centre: (177, 334) on 800x600 => top-left (152, 309)
+      // centre: (177, 334) => top-left (152, 309)
       // xPercent = 152 / 800 * 100 = 19
       // yPercent = 309 / 600 * 100 = 51.5
       xPercent: 19,
@@ -244,7 +244,7 @@ function goToRoom(room, options = {}) {
     dialogueText.textContent =
       "The bar hums with low conversation and clinking glasses.";
 
-    // Leaving karaoke: stop audio and clear the karaoke screen
+    // Leaving karaoke: stop audio, clear karaoke screen & song list overlay
     stopCurrentAudio();
     setSongDetailsVisible(false);
     hideSongListOverlay();
@@ -254,7 +254,7 @@ function goToRoom(room, options = {}) {
     appendToLog("You step into the karaoke room.");
     dialogueText.textContent =
       "A small crowd hovers near the screen, waiting for their turn to murder a classic.";
-    // Karaoke overlay will be managed per-song
+    // Karaoke overlay will be managed per-song / song list
   }
 
   renderActions();
@@ -446,7 +446,7 @@ function performAction(actionKey) {
     return;
   }
 
-  // Open song list
+  // Open song list (karaoke only)
   if (actionKey === "open-song-list" && currentRoom === "karaoke") {
     showSongListOverlay();
     return;
@@ -520,13 +520,13 @@ window.addEventListener("DOMContentLoaded", () => {
           const hotRect = hotspot.getBoundingClientRect();
           const centerX = hotRect.left + hotRect.width / 2 - frameRect.left;
 
-          // First, temporarily position label to get its height
+          // Temporarily position to measure height
           hoverLabel.style.left = `${centerX}px`;
           hoverLabel.style.top = `0px`;
           const labelRect = hoverLabel.getBoundingClientRect();
           const labelHeight = labelRect.height || 0;
 
-          // We want label bottom to be at least 10px above hotspot top
+          // Label bottom should be at least 10px above hotspot top
           const desiredBottom =
             hotRect.top - frameRect.top - 10; // 10px above hotspot
           let labelTop = desiredBottom - labelHeight;
