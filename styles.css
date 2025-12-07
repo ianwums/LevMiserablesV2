@@ -58,10 +58,21 @@ body {
 
 .header-status {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   font-size: 0.85rem;
   opacity: 0.9;
   align-items: center;
+}
+
+/* Drunkness indicator */
+.drunkness-display {
+  padding: 2px 10px;
+  border-radius: 999px;
+  border: 1px solid #555;
+  background: rgba(120, 50, 50, 0.35);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 /* Mute button in header */
@@ -584,6 +595,35 @@ body {
 
 .environment-hover-label.is-visible {
   display: block;
+}
+
+/* -------------------------
+   GAME OVER OVERLAY
+-------------------------- */
+
+.game-over-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  text-align: center;
+  padding: 20px;
+}
+
+.game-over-overlay.is-visible {
+  display: flex;
+}
+
+.game-over-message {
+  color: #ff4444;
+  font-size: 2rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  line-height: 1.4;
 }
 
 /* -------------------------
