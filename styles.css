@@ -318,16 +318,16 @@ body {
 }
 
 /* New coordinates:
-   455,340  639,336  444,554  643,547
-   Bounding box ≈ top-left (444,336), width 199, height 218 on 800x600
-   => left 55.5%, top 56%, width 24.875%, height ~36.33%
+   445,358  652,341  429,583  668,586
+   Bounding box ≈ top-left (429,341), width 239, height 245 on 800x600
+   => left 53.625%, top 56.8333%, width 29.875%, height 40.8333%
 */
 .song-list-overlay-inner {
   position: absolute;
-  left: 55.5%;
-  top: 56%;
-  width: 24.875%;
-  height: 36.3333%;
+  left: 53.625%;
+  top: 56.8333%;
+  width: 29.875%;
+  height: 40.8333%;
   display: flex;
   flex-direction: column;
   overflow: hidden;
