@@ -46,7 +46,6 @@ function appendToLog(text) {
     actionLog.appendChild(li);
   }
 
-  // Scroll to top so latest entry is visible
   actionLog.scrollTop = 0;
 }
 
@@ -64,22 +63,20 @@ function addDrinkIcon() {
   slot.appendChild(img);
   iconRow.appendChild(slot);
 
-  // After 3 seconds, the pint becomes empty
   setTimeout(() => {
     img.src = EMPTY_PINT_URL;
   }, 3000);
 }
 
-// Scale font sizes based on title length so everything fits in the box
 function adjustSongFontSizes(titleText) {
   const len = titleText.length;
   let titleSizeRem;
   if (len <= 22) {
-    titleSizeRem = 0.75; // short title
+    titleSizeRem = 0.75;
   } else if (len <= 35) {
-    titleSizeRem = 0.7; // medium
+    titleSizeRem = 0.7;
   } else {
-    titleSizeRem = 0.6; // long title
+    titleSizeRem = 0.6;
   }
   const artistSizeRem = Math.max(titleSizeRem - 0.15, 0.45);
 
@@ -87,7 +84,6 @@ function adjustSongFontSizes(titleText) {
   songArtistEl.style.fontSize = `${artistSizeRem}rem`;
 }
 
-// Set the current song text into the overlay
 function setCurrentSong(songId) {
   const song = SONGS_BY_ID[songId];
   if (!song) return;
@@ -102,7 +98,6 @@ function setCurrentSong(songId) {
   adjustSongFontSizes(titleText);
 }
 
-// Show/hide overlay when needed
 function setSongDetailsVisible(visible) {
   karaokeSongDetails.style.display = visible ? "flex" : "none";
 }
@@ -123,20 +118,18 @@ function goToRoom(room, options = {}) {
 
     dialogueText.textContent =
       "The bar hums with low conversation and clinking glasses.";
-    setSongDetailsVisible(false); // hide overlay outside karaoke
+    setSongDetailsVisible(false);
   } else if (room === "karaoke") {
     locationNameEl.textContent = "Karaoke Room";
     environmentBaseImg.src = KARAOKE_ROOM_IMAGE;
     appendToLog("You step into the karaoke room.");
     dialogueText.textContent =
       "A small crowd hovers near the screen, waiting for their turn to murder a classic.";
-    // overlay remains as-is until a song is picked
   }
 
   renderActions();
 }
 
-// Helpers to get song-specific dialogue, with generic fallback
 function getSelectDialogue(song) {
   if (song.selectDialogue && song.selectDialogue.trim().length > 0) {
     return song.selectDialogue;
@@ -152,39 +145,19 @@ function getSelectDialogue(song) {
 // Actions & effects
 // -------------------------
 
-// Actions shared between rooms
 const commonActionEffects = {
   "order-drink": {
     log: "You order a drink. The bartender eyes you carefully.",
     dialogue:
       '"What\'s your poison?" the bartender asks, polishing a glass that has seen better decades.'
-  },
-  "talk-bartender": {
-    log: "You strike up a conversation with the bartender.",
-    dialogue:
-      '"You don\'t look like the usual crowd," they say. "Looking for trouble or trying to avoid it?"'
-  },
-  "inspect-room": {
-    log: "You look around the room, taking in the details.",
-    dialogue:
-      "The bar is cluttered with mismatched stools, old posters and a mirror that has heard too many secrets."
-  },
-  wait: {
-    log: "You wait. The pub creaks and murmurs around you.",
-    dialogue:
-      "Time passes, and with it the noise of the front bar swells and ebbs like a tired tide."
   }
 };
 
-// Actions available per room
 function getActionsForRoom() {
   if (currentRoom === "bar") {
     return [
       { key: "order-drink", label: "Order a drink" },
-      { key: "talk-bartender", label: "Talk to the bartender" },
-      { key: "inspect-room", label: "Inspect the room" },
-      { key: "wait", label: "Wait and see" },
-      { key: "go-karaoke", label: "Karaoke" }
+      { key: "go-karaoke", label: "Karaoke Room" }
     ];
   }
 
@@ -198,12 +171,10 @@ function getActionsForRoom() {
 
   return [
     ...songActions,
-    { key: "wait", label: "Wait and see" },
     { key: "back-to-bar", label: "Go back to bar" }
   ];
 }
 
-// Render buttons
 function renderActions() {
   const actions = getActionsForRoom();
   actionsRow.innerHTML = "";
@@ -217,14 +188,12 @@ function renderActions() {
   });
 }
 
-// Handle clicks
 function handleActionClick(event) {
   const button = event.target.closest(".action-button");
   if (!button) return;
 
   const actionKey = button.dataset.action;
 
-  // Room-transition actions
   if (actionKey === "go-karaoke") {
     goToRoom("karaoke");
     return;
@@ -234,23 +203,19 @@ function handleActionClick(event) {
     return;
   }
 
-  // Karaoke: song selection (play:* keys)
   if (actionKey.startsWith("play:") && currentRoom === "karaoke") {
     const songId = actionKey.split(":")[1];
     const song = SONGS_BY_ID[songId];
     if (!song) return;
 
-    // If customDialogue is provided, show that ONLY (no playback / overlay change)
     if (song.customDialogue && song.customDialogue.trim().length > 0) {
       appendToLog(
-        `You select "${song.title}" by ${song.artist}, but Rockin Ronnie hesitates.`
+        `You select "${song.title}" by ${song.artist}, but the system hesitates.`
       );
       dialogueText.textContent = song.customDialogue;
-      // Mp3 and overlay are intentionally not touched.
       return;
     }
 
-    // Normal song behaviour (no audio yet, but overlay + dialogue)
     setCurrentSong(song.id);
     setSongDetailsVisible(true);
 
@@ -260,7 +225,6 @@ function handleActionClick(event) {
     return;
   }
 
-  // Common actions
   const effect = commonActionEffects[actionKey];
   if (effect) {
     appendToLog(effect.log);
@@ -279,7 +243,6 @@ function handleActionClick(event) {
 window.addEventListener("DOMContentLoaded", () => {
   actionsRow.addEventListener("click", handleActionClick);
 
-  // Initial song text/size from first song in the list (if any)
   if (currentSongId) {
     setCurrentSong(currentSongId);
   }
@@ -287,5 +250,5 @@ window.addEventListener("DOMContentLoaded", () => {
   // Initial entry already in HTML: "You step into the bar."
   // We set up the bar state without adding another log entry.
   goToRoom("bar", { initial: true });
-  setSongDetailsVisible(false); // hidden by default
+  setSongDetailsVisible(false);
 });
