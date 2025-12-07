@@ -346,14 +346,15 @@ body {
   display: none;
 }
 
-/* Close "X" styling – black text with white shadow, no chrome */
+/* Close "X" styling – sans serif, no extra chrome, cursor inherited
+   so we don't see a second OS pointer */
 .song-list-close-button {
   border: none;
   background: transparent;
   padding: 0;
-  cursor: pointer;
 
-  font-family: "Times New Roman", "TimesNewRoman", serif;
+  cursor: inherit;          /* inherit 'none' from environment frame */
+  font-family: inherit;     /* use the main sans-serif stack */
   font-size: 0.9rem;
   color: #000000;
 
@@ -386,14 +387,14 @@ body {
   background: transparent;
   padding: 2px 0;
   text-align: left;
-  cursor: pointer;
 
+  cursor: inherit;          /* inherit 'none' so only custom cursor shows */
   display: flex;
   justify-content: flex-start;
   align-items: baseline;
   gap: 4px;
 
-  font-family: "Times New Roman", "TimesNewRoman", serif;
+  font-family: inherit;     /* inherit body sans-serif */
   font-size: 0.8rem;
   color: #000000;
 
