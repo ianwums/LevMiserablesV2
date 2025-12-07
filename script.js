@@ -13,6 +13,8 @@ const hoverLabel = document.getElementById("environment-hover-label");
 const muteButton = document.getElementById("mute-button");
 const trophyTitleEl = document.getElementById("trophy-title");
 const drinkMenu = document.getElementById("drink-menu");
+const drunknessDisplay = document.getElementById("drunkness-display");
+const gameOverOverlay = document.getElementById("game-over-overlay");
 
 // Song list overlay DOM
 const songListOverlay = document.getElementById("song-list-overlay");
@@ -58,6 +60,9 @@ const GUINNESS_DIALOGUE_LINES = [
   "Mags hands you a Guinness topped with a Heart.",
   "Mags hands you a Guinness topped with MUFC."
 ];
+
+// Drunkness
+const DRUNKNESS_MAX = 10;
 
 // Hotspots
 const HOTSPOTS = {
@@ -113,6 +118,8 @@ let trophyCount = 0;
 let currentAudio = null;
 let customCursorEl = null;
 let isMuted = false;
+let drunkness = 0;
+let isGameOver = false;
 
 // -------------------------
 // Utilities
@@ -141,6 +148,39 @@ function updateTrophyTitle() {
   trophyTitleEl.textContent = `TROPHIES: ${total}`;
 }
 
+function updateDrunknessDisplay() {
+  if (!drunknessDisplay) return;
+  drunknessDisplay.textContent = `Drunkness: ${drunkness}`;
+}
+
+function triggerGameOver() {
+  if (isGameOver) return;
+  isGameOver = true;
+
+  // Stop any audio, overlays, menus
+  stopCurrentAudio();
+  setSongDetailsVisible(false);
+  hideSongListOverlay();
+  hideDrinkMenu();
+  clearHoverUI();
+
+  if (gameOverOverlay) {
+    gameOverOverlay.classList.add("is-visible");
+  }
+}
+
+// Change drunkness by delta (positive or negative)
+function changeDrunkness(delta) {
+  if (isGameOver) return;
+  drunkness += delta;
+  if (drunkness < 0) drunkness = 0;
+  updateDrunknessDisplay();
+
+  if (drunkness >= DRUNKNESS_MAX) {
+    triggerGameOver();
+  }
+}
+
 // Generic trophy helper – can be reused for other items later
 function addTrophyIcon(src, alt) {
   trophyCount += 1;
@@ -160,7 +200,7 @@ function addTrophyIcon(src, alt) {
 
 // Floating pint visual in environment, cross-fade full -> empty -> fade out
 function showFloatingPint() {
-  if (!environmentFrame) return;
+  if (!environmentFrame || isGameOver) return;
 
   const wrapper = document.createElement("div");
   wrapper.className = "environment-pint-float";
@@ -181,12 +221,14 @@ function showFloatingPint() {
 
   // After 3 seconds, cross-fade full -> empty
   setTimeout(() => {
+    if (!document.body.contains(wrapper)) return;
     fullImg.classList.add("is-fading");
     emptyImg.classList.add("is-visible");
   }, 3000);
 
   // Start fading the whole wrapper near the end of the empty phase
   setTimeout(() => {
+    if (!document.body.contains(wrapper)) return;
     wrapper.classList.add("fade-out");
   }, 5500);
 
@@ -198,7 +240,7 @@ function showFloatingPint() {
 
 // Jägerbomb: just fade away (no empty glass)
 function showFloatingJagerbomb() {
-  if (!environmentFrame) return;
+  if (!environmentFrame || isGameOver) return;
 
   const wrapper = document.createElement("div");
   wrapper.className = "environment-pint-float";
@@ -212,6 +254,7 @@ function showFloatingJagerbomb() {
   environmentFrame.appendChild(wrapper);
 
   setTimeout(() => {
+    if (!document.body.contains(wrapper)) return;
     wrapper.classList.add("fade-out");
   }, 2500);
 
@@ -343,6 +386,7 @@ function renderHotspotsForRoom(roomId) {
 // -------------------------
 
 function showDrinkMenu() {
+  if (isGameOver) return;
   if (!drinkMenu) return;
   drinkMenu.classList.add("is-visible");
   // Ensure the panel is visible even if there are no actions
@@ -358,6 +402,7 @@ function hideDrinkMenu() {
 
 // Handle a specific drink choice
 function handleDrinkChoice(drinkId) {
+  if (isGameOver) return;
   if (currentRoom !== "bar") return;
   hideDrinkMenu();
 
@@ -365,11 +410,13 @@ function handleDrinkChoice(drinkId) {
     appendToLog("You order a pint of Guinness.");
     dialogueText.textContent = getRandomGuinnessDialogue();
     addTrophyIcon(FULL_PINT_URL, "Pint of Guinness");
+    changeDrunkness(1);
     showFloatingPint();
   } else if (drinkId === "jagerbomb") {
     appendToLog("You order a Jägerbomb.");
     dialogueText.textContent = "Julie looks on approvingly.";
     addTrophyIcon(JAGERBOMB_URL, "Jägerbomb");
+    changeDrunkness(1);
     showFloatingJagerbomb();
   }
 }
@@ -379,6 +426,8 @@ function handleDrinkChoice(drinkId) {
 // -------------------------
 
 function goToRoom(room, options = {}) {
+  if (isGameOver) return;
+
   const { initial = false } = options;
   currentRoom = room;
 
@@ -456,6 +505,7 @@ function renderSongList() {
 }
 
 function showSongListOverlay() {
+  if (isGameOver) return;
   if (!songListOverlay) return;
   renderSongList();
   songListOverlay.classList.add("is-visible");
@@ -514,6 +564,8 @@ function renderActions() {
 // -------------------------
 
 function playSongById(songId) {
+  if (isGameOver) return;
+
   const song = SONGS_BY_ID[songId];
   if (!song) return;
 
@@ -577,6 +629,8 @@ function playSongById(songId) {
 // -------------------------
 
 function performAction(actionKey) {
+  if (isGameOver) return;
+
   if (actionKey === "go-karaoke") {
     goToRoom("karaoke");
     return;
@@ -596,6 +650,7 @@ function performAction(actionKey) {
 }
 
 function handleActionClick(event) {
+  if (isGameOver) return;
   const button = event.target.closest(".action-button");
   if (!button) return;
 
@@ -612,6 +667,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   if (drinkMenu) {
     drinkMenu.addEventListener("click", (event) => {
+      if (isGameOver) return;
       const btn = event.target.closest(".drink-menu-button");
       if (!btn) return;
       const drinkId = btn.dataset.drinkId;
@@ -622,6 +678,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   if (muteButton) {
     muteButton.addEventListener("click", () => {
+      if (isGameOver) return;
       isMuted = !isMuted;
       updateMuteButton();
     });
@@ -636,6 +693,7 @@ window.addEventListener("DOMContentLoaded", () => {
     environmentFrame.appendChild(customCursorEl);
 
     environmentFrame.addEventListener("click", (event) => {
+      if (isGameOver) return;
       const hotspot = event.target.closest(".hotspot");
       if (!hotspot) return;
       const actionKey = hotspot.dataset.actionKey;
@@ -657,33 +715,33 @@ window.addEventListener("DOMContentLoaded", () => {
 
       if (hoverLabel) {
         const hotspot = event.target.closest(".hotspot");
-        if (hotspot && hotspot.dataset.hoverText) {
-          hoverLabel.textContent = hotspot.dataset.hoverText;
-          hoverLabel.classList.add("is-visible");
-
-          const hotRect = hotspot.getBoundingClientRect();
-          const centerX = hotRect.left + hotRect.width / 2 - frameRect.left;
-
-          hoverLabel.style.left = `${centerX}px`;
-          hoverLabel.style.top = `0px`;
-
-          const labelRect = hoverLabel.getBoundingClientRect();
-          const labelHeight = labelRect.height || 0;
-
-          const offsetAboveHotspot = 14;
-          const desiredBottom =
-            hotRect.top - frameRect.top - offsetAboveHotspot;
-          let labelTop = desiredBottom - labelHeight;
-
-          if (labelTop < 0) {
-            labelTop = 0;
-          }
-
-          hoverLabel.style.left = `${centerX}px`;
-          hoverLabel.style.top = `${labelTop}px`;
-        } else {
+        if (!hotspot || !hotspot.dataset.hoverText || isGameOver) {
           hoverLabel.classList.remove("is-visible");
+          return;
         }
+
+        hoverLabel.textContent = hotspot.dataset.hoverText;
+        hoverLabel.classList.add("is-visible");
+
+        const hotRect = hotspot.getBoundingClientRect();
+        const centerX = hotRect.left + hotRect.width / 2 - frameRect.left;
+
+        hoverLabel.style.left = `${centerX}px`;
+        hoverLabel.style.top = `0px`;
+
+        const labelRect = hoverLabel.getBoundingClientRect();
+        const labelHeight = labelRect.height || 0;
+
+        const offsetAboveHotspot = 14;
+        const desiredBottom = hotRect.top - frameRect.top - offsetAboveHotspot;
+        let labelTop = desiredBottom - labelHeight;
+
+        if (labelTop < 0) {
+          labelTop = 0;
+        }
+
+        hoverLabel.style.left = `${centerX}px`;
+        hoverLabel.style.top = `${labelTop}px`;
       }
     });
 
@@ -697,6 +755,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   if (songListContainer) {
     songListContainer.addEventListener("click", (event) => {
+      if (isGameOver) return;
       const btn = event.target.closest(".song-list-item");
       if (!btn) return;
       const songId = btn.dataset.songId;
@@ -707,6 +766,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   if (songListCloseBtn) {
     songListCloseBtn.addEventListener("click", () => {
+      if (isGameOver) return;
       hideSongListOverlay();
     });
   }
@@ -716,6 +776,9 @@ window.addEventListener("DOMContentLoaded", () => {
   if (environmentBaseImg) {
     environmentBaseImg.addEventListener("load", updateEnvironmentHeightVar);
   }
+
+  // Initial drunkness
+  updateDrunknessDisplay();
 
   goToRoom("bar", { initial: true });
   setSongDetailsVisible(false);
