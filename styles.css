@@ -85,13 +85,71 @@ body {
   overflow: hidden;
   background: #090910;
   box-shadow: 0 0 16px rgba(0, 0, 0, 0.45);
+  position: relative;
 }
 
 .environment-frame img {
+  display: block;
+}
+
+/* Base environment image (bar / karaoke room) */
+#environment-base {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* or 'contain' if you prefer letterboxing */
+  object-fit: cover;
+}
+
+/* Karaoke overlay (TV green screen area) */
+.karaoke-overlay {
+  position: absolute;
+  /* Approximate position of the TV screen in the karaoke room image */
+  top: 10%;
+  left: 22%;
+  width: 56%;
+  height: 30%;
+  display: none; /* only visible in karaoke room */
+  pointer-events: none; /* overlay shouldn't intercept clicks */
+}
+
+/* Sunfly screen inside the TV */
+.karaoke-screen-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   display: block;
+}
+
+/* Text overlay on top of the Sunfly screen */
+.karaoke-song-details {
+  position: absolute;
+  inset: 0;
+  display: none; /* toggled on/off via JS */
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 8%;
+  pointer-events: none;
+}
+
+.song-title {
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  /* Scales with screen; tweak as needed */
+  font-size: clamp(0.8rem, 2.6vw, 1.6rem);
+  color: #0044cc; /* blue title, similar to example */
+  text-shadow: 1px 1px 0 #ffff66;
+}
+
+.song-artist {
+  margin-top: 0.3em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: clamp(0.7rem, 2vw, 1.2rem);
+  color: #000000;
+  text-shadow: 1px 1px 0 #ffff99;
 }
 
 /* Action log */
