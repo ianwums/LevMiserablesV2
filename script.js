@@ -44,18 +44,16 @@ const KARAOKE_END_LOG_MESSAGES = [
 // Track last message index so we don't repeat immediately
 let lastKaraokeEndIndex = null;
 
-// Hotspot configuration.
-// Percentages are relative to the 800x600 image.
-// We want a roughly 50px circular hotspot near the bottom-left for ordering a drink.
+// Hotspot configuration (percentages relative to 800x600 image)
 const HOTSPOTS = {
   bar: [
     {
       id: "bar-order-drink",
-      // approx bottom-left area: tweak as needed
+      // roughly bottom-left; tweak as needed
       xPercent: 6, // from left
       yPercent: 75, // from top
-      widthPercent: (50 / 800) * 100, // 50px of 800px width ≈ 6.25%
-      heightPercent: (50 / 600) * 100, // 50px of 600px height ≈ 8.33%
+      widthPercent: (50 / 800) * 100, // ≈6.25%
+      heightPercent: (50 / 600) * 100, // ≈8.33%
       hoverText: "Order drink",
       actionKey: "order-drink"
     }
@@ -194,6 +192,10 @@ function renderHotspotsForRoom(roomId) {
   });
 }
 
+// -------------------------
+// Room transitions
+// -------------------------
+
 // room can be "bar" or "karaoke"
 // options.initial = true means "first time setup", so no extra log entry
 function goToRoom(room, options = {}) {
@@ -241,7 +243,7 @@ function getSelectDialogue(song) {
 
 // -------------------------
 // Song list overlay helpers
--------------------------- */
+// -------------------------
 
 function renderSongList() {
   if (!songListContainer) return;
@@ -324,6 +326,10 @@ function renderActions() {
   });
 }
 
+// -------------------------
+// Karaoke song playback
+// -------------------------
+
 // Main song-playing logic, used by song list overlay
 function playSongById(songId) {
   const song = SONGS_BY_ID[songId];
@@ -391,6 +397,10 @@ function playSongById(songId) {
     // No audio available: keep overlay visible (or you could add a timeout here)
   }
 }
+
+// -------------------------
+// Action dispatcher
+// -------------------------
 
 // General action dispatcher used by buttons + hotspots
 function performAction(actionKey) {
@@ -475,5 +485,4 @@ window.addEventListener("DOMContentLoaded", () => {
   // We set up the bar state without adding another log entry.
   goToRoom("bar", { initial: true });
   setSongDetailsVisible(false);
-  renderHotspotsForRoom("bar");
 });
