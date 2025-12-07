@@ -430,7 +430,11 @@ body {
 
   font-family: "Times New Roman", "TimesNewRoman", serif;
   font-size: 0.9rem;
-  color: #000000; /* back to black */
+  color: #000000; /* black text */
+
+  /* keep things tidy and centred */
+  text-align: center;
+  white-space: nowrap;
 
   /* white-ish shadow for contrast */
   text-shadow:
