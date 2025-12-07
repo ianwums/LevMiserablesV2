@@ -26,7 +26,7 @@ window.KARAOKE_SONGS = [
     enabled: true,
     mp3Url:
       "", // e.g. "https://levmiserables.s3.../kitchen_at_parties.mp3"
-    customDialogue: "",
+    customDialogue: "Ronnie informs you he doesn't have that song. You are, as always, crestfallen.",
 
     selectDialogue:
       "The crowd murmurs appreciatively as the familiar synth line kicks in."
