@@ -6,6 +6,8 @@ const karaokeSongDetails = document.getElementById("karaoke-song-details");
 const actionsRow = document.getElementById("actions-row");
 const iconRow = document.getElementById("icon-row");
 const locationNameEl = document.getElementById("location-name");
+const songTitleEl = document.querySelector(".song-title");
+const songArtistEl = document.querySelector(".song-artist");
 
 // Image URLs
 const BAR_IMAGE =
@@ -17,9 +19,28 @@ const FULL_PINT_URL =
 const EMPTY_PINT_URL =
   "https://levmiserables.s3.eu-north-1.amazonaws.com/images/guinesspint_empty.gif";
 
+// Karaoke songs
+const SONGS = {
+  morrissey: {
+    id: "morrissey",
+    titleDisplay: "Everyday Is Like Sunday",
+    artistDisplay: "Morrissey",
+    titleText: "EVERYDAY IS LIKE SUNDAY",
+    artistText: "MORRISSEY"
+  },
+  kitchen: {
+    id: "kitchen",
+    titleDisplay: "You'll Always Find Me In The Kitchen At Parties",
+    artistDisplay: "Jona Lewie",
+    titleText: "YOU'LL ALWAYS FIND ME IN THE KITCHEN AT PARTIES",
+    artistText: "JONA LEWIE"
+  }
+};
+
 // State
 let currentRoom = "bar"; // "bar" | "karaoke"
 let songDetailsVisible = false;
+let currentSongId = "morrissey";
 let drinkCount = 0;
 
 // --- Actions available per room --- //
@@ -36,6 +57,14 @@ function getActionsForRoom() {
 
   // Karaoke room
   return [
+    {
+      key: "play-morrissey",
+      label: 'Play "Everyday Is Like Sunday"'
+    },
+    {
+      key: "play-kitchen",
+      label: 'Play "Kitchen At Parties"'
+    },
     {
       key: "toggle-song-details",
       label: songDetailsVisible ? "Hide song details" : "Show song details"
@@ -97,10 +126,38 @@ function addDrinkIcon() {
   }, 3000);
 }
 
+// Scale font sizes based on title length so everything fits in the box
+function adjustSongFontSizes(titleText) {
+  const len = titleText.length;
+  let titleSizeRem;
+  if (len <= 22) {
+    titleSizeRem = 0.75; // short title
+  } else if (len <= 35) {
+    titleSizeRem = 0.7; // medium
+  } else {
+    titleSizeRem = 0.6; // long title (e.g. Kitchen At Parties)
+  }
+  const artistSizeRem = Math.max(titleSizeRem - 0.15, 0.45);
+
+  songTitleEl.style.fontSize = `${titleSizeRem}rem`;
+  songArtistEl.style.fontSize = `${artistSizeRem}rem`;
+}
+
+// Set the current song text into the overlay
+function setCurrentSong(songId) {
+  const song = SONGS[songId];
+  currentSongId = songId;
+
+  songTitleEl.textContent = song.titleText;
+  songArtistEl.textContent = song.artistText;
+  adjustSongFontSizes(song.titleText);
+}
+
+// Show/hide overlay
 function setSongDetailsVisible(visible) {
   songDetailsVisible = visible;
   karaokeSongDetails.style.display = visible ? "flex" : "none";
-  renderActions(); // update button label
+  renderActions(); // update button labels
 }
 
 function goToRoom(room) {
@@ -154,18 +211,44 @@ function handleActionClick(event) {
     return;
   }
 
-  // Karaoke-specific action
+  // Karaoke: choose songs
+  if (actionKey === "play-morrissey" && currentRoom === "karaoke") {
+    const song = SONGS.morrissey;
+    setCurrentSong(song.id);
+    setSongDetailsVisible(true);
+    appendToLog(
+      `You queue up "${song.titleDisplay}" by ${song.artistDisplay}.`
+    );
+    dialogueText.textContent =
+      "The intro crackles through the speakers as the screen flashes MORRISSEY.";
+    return;
+  }
+
+  if (actionKey === "play-kitchen" && currentRoom === "karaoke") {
+    const song = SONGS.kitchen;
+    setCurrentSong(song.id);
+    setSongDetailsVisible(true);
+    appendToLog(
+      `You queue up "${song.titleDisplay}" by ${song.artistDisplay}.`
+    );
+    dialogueText.textContent =
+      "The crowd murmurs appreciatively as the familiar synth line kicks in.";
+    return;
+  }
+
+  // Karaoke-specific toggle
   if (actionKey === "toggle-song-details" && currentRoom === "karaoke") {
     const nowVisible = !songDetailsVisible;
     setSongDetailsVisible(nowVisible);
 
+    const currentSong = SONGS[currentSongId];
     appendToLog(
       nowVisible
-        ? "Song details appear on the karaoke screen."
+        ? `Song details appear on the karaoke screen (${currentSong.titleDisplay}).`
         : "The karaoke screen clears, waiting for the next song."
     );
     dialogueText.textContent = nowVisible
-      ? "The screen announces: EVERYDAY IS LIKE SUNDAY – MORRISSEY."
+      ? `The screen announces: ${currentSong.titleDisplay.toUpperCase()} – ${currentSong.artistDisplay.toUpperCase()}.`
       : "The crowd grumbles as the text fades, eager for the next track.";
     return;
   }
@@ -187,6 +270,7 @@ window.addEventListener("DOMContentLoaded", () => {
   actionsRow.addEventListener("click", handleActionClick);
 
   // Initial setup
+  setCurrentSong("morrissey");  // default song text/size
   goToRoom("bar");
   setSongDetailsVisible(false); // hidden by default
 });
