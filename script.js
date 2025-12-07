@@ -122,7 +122,6 @@ function appendToLog(text) {
 }
 
 function getTotalTrophies() {
-  // Later we can add other trophy types here.
   return drinkTrophyCount;
 }
 
@@ -150,8 +149,7 @@ function addDrinkIcon() {
   iconRow.appendChild(slot);
 }
 
-// Floating pint visual in environment at (roughly) (108, 462)
-// Cross-fade: full 0–3s, cross-fade 3–4s, empty 4–6s, then fade out + remove
+// Floating pint visual in environment, cross-fade full -> empty -> fade out
 function showFloatingPint() {
   if (!environmentFrame) return;
 
@@ -315,11 +313,11 @@ function goToRoom(room, options = {}) {
     environmentBaseImg.src = BAR_IMAGE;
 
     if (!initial) {
-      appendToLog("You head back to the bar.");
+      appendToLog("To the bar!");
     }
 
     dialogueText.textContent =
-      "The bar hums with low conversation and clinking glasses.";
+      "Mags and Steve are behind the bar. It's going to be a good night.";
 
     stopCurrentAudio();
     setSongDetailsVisible(false);
@@ -329,7 +327,7 @@ function goToRoom(room, options = {}) {
     environmentBaseImg.src = KARAOKE_ROOM_IMAGE;
     appendToLog("You step into the karaoke room.");
     dialogueText.textContent =
-      "A small crowd hovers near the screen, waiting for their turn to murder a classic.";
+      "The baying mob approach Ronnie, song slips in hand.";
   }
 
   renderActions();
@@ -399,7 +397,7 @@ const commonActionEffects = {
   "order-drink": {
     log: "You order a drink. The bartender eyes you carefully.",
     dialogue:
-      '"What\'s your poison?" the bartender asks, polishing a glass that has seen better decades.'
+      "Mags smiles and points the card machine your way."
   }
 };
 
@@ -448,7 +446,7 @@ function playSongById(songId) {
 
   if (song.customDialogue && song.customDialogue.trim().length > 0) {
     appendToLog(
-      `You select "${song.title}" by ${song.artist}, but Rockin Ronnie hesitates.`
+      `You select "${song.title}" by ${song.artist}, but Rockin Ronnie looks worried.`
     );
     dialogueText.textContent = song.customDialogue;
     return;
@@ -636,7 +634,6 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Keep env height updated on load and resize
   updateEnvironmentHeightVar();
   window.addEventListener("resize", updateEnvironmentHeightVar);
   if (environmentBaseImg) {
