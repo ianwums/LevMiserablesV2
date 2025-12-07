@@ -112,8 +112,7 @@ body {
 
 .custom-cursor {
   position: absolute;
-  /* ~70% of previous 48px size */
-  width: 34px;
+  width: 34px; /* ~70% of previous 48px size */
   height: 34px;
   pointer-events: none;
   display: none;
@@ -297,46 +296,53 @@ body {
 }
 
 /* -------------------------
-   SONG LIST OVERLAY
+   SONG LIST OVERLAY (IN-ENVIRONMENT)
 -------------------------- */
 
-.song-list-overlay-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.7);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.song-list-overlay-backdrop.is-visible {
-  display: flex;
-}
-
 .song-list-overlay {
-  background: #14151f;
-  border-radius: 8px;
-  padding: 12px 16px;
-  max-width: 420px;
-  width: 90%;
-  max-height: 80vh;
+  position: absolute;
+  inset: 0;
+  display: none;
+  z-index: 40; /* under the custom cursor (50) */
+}
+
+.song-list-overlay.is-visible {
+  display: block;
+}
+
+.song-list-overlay-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none; /* clicks go to inner content */
+}
+
+/* The clickable / scrollable area constrained to the box:
+   (448,155) (660,146) (443,457) (659,456)
+   => top-left (443,146), width 217, height 311 on 800x600
+   => 55.375% from left, 24.333% from top, 27.125% width, 51.833% height
+*/
+.song-list-overlay-inner {
+  position: absolute;
+  left: 55.375%;
+  top: 24.333%;
+  width: 27.125%;
+  height: 51.833%;
   display: flex;
   flex-direction: column;
-  border: 1px solid #444;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
 }
 
 .song-list-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .song-list-header h2 {
   margin: 0;
-  font-size: 0.95rem;
+  font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -347,8 +353,8 @@ body {
   background: #202231;
   color: inherit;
   font: inherit;
-  font-size: 1rem;
-  padding: 4px 10px;
+  font-size: 0.8rem;
+  padding: 2px 8px;
   cursor: pointer;
 }
 
@@ -358,11 +364,12 @@ body {
 }
 
 .song-list-container {
-  margin-top: 4px;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
   overflow-y: auto;
+  padding-right: 4px; /* space for scrollbar */
 }
 
 .song-list-item {
@@ -372,14 +379,14 @@ body {
   background: #202231;
   color: inherit;
   font: inherit;
-  font-size: 0.85rem;
-  padding: 6px 12px;
+  font-size: 0.75rem;
+  padding: 4px 8px;
   text-align: left;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  gap: 8px;
+  gap: 6px;
 }
 
 .song-list-item span.song-list-artist {
@@ -431,8 +438,6 @@ body {
   font-family: "Times New Roman", "TimesNewRoman", serif;
   font-size: 0.9rem;
   color: #000000; /* black text */
-
-  /* keep things tidy and centred */
   text-align: center;
   white-space: nowrap;
 
