@@ -406,8 +406,7 @@ body {
 
 .environment-hover-label {
   position: absolute;
-  bottom: 4%;
-  left: 50%;
+  /* top/left are set dynamically from JS */
   transform: translateX(-50%);
   padding: 2px 8px;
   pointer-events: none;
