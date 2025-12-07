@@ -112,8 +112,9 @@ body {
 
 .custom-cursor {
   position: absolute;
-  width: 48px;   /* roughly 2× a typical 24px cursor */
-  height: 48px;
+  /* ~70% of previous 48px size */
+  width: 34px;
+  height: 34px;
   pointer-events: none;
   display: none;
   z-index: 50;
@@ -429,7 +430,7 @@ body {
 
   font-family: "Times New Roman", "TimesNewRoman", serif;
   font-size: 0.9rem;
-  color: #000;
+  color: #eec41e; /* updated from black to yellow */
 
   /* white-ish shadow for contrast */
   text-shadow:
