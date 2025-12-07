@@ -10,6 +10,7 @@ const songTitleEl = document.querySelector(".song-title");
 const songArtistEl = document.querySelector(".song-artist");
 const environmentFrame = document.getElementById("environment-frame");
 const hoverLabel = document.getElementById("environment-hover-label");
+const muteButton = document.getElementById("mute-button");
 
 // Song list overlay DOM (now in-environment)
 const songListOverlay = document.getElementById("song-list-overlay");
@@ -97,6 +98,7 @@ let currentRoom = "bar"; // "bar" | "karaoke"
 let drinkCount = 0;
 let currentAudio = null; // active audio playback (if any)
 let customCursorEl = null; // our fake cursor image
+let isMuted = false; // global mute state
 
 // -------------------------
 // Utilities
@@ -145,6 +147,22 @@ function stopCurrentAudio() {
       // ignore
     }
     currentAudio = null;
+  }
+}
+
+// Update the mute button label / state
+function updateMuteButton() {
+  if (!muteButton) return;
+  if (isMuted) {
+    muteButton.textContent = "🔇 Muted";
+    muteButton.setAttribute("aria-pressed", "true");
+  } else {
+    muteButton.textContent = "🔊 Sound On";
+    muteButton.setAttribute("aria-pressed", "false");
+  }
+  // Apply to currently playing audio
+  if (currentAudio) {
+    currentAudio.muted = isMuted;
   }
 }
 
@@ -244,7 +262,7 @@ function goToRoom(room, options = {}) {
   clearHoverUI();
 
   if (room === "bar") {
-    locationNameEl.textContent = "Pub – Bar";
+    locationNameEl.textContent = "THE UNION - BAR AREA";
     environmentBaseImg.src = BAR_IMAGE;
 
     if (!initial) {
@@ -259,7 +277,7 @@ function goToRoom(room, options = {}) {
     setSongDetailsVisible(false);
     hideSongListOverlay();
   } else if (room === "karaoke") {
-    locationNameEl.textContent = "Karaoke Room";
+    locationNameEl.textContent = "THE UNION - KARAOKE ROOM";
     environmentBaseImg.src = KARAOKE_ROOM_IMAGE;
     appendToLog("You step into the karaoke room.");
     dialogueText.textContent =
@@ -404,6 +422,7 @@ function playSongById(songId) {
     // Play the audio once; overlay visible only while it plays
     const audio = new Audio(song.mp3Url);
     currentAudio = audio;
+    currentAudio.muted = isMuted;
 
     audio.addEventListener("ended", () => {
       // Only clear if this is still the active audio instance
@@ -487,6 +506,15 @@ function handleActionClick(event) {
 
 window.addEventListener("DOMContentLoaded", () => {
   actionsRow.addEventListener("click", handleActionClick);
+
+  // Mute button handling
+  if (muteButton) {
+    muteButton.addEventListener("click", () => {
+      isMuted = !isMuted;
+      updateMuteButton();
+    });
+    updateMuteButton();
+  }
 
   // Set up custom cursor element inside environment frame
   if (environmentFrame) {
