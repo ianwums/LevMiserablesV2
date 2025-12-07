@@ -105,27 +105,26 @@ body {
 
 /* -------------------------
    KARAOKE TEXT OVERLAY
-   (exactly inside the green box you drew)
+   (exactly inside the small green box you drew)
 -------------------------- */
 
-/* The green box in the 800x600 karaoke image runs from:
+/* Green box in your 800x600 reference:
    x: 250–500, y: 125–201
-   This translates to:
-   left ≈ 31.25%, top ≈ 20.8%, width ≈ 31.25%, height ≈ 12.7%
+   -> left: 31.25%, top: 20.83%, width: 31.25%, height: 12.67%
 */
 .karaoke-song-details {
   position: absolute;
-  top: 21%;      /* ≈125/600 */
-  left: 31.5%;   /* ≈250/800 */
-  width: 31%;    /* ≈(500-250)/800 */
-  height: 13%;   /* ≈(201-125)/600 */
+  top: 20.83%;
+  left: 31.25%;
+  width: 31.25%;
+  height: 12.67%;
 
   display: none;              /* toggled via JS */
   flex-direction: column;
   justify-content: center;    /* center vertically in the box */
   align-items: center;        /* center horizontally */
   text-align: center;
-  padding: 3%;
+  padding: 2%;
   pointer-events: none;
 }
 
