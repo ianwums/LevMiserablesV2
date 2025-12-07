@@ -94,7 +94,6 @@ const HOTSPOTS = {
 
 // State
 let currentRoom = "bar"; // "bar" | "karaoke"
-let currentSongId = SONG_LIST.length ? SONG_LIST[0].id : null;
 let drinkCount = 0;
 let currentAudio = null; // active audio playback (if any)
 let customCursorEl = null; // our fake cursor image
@@ -184,8 +183,6 @@ function setCurrentSong(songId) {
   const song = SONGS_BY_ID[songId];
   if (!song) return;
 
-  currentSongId = songId;
-
   const titleText = song.title.toUpperCase();
   const artistText = song.artist.toUpperCase();
 
@@ -267,7 +264,6 @@ function goToRoom(room, options = {}) {
     appendToLog("You step into the karaoke room.");
     dialogueText.textContent =
       "A small crowd hovers near the screen, waiting for their turn to murder a classic.";
-    // Karaoke overlay will be managed per-song / song list
   }
 
   renderActions();
@@ -582,10 +578,6 @@ window.addEventListener("DOMContentLoaded", () => {
     songListCloseBtn.addEventListener("click", () => {
       hideSongListOverlay();
     });
-  }
-
-  if (currentSongId) {
-    setCurrentSong(currentSongId);
   }
 
   // Initial entry already in HTML: "You step into the bar."
