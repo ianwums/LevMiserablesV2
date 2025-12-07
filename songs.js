@@ -6,7 +6,7 @@ window.KARAOKE_SONGS = [
     id: "morrissey",
     title: "Everyday Is Like Sunday",
     artist: "Morrissey",
-    enabled: true, // set to false to hide from UI
+    enabled: false, // set to false to hide from UI
     mp3Url:
       "", // e.g. "https://levmiserables.s3.../everyday_is_like_sunday.mp3"
 
@@ -32,7 +32,72 @@ window.KARAOKE_SONGS = [
       "The crowd murmurs appreciatively as the familiar synth line kicks in."
   },
 
+{
+    id: "blackstar",
+    title: "Blackstar",
+    artist: "David Bowie",
+    enabled: true,
+    mp3Url:
+      "https://levmiserables.s3.eu-north-1.amazonaws.com/audio/karaoke_blackstar.mp3", 
+    customDialogue: "",
 
+    selectDialogue:
+      "It's going to be a long and morbid night."
+  },
+
+{
+    id: "gfinac",
+    title: "Girlfriend in a Coma",
+    artist: "The Smiths",
+    enabled: true,
+    mp3Url:
+      "https://levmiserables.s3.eu-north-1.amazonaws.com/audio/karaoke_girlfriend_in_a_coma.mp3", 
+    customDialogue: "",
+
+    selectDialogue:
+      "Whisper your last goodbyes, you probably won't get another shot afer this."
+  },
+
+{
+    id: "rockdj",
+    title: "Rock DJ",
+    artist: "Robbie Williams",
+    enabled: true,
+    mp3Url:
+      "https://levmiserables.s3.eu-north-1.amazonaws.com/audio/karaoke_rock_dj.mp3", 
+    customDialogue: "",
+
+    selectDialogue:
+      "Who are you calling a Fat Dancer?"
+  },
+
+  {
+    id: "underpressure",
+    title: "Under Pressure",
+    artist: "Queen, David Bowie",
+    enabled: true,
+    mp3Url:
+      "https://levmiserables.s3.eu-north-1.amazonaws.com/audio/karaoke_under_pressure.mp3", 
+    customDialogue: "",
+
+    selectDialogue:
+      "Hope you brought a friend."
+  },
+
+  {
+    id: "didntstartfire",
+    title: "We Didn't Start the Fire",
+    artist: "Billy Joel",
+    enabled: true,
+    mp3Url:
+      "https://levmiserables.s3.eu-north-1.amazonaws.com/audio/karaoke_we_didnt_start_the_fire.mp3", 
+    customDialogue: "",
+
+    selectDialogue:
+      "You probably don't even need the screen for this one."
+  },
+
+  
   {
     id: "rollercoaster",
     title: "Life is a Rollercoaster",
