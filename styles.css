@@ -430,7 +430,7 @@ body {
 
   font-family: "Times New Roman", "TimesNewRoman", serif;
   font-size: 0.9rem;
-  color: #eec41e; /* updated from black to yellow */
+  color: #000000; /* back to black */
 
   /* white-ish shadow for contrast */
   text-shadow:
