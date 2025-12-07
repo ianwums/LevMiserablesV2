@@ -37,6 +37,7 @@ body {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  align-items: center;
   gap: 8px;
 }
 
@@ -52,9 +53,39 @@ body {
 
 .header-status {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   font-size: 0.85rem;
-  opacity: 0.85;
+  opacity: 0.9;
+  align-items: center;
+}
+
+/* Mute button in header */
+.mute-button {
+  border-radius: 999px;
+  border: 1px solid #555;
+  padding: 4px 10px;
+  background: #202231;
+  color: inherit;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: background 0.1s ease-out, border-color 0.1s ease-out,
+    box-shadow 0.1s ease-out, transform 0.05s ease-out;
+}
+
+.mute-button:hover {
+  background: #27293b;
+  border-color: #7a7cff;
+  box-shadow: 0 0 6px rgba(122, 124, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+.mute-button:active {
+  transform: translateY(0);
+  box-shadow: none;
 }
 
 /* -------------------------
@@ -260,7 +291,7 @@ body {
 .actions-panel {
   border: 1px solid #333;
   border-radius: 6px;
-  padding: 8px 10px;
+  padding: 4px 10px; /* reduced vertical padding since title removed */
   background: #14151f;
 }
 
@@ -507,8 +538,8 @@ body {
 
   .header-status {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 2px;
+    align-items: flex-end;
+    gap: 4px;
   }
 
   .actions-row {
