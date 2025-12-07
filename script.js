@@ -38,8 +38,16 @@ let drinkCount = 0;
 function appendToLog(text) {
   const li = document.createElement("li");
   li.textContent = text;
-  actionLog.appendChild(li);
-  actionLog.scrollTop = actionLog.scrollHeight;
+
+  // Most recent at the top
+  if (actionLog.firstChild) {
+    actionLog.insertBefore(li, actionLog.firstChild);
+  } else {
+    actionLog.appendChild(li);
+  }
+
+  // Scroll to top so latest entry is visible
+  actionLog.scrollTop = 0;
 }
 
 function addDrinkIcon() {
@@ -99,12 +107,20 @@ function setSongDetailsVisible(visible) {
   karaokeSongDetails.style.display = visible ? "flex" : "none";
 }
 
-function goToRoom(room) {
+// room can be "bar" or "karaoke"
+// options.initial = true means "first time setup", so no extra log entry
+function goToRoom(room, options = {}) {
+  const { initial = false } = options;
   currentRoom = room;
+
   if (room === "bar") {
     locationNameEl.textContent = "Pub – Bar";
     environmentBaseImg.src = BAR_IMAGE;
-    appendToLog("You head back to the bar.");
+
+    if (!initial) {
+      appendToLog("You head back to the bar.");
+    }
+
     dialogueText.textContent =
       "The bar hums with low conversation and clinking glasses.";
     setSongDetailsVisible(false); // hide overlay outside karaoke
@@ -268,6 +284,8 @@ window.addEventListener("DOMContentLoaded", () => {
     setCurrentSong(currentSongId);
   }
 
-  goToRoom("bar");
+  // Initial entry already in HTML: "You step into the bar."
+  // We set up the bar state without adding another log entry.
+  goToRoom("bar", { initial: true });
   setSongDetailsVisible(false); // hidden by default
 });
