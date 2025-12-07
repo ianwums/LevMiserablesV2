@@ -536,14 +536,14 @@ window.addEventListener("DOMContentLoaded", () => {
           // Temporarily position to measure height
           hoverLabel.style.left = `${centerX}px`;
           hoverLabel.style.top = `0px`;
-          const labelRect = hoverLabel.getBoundingClientClientRect
-            ? hoverLabel.getBoundingClientRect()
-            : { height: 0 };
+
+          const labelRect = hoverLabel.getBoundingClientRect();
           const labelHeight = labelRect.height || 0;
 
-          // Label bottom should be at least 10px above hotspot top
+          // Label bottom should be at least 14px above hotspot top
+          const offsetAboveHotspot = 14;
           const desiredBottom =
-            hotRect.top - frameRect.top - 10; // 10px above hotspot
+            hotRect.top - frameRect.top - offsetAboveHotspot;
           let labelTop = desiredBottom - labelHeight;
 
           if (labelTop < 0) {
