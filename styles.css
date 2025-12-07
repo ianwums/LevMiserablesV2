@@ -142,8 +142,7 @@ body {
   display: block;
 }
 
-/* Right-hand column: stack history and trophies
-   We clamp their max-heights based on env height via --env-height. */
+/* Right-hand column: stack history and trophies */
 .side-column {
   display: flex;
   flex-direction: column;
@@ -162,13 +161,11 @@ body {
   display: none;
   z-index: 50;
 
-  /* Slight offset so the tip of the arrow feels like the click point */
   transform: translate(-4px, -4px);
 }
 
 /* -------------------------
    KARAOKE TEXT OVERLAY
-   (within the 376–500 x 125–185 box)
 -------------------------- */
 
 .karaoke-song-details {
@@ -177,7 +174,6 @@ body {
   left: 47%;
   width: 15.5%;
   height: 10%;
-
   display: none;
   flex-direction: column;
   justify-content: center;
@@ -221,8 +217,8 @@ body {
   display: flex;
   flex-direction: column;
 
-  /* Clamp height to 40% of environment height, scroll inside when exceeded */
-  max-height: calc(var(--env-height) * 0.4);
+  /* Taller: 48% of env height, scroll when exceeded */
+  max-height: calc(var(--env-height) * 0.48);
   min-height: 0;
 }
 
@@ -242,7 +238,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  overflow-y: auto; /* scroll instead of growing panel */
+  overflow-y: scroll; /* always show scrollbar */
   scrollbar-width: thin;
   flex: 1;
 }
@@ -258,7 +254,7 @@ body {
 
 .lower-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr); /* dialogue full width; right blank for now */
+  grid-template-columns: minmax(0, 1fr);
   gap: 12px;
 }
 
@@ -287,8 +283,8 @@ body {
   display: flex;
   flex-direction: column;
 
-  /* Clamp to 40% of environment height, scroll contents */
-  max-height: calc(var(--env-height) * 0.4);
+  /* Taller: 48% of env height, scroll contents */
+  max-height: calc(var(--env-height) * 0.48);
   min-height: 0;
 }
 
@@ -299,7 +295,8 @@ body {
   align-items: flex-end;
   min-height: 0;
   max-height: 100%;
-  overflow-y: auto; /* scroll instead of growing panel */
+  overflow-y: scroll;    /* always show scrollbar */
+  scrollbar-width: thin; /* thinner scrollbar like history */
 }
 
 .drink-slot {
@@ -323,7 +320,7 @@ body {
 .actions-panel {
   border: 1px solid #333;
   border-radius: 6px;
-  padding: 4px 10px; /* reduced vertical padding since title removed */
+  padding: 4px 10px;
   background: #14151f;
 }
 
@@ -359,14 +356,14 @@ body {
 }
 
 /* -------------------------
-   SONG LIST OVERLAY (IN-ENVIRONMENT)
+   SONG LIST OVERLAY
 -------------------------- */
 
 .song-list-overlay {
   position: absolute;
   inset: 0;
   display: none;
-  z-index: 40; /* under the custom cursor (50) */
+  z-index: 40;
 }
 
 .song-list-overlay.is-visible {
@@ -380,11 +377,7 @@ body {
   pointer-events: none;
 }
 
-/* Coordinates:
-   445,358  652,341  429,583  668,586
-   Bounding box ≈ top-left (429,341), width 239, height 245 on 800x600
-   => left 53.625%, top 56.8333%, width 29.875%, height 40.8333%
-*/
+/* Coordinates box for song list */
 .song-list-overlay-inner {
   position: absolute;
   left: 53.625%;
@@ -396,7 +389,6 @@ body {
   overflow: hidden;
 }
 
-/* Header just for the close button (no title) */
 .song-list-header {
   display: flex;
   justify-content: flex-end;
@@ -404,22 +396,18 @@ body {
   margin-bottom: 2px;
 }
 
-/* Hide the "Song List" title text to save space */
 .song-list-header h2 {
   display: none;
 }
 
-/* Close "X" styling */
 .song-list-close-button {
   border: none;
   background: transparent;
   padding: 0;
-
   cursor: inherit;
   font-family: inherit;
   font-size: 0.9rem;
   color: #000000;
-
   text-shadow:
     0 1px 2px #ffffff,
     1px 0 2px #ffffff,
@@ -431,7 +419,6 @@ body {
   text-decoration: underline;
 }
 
-/* Scrollable song list area */
 .song-list-container {
   flex: 1;
   display: flex;
@@ -441,7 +428,6 @@ body {
   padding-right: 2px;
 }
 
-/* Individual song rows */
 .song-list-item {
   width: 100%;
   border: none;
@@ -449,17 +435,14 @@ body {
   background: transparent;
   padding: 2px 0;
   text-align: left;
-
   cursor: inherit;
   display: flex;
   justify-content: flex-start;
   align-items: baseline;
   gap: 4px;
-
   font-family: inherit;
   font-size: 0.8rem;
   color: #000000;
-
   text-shadow:
     0 1px 2px #ffffff,
     1px 0 2px #ffffff,
@@ -500,15 +483,14 @@ body {
 
 /* -------------------------
    FLOATING PINT EFFECT
-   (bottom-centre at 108,462 in 800x600 space)
 -------------------------- */
 
 .environment-pint-float {
   position: absolute;
-  left: 13.5%;   /* 108 / 800 * 100 */
-  top: 77%;      /* 462 / 600 * 100 */
+  left: 13.5%;
+  top: 77%;
   transform: translate(-50%, -100%);
-  max-height: 60px; /* 50% of previous 120px */
+  max-height: 60px;
   height: auto;
   width: auto;
   pointer-events: none;
@@ -530,15 +512,12 @@ body {
   transform: translateX(-50%);
   padding: 2px 8px;
   pointer-events: none;
-
   display: none;
-
   font-family: "Times New Roman", "TimesNewRoman", serif;
   font-size: 0.9rem;
   color: #000000;
   text-align: center;
   white-space: nowrap;
-
   text-shadow:
     0 1px 2px #ffffff,
     1px 0 2px #ffffff,
