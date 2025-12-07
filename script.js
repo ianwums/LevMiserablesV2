@@ -8,6 +8,7 @@ const iconRow = document.getElementById("icon-row");
 const locationNameEl = document.getElementById("location-name");
 const songTitleEl = document.querySelector(".song-title");
 const songArtistEl = document.querySelector(".song-artist");
+const environmentFrame = document.getElementById("environment-frame");
 
 // Song list overlay DOM
 const songListOverlay = document.getElementById("song-list-overlay");
@@ -42,6 +43,25 @@ const KARAOKE_END_LOG_MESSAGES = [
 
 // Track last message index so we don't repeat immediately
 let lastKaraokeEndIndex = null;
+
+// Hotspot configuration.
+// Percentages are relative to the 800x600 image.
+// We want a roughly 50px circular hotspot near the bottom-left for ordering a drink.
+const HOTSPOTS = {
+  bar: [
+    {
+      id: "bar-order-drink",
+      // approx bottom-left area: tweak as needed
+      xPercent: 6, // from left
+      yPercent: 75, // from top
+      widthPercent: (50 / 800) * 100, // 50px of 800px width ≈ 6.25%
+      heightPercent: (50 / 600) * 100, // 50px of 600px height ≈ 8.33%
+      hoverText: "Order drink",
+      actionKey: "order-drink"
+    }
+  ],
+  karaoke: []
+};
 
 // State
 let currentRoom = "bar"; // "bar" | "karaoke"
@@ -148,6 +168,32 @@ function setSongDetailsVisible(visible) {
   karaokeSongDetails.style.display = visible ? "flex" : "none";
 }
 
+// -------------------------
+// Hotspots
+// -------------------------
+
+function renderHotspotsForRoom(roomId) {
+  if (!environmentFrame) return;
+
+  // Remove any existing hotspots
+  environmentFrame.querySelectorAll(".hotspot").forEach((el) => el.remove());
+
+  const hotspots = HOTSPOTS[roomId] || [];
+  hotspots.forEach((h) => {
+    const el = document.createElement("button");
+    el.className = "hotspot";
+    el.dataset.actionKey = h.actionKey;
+    el.title = h.hoverText || "";
+
+    el.style.left = `${h.xPercent}%`;
+    el.style.top = `${h.yPercent}%`;
+    el.style.width = `${h.widthPercent}%`;
+    el.style.height = `${h.heightPercent}%`;
+
+    environmentFrame.appendChild(el);
+  });
+}
+
 // room can be "bar" or "karaoke"
 // options.initial = true means "first time setup", so no extra log entry
 function goToRoom(room, options = {}) {
@@ -179,6 +225,7 @@ function goToRoom(room, options = {}) {
   }
 
   renderActions();
+  renderHotspotsForRoom(room);
 }
 
 function getSelectDialogue(song) {
@@ -194,7 +241,7 @@ function getSelectDialogue(song) {
 
 // -------------------------
 // Song list overlay helpers
-// -------------------------
+-------------------------- */
 
 function renderSongList() {
   if (!songListContainer) return;
@@ -345,13 +392,9 @@ function playSongById(songId) {
   }
 }
 
-function handleActionClick(event) {
-  const button = event.target.closest(".action-button");
-  if (!button) return;
-
-  const actionKey = button.dataset.action;
-
-  // Move between rooms
+// General action dispatcher used by buttons + hotspots
+function performAction(actionKey) {
+  // Room navigation
   if (actionKey === "go-karaoke") {
     goToRoom("karaoke");
     return;
@@ -361,7 +404,7 @@ function handleActionClick(event) {
     return;
   }
 
-  // Open song list overlay
+  // Open song list
   if (actionKey === "open-song-list" && currentRoom === "karaoke") {
     showSongListOverlay();
     return;
@@ -379,12 +422,32 @@ function handleActionClick(event) {
   }
 }
 
+function handleActionClick(event) {
+  const button = event.target.closest(".action-button");
+  if (!button) return;
+
+  const actionKey = button.dataset.action;
+  performAction(actionKey);
+}
+
 // -------------------------
 // Init
 // -------------------------
 
 window.addEventListener("DOMContentLoaded", () => {
   actionsRow.addEventListener("click", handleActionClick);
+
+  // Hotspot click handling
+  if (environmentFrame) {
+    environmentFrame.addEventListener("click", (event) => {
+      const hotspot = event.target.closest(".hotspot");
+      if (!hotspot) return;
+      const actionKey = hotspot.dataset.actionKey;
+      if (actionKey) {
+        performAction(actionKey);
+      }
+    });
+  }
 
   // Song list item selection
   if (songListContainer) {
@@ -412,4 +475,5 @@ window.addEventListener("DOMContentLoaded", () => {
   // We set up the bar state without adding another log entry.
   goToRoom("bar", { initial: true });
   setSongDetailsVisible(false);
+  renderHotspotsForRoom("bar");
 });
