@@ -66,11 +66,11 @@ const HOTSPOTS = {
     },
     {
       id: "bar-karaoke-room",
-      // centre: (651, 296) => top-left (626, 271)
-      // xPercent = 626 / 800 * 100 = 78.25
-      // yPercent = 271 / 600 * 100 ≈ 45.1667
-      xPercent: 78.25,
-      yPercent: 45.1667,
+      // centre: (650, 50) => top-left (625, 25)
+      // xPercent = 625 / 800 * 100 = 78.125
+      // yPercent = 25 / 600 * 100 ≈ 4.1667
+      xPercent: 78.125,
+      yPercent: 4.1667,
       widthPercent: (50 / 800) * 100,
       heightPercent: (50 / 600) * 100,
       hoverText: "Karaoke Room",
@@ -371,10 +371,8 @@ const commonActionEffects = {
 
 function getActionsForRoom() {
   if (currentRoom === "bar") {
-    return [
-      { key: "order-drink", label: "Order a drink" },
-      { key: "go-karaoke", label: "Karaoke Room" }
-    ];
+    // Karaoke Room is now hotspot-only, so just keep Order a drink here
+    return [{ key: "order-drink", label: "Order a drink" }];
   }
 
   // Karaoke room: all interactions via hotspots only
