@@ -15,6 +15,7 @@ const trophyTitleEl = document.getElementById("trophy-title");
 const drinkMenu = document.getElementById("drink-menu");
 const drunknessDisplay = document.getElementById("drunkness-display");
 const gameOverOverlay = document.getElementById("game-over-overlay");
+const restartButton = document.getElementById("restart-button");
 
 // Song list overlay DOM
 const songListOverlay = document.getElementById("song-list-overlay");
@@ -673,6 +674,14 @@ window.addEventListener("DOMContentLoaded", () => {
       const drinkId = btn.dataset.drinkId;
       if (!drinkId) return;
       handleDrinkChoice(drinkId);
+    });
+  }
+
+  // Restart button: simply reload the page to reset state
+  if (restartButton) {
+    restartButton.addEventListener("click", () => {
+      // Hard reset is simplest for now
+      window.location.reload();
     });
   }
 
