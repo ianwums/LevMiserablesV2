@@ -132,6 +132,7 @@ function updateTrophyTitle() {
   trophyTitleEl.textContent = `TROPHIES: ${total}`;
 }
 
+// Trophy pints: now always remain full
 function addDrinkIcon() {
   drinkCount += 1;
   drinkTrophyCount += 1;
@@ -147,13 +148,10 @@ function addDrinkIcon() {
 
   slot.appendChild(img);
   iconRow.appendChild(slot);
-
-  setTimeout(() => {
-    img.src = EMPTY_PINT_URL;
-  }, 3000);
 }
 
 // Floating pint visual in environment at (108,462)
+// Full for 3s, empty for 3s, then fade/remove
 function showFloatingPint() {
   if (!environmentFrame) return;
 
@@ -164,13 +162,20 @@ function showFloatingPint() {
 
   environmentFrame.appendChild(img);
 
+  // Switch to empty after 3 seconds
+  setTimeout(() => {
+    img.src = EMPTY_PINT_URL;
+  }, 3000);
+
+  // Start fading out near the end of the empty phase
   setTimeout(() => {
     img.classList.add("fade-out");
-  }, 4000);
+  }, 5500);
 
+  // Remove after 6 seconds total
   setTimeout(() => {
     img.remove();
-  }, 5000);
+  }, 6000);
 }
 
 function stopCurrentAudio() {
