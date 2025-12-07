@@ -620,6 +620,7 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Keep env height updated on load and resize
   updateEnvironmentHeightVar();
   window.addEventListener("resize", updateEnvironmentHeightVar);
   if (environmentBaseImg) {
