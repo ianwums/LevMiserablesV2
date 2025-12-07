@@ -11,8 +11,9 @@ const songArtistEl = document.querySelector(".song-artist");
 const environmentFrame = document.getElementById("environment-frame");
 const hoverLabel = document.getElementById("environment-hover-label");
 const muteButton = document.getElementById("mute-button");
+const trophyTitleEl = document.getElementById("trophy-title");
 
-// Song list overlay DOM (now in-environment)
+// Song list overlay DOM
 const songListOverlay = document.getElementById("song-list-overlay");
 const songListContainer = document.getElementById("song-list-container");
 const songListCloseBtn = document.getElementById("song-list-close");
@@ -29,14 +30,14 @@ const EMPTY_PINT_URL =
 const POINTER_URL =
   "https://levmiserables.s3.eu-north-1.amazonaws.com/UI_Elements/pointer.gif";
 
-// Karaoke songs come from songs.js
+// Karaoke songs from songs.js
 const SONG_LIST = (window.KARAOKE_SONGS || []).slice();
 const SONGS_BY_ID = {};
 SONG_LIST.forEach((song) => {
   SONGS_BY_ID[song.id] = song;
 });
 
-// Action log messages for end-of-song
+// End-of-song log messages
 const KARAOKE_END_LOG_MESSAGES = [
   "The crowd go wild",
   "The room is notably emptier than before you sang",
@@ -45,17 +46,14 @@ const KARAOKE_END_LOG_MESSAGES = [
   "That's My Dad!"
 ];
 
-// Track last message index so we don't repeat immediately
 let lastKaraokeEndIndex = null;
 
-// Hotspot configuration (percentages relative to 800x600 image)
+// Hotspots
 const HOTSPOTS = {
   bar: [
     {
       id: "bar-order-drink",
       // centre: (200, 400) => top-left (175, 375)
-      // xPercent = 175 / 800 * 100 = 21.875
-      // yPercent = 375 / 600 * 100 = 62.5
       xPercent: 21.875,
       yPercent: 62.5,
       widthPercent: (50 / 800) * 100,
@@ -66,8 +64,6 @@ const HOTSPOTS = {
     {
       id: "bar-karaoke-room",
       // centre: (650, 50) => top-left (625, 25)
-      // xPercent = 625 / 800 * 100 = 78.125
-      // yPercent = 25 / 600 * 100 ≈ 4.1667
       xPercent: 78.125,
       yPercent: 4.1667,
       widthPercent: (50 / 800) * 100,
@@ -79,9 +75,7 @@ const HOTSPOTS = {
   karaoke: [
     {
       id: "karaoke-pick-song",
-      // centre: (647, 514) => top-left (622, 489)
-      // xPercent = 622 / 800 * 100 = 77.75
-      // yPercent = 489 / 600 * 100 = 81.5
+      // centre: (647, 514)
       xPercent: 77.75,
       yPercent: 81.5,
       widthPercent: (50 / 800) * 100,
@@ -91,9 +85,7 @@ const HOTSPOTS = {
     },
     {
       id: "karaoke-back-to-bar",
-      // centre: (75, 50) => top-left (50, 25)
-      // xPercent = 50 / 800 * 100 = 6.25
-      // yPercent = 25 / 600 * 100 ≈ 4.1667
+      // centre: (75, 50)
       xPercent: 6.25,
       yPercent: 4.1667,
       widthPercent: (50 / 800) * 100,
@@ -105,8 +97,9 @@ const HOTSPOTS = {
 };
 
 // State
-let currentRoom = "bar"; // "bar" | "karaoke"
+let currentRoom = "bar";
 let drinkCount = 0;
+let drinkTrophyCount = 0; // trophies from drinks
 let currentAudio = null;
 let customCursorEl = null;
 let isMuted = false;
@@ -128,8 +121,21 @@ function appendToLog(text) {
   actionLog.scrollTop = 0;
 }
 
+function getTotalTrophies() {
+  // Later we can add other trophy types here.
+  return drinkTrophyCount;
+}
+
+function updateTrophyTitle() {
+  if (!trophyTitleEl) return;
+  const total = getTotalTrophies();
+  trophyTitleEl.textContent = `TROPHIES: ${total}`;
+}
+
 function addDrinkIcon() {
   drinkCount += 1;
+  drinkTrophyCount += 1;
+  updateTrophyTitle();
 
   const slot = document.createElement("div");
   slot.className = "drink-slot";
@@ -167,7 +173,6 @@ function showFloatingPint() {
   }, 5000);
 }
 
-// Stop any currently playing audio
 function stopCurrentAudio() {
   if (currentAudio) {
     try {
@@ -178,7 +183,6 @@ function stopCurrentAudio() {
   }
 }
 
-// Update the mute button label / state
 function updateMuteButton() {
   if (!muteButton) return;
   if (isMuted) {
@@ -193,7 +197,6 @@ function updateMuteButton() {
   }
 }
 
-// Keep CSS var --env-height in sync with environment frame
 function updateEnvironmentHeightVar() {
   if (!environmentFrame) return;
   const h = environmentFrame.clientHeight;
@@ -202,7 +205,6 @@ function updateEnvironmentHeightVar() {
   }
 }
 
-// Pick a random karaoke end-of-song log line (no immediate repeats)
 function getRandomKaraokeEndLogMessage() {
   const len = KARAOKE_END_LOG_MESSAGES.length;
   if (!len) return "";
@@ -316,12 +318,9 @@ function goToRoom(room, options = {}) {
 
   renderActions();
   renderHotspotsForRoom(room);
-
-  // Update env height variable in case layout changed
   updateEnvironmentHeightVar();
 }
 
-// helper for karaoke dialogue
 function getSelectDialogue(song) {
   if (song.selectDialogue && song.selectDialogue.trim().length > 0) {
     return song.selectDialogue;
@@ -343,7 +342,6 @@ function renderSongList() {
   songListContainer.innerHTML = "";
 
   const enabledSongs = SONG_LIST.filter((song) => song.enabled !== false);
-
   enabledSongs.sort((a, b) => a.artist.localeCompare(b.artist));
 
   enabledSongs.forEach((song) => {
@@ -622,7 +620,6 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Keep env height updated on load and resize
   updateEnvironmentHeightVar();
   window.addEventListener("resize", updateEnvironmentHeightVar);
   if (environmentBaseImg) {
@@ -631,4 +628,5 @@ window.addEventListener("DOMContentLoaded", () => {
 
   goToRoom("bar", { initial: true });
   setSongDetailsVisible(false);
+  updateTrophyTitle(); // initialise TROPHIES: 0
 });
