@@ -451,7 +451,7 @@ function handleActionClick(event) {
 window.addEventListener("DOMContentLoaded", () => {
   actionsRow.addEventListener("click", handleActionClick);
 
-  // Hotspot click handling
+  // Hotspot click + hover handling
   if (environmentFrame) {
     environmentFrame.addEventListener("click", (event) => {
       const hotspot = event.target.closest(".hotspot");
@@ -469,6 +469,17 @@ window.addEventListener("DOMContentLoaded", () => {
       if (hotspot && hotspot.dataset.hoverText) {
         hoverLabel.textContent = hotspot.dataset.hoverText;
         hoverLabel.classList.add("is-visible");
+
+        // Position the label just above the hotspot, centred horizontally
+        const frameRect = environmentFrame.getBoundingClientRect();
+        const hotRect = hotspot.getBoundingClientRect();
+
+        const centerX = hotRect.left + hotRect.width / 2 - frameRect.left;
+        const tentativeTop = hotRect.top - frameRect.top - 6; // a few px above
+        const top = Math.max(tentativeTop, 0);
+
+        hoverLabel.style.left = `${centerX}px`;
+        hoverLabel.style.top = `${top}px`;
       } else {
         hoverLabel.classList.remove("is-visible");
       }
