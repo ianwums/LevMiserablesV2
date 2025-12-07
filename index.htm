@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Lev Miserables – Pub Room</title>
+  <title>Lev Miserables – Pub & Karaoke</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -32,20 +32,10 @@
               alt="Pub environment"
             />
 
-            <!-- Karaoke overlay: only visible in karaoke room -->
-            <div id="karaoke-overlay" class="karaoke-overlay">
-              <!-- Sunfly screen on top of the green area -->
-              <img
-                id="karaoke-screen-img"
-                class="karaoke-screen-img"
-                src="https://levmiserables.s3.eu-north-1.amazonaws.com/images/sunflyblank800600.png"
-                alt="Karaoke screen"
-              />
-              <!-- Song details (toggled on/off) -->
-              <div id="karaoke-song-details" class="karaoke-song-details">
-                <div class="song-title">EVERYDAY IS LIKE SUNDAY</div>
-                <div class="song-artist">MORRISSEY</div>
-              </div>
+            <!-- Karaoke song text overlay (TV area in karaoke room) -->
+            <div id="karaoke-song-details" class="karaoke-song-details">
+              <div class="song-title">EVERYDAY IS LIKE SUNDAY</div>
+              <div class="song-artist">MORRISSEY</div>
             </div>
           </div>
         </div>
@@ -77,7 +67,7 @@
       <section class="actions-panel">
         <h2 class="visually-hidden">Options and actions</h2>
         <div class="actions-row" id="actions-row">
-          <!-- Buttons are injected by script.js depending on room -->
+          <!-- Buttons injected by script.js depending on room -->
         </div>
       </section>
     </main>
