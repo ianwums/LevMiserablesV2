@@ -317,76 +317,91 @@ body {
   pointer-events: none; /* clicks go to inner content */
 }
 
-/* The clickable / scrollable area constrained to the box:
-   (448,155) (660,146) (443,457) (659,456)
-   => top-left (443,146), width 217, height 311 on 800x600
-   => 55.375% from left, 24.333% from top, 27.125% width, 51.833% height
+/* New coordinates:
+   455,340  639,336  444,554  643,547
+   Bounding box ≈ top-left (444,336), width 199, height 218 on 800x600
+   => left 55.5%, top 56%, width 24.875%, height ~36.33%
 */
 .song-list-overlay-inner {
   position: absolute;
-  left: 55.375%;
-  top: 24.333%;
-  width: 27.125%;
-  height: 51.833%;
+  left: 55.5%;
+  top: 56%;
+  width: 24.875%;
+  height: 36.3333%;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
+/* Header just for the close button (no title) */
 .song-list-header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 4px;
+  justify-content: flex-end;
+  align-items: flex-start;
+  margin-bottom: 2px;
 }
 
+/* Hide the "Song List" title text to save space */
 .song-list-header h2 {
-  margin: 0;
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  display: none;
 }
 
+/* Close "X" styling – black text with white shadow, no chrome */
 .song-list-close-button {
-  border: 1px solid #555;
-  border-radius: 999px;
-  background: #202231;
-  color: inherit;
-  font: inherit;
-  font-size: 0.8rem;
-  padding: 2px 8px;
+  border: none;
+  background: transparent;
+  padding: 0;
   cursor: pointer;
+
+  font-family: "Times New Roman", "TimesNewRoman", serif;
+  font-size: 0.9rem;
+  color: #000000;
+
+  text-shadow:
+    0 1px 2px #ffffff,
+    1px 0 2px #ffffff,
+    -1px 0 2px #ffffff,
+    0 -1px 2px #ffffff;
 }
 
 .song-list-close-button:hover {
-  background: #27293b;
-  border-color: #7a7cff;
+  text-decoration: underline;
 }
 
+/* Scrollable song list area */
 .song-list-container {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
   overflow-y: auto;
-  padding-right: 4px; /* space for scrollbar */
+  padding-right: 2px; /* space for scrollbar */
 }
 
+/* Individual song rows – text only, no pills / boxes */
 .song-list-item {
   width: 100%;
-  border-radius: 999px;
-  border: 1px solid #555;
-  background: #202231;
-  color: inherit;
-  font: inherit;
-  font-size: 0.75rem;
-  padding: 4px 8px;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  padding: 2px 0;
   text-align: left;
   cursor: pointer;
+
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: baseline;
-  gap: 6px;
+  gap: 4px;
+
+  font-family: "Times New Roman", "TimesNewRoman", serif;
+  font-size: 0.8rem;
+  color: #000000;
+
+  text-shadow:
+    0 1px 2px #ffffff,
+    1px 0 2px #ffffff,
+    -1px 0 2px #ffffff,
+    0 -1px 2px #ffffff;
 }
 
 .song-list-item span.song-list-artist {
@@ -397,9 +412,9 @@ body {
   opacity: 0.9;
 }
 
+/* Simple hover treatment: underline instead of changing background */
 .song-list-item:hover {
-  background: #27293b;
-  border-color: #7a7cff;
+  text-decoration: underline;
 }
 
 /* -------------------------
@@ -438,6 +453,7 @@ body {
   font-family: "Times New Roman", "TimesNewRoman", serif;
   font-size: 0.9rem;
   color: #000000; /* black text */
+
   text-align: center;
   white-space: nowrap;
 
