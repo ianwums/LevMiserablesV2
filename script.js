@@ -49,7 +49,6 @@ const KARAOKE_END_LOG_MESSAGES = [
 let lastKaraokeEndIndex = null;
 
 // Hotspot configuration (percentages relative to 800x600 image)
-// These are TOP-LEFT of a 50x50 circle, using your centre coords.
 const HOTSPOTS = {
   bar: [
     {
@@ -59,8 +58,8 @@ const HOTSPOTS = {
       // yPercent = 375 / 600 * 100 = 62.5
       xPercent: 21.875,
       yPercent: 62.5,
-      widthPercent: (50 / 800) * 100, // ≈6.25%
-      heightPercent: (50 / 600) * 100, // ≈8.33%
+      widthPercent: (50 / 800) * 100,
+      heightPercent: (50 / 600) * 100,
       hoverText: "Order drink",
       actionKey: "order-drink"
     },
@@ -108,9 +107,9 @@ const HOTSPOTS = {
 // State
 let currentRoom = "bar"; // "bar" | "karaoke"
 let drinkCount = 0;
-let currentAudio = null; // active audio playback (if any)
-let customCursorEl = null; // our fake cursor image
-let isMuted = false; // global mute state
+let currentAudio = null;
+let customCursorEl = null;
+let isMuted = false;
 
 // -------------------------
 // Utilities
@@ -120,7 +119,6 @@ function appendToLog(text) {
   const li = document.createElement("li");
   li.textContent = text;
 
-  // Most recent at the top
   if (actionLog.firstChild) {
     actionLog.insertBefore(li, actionLog.firstChild);
   } else {
@@ -149,7 +147,7 @@ function addDrinkIcon() {
   }, 3000);
 }
 
-// Floating pint visual in environment at (200,450)
+// Floating pint visual in environment at (108,462)
 function showFloatingPint() {
   if (!environmentFrame) return;
 
@@ -160,12 +158,10 @@ function showFloatingPint() {
 
   environmentFrame.appendChild(img);
 
-  // start fade near the end of its lifetime
   setTimeout(() => {
     img.classList.add("fade-out");
   }, 4000);
 
-  // remove from DOM after fade completes
   setTimeout(() => {
     img.remove();
   }, 5000);
@@ -177,9 +173,7 @@ function stopCurrentAudio() {
     try {
       currentAudio.pause();
       currentAudio.currentTime = 0;
-    } catch (e) {
-      // ignore
-    }
+    } catch (e) {}
     currentAudio = null;
   }
 }
@@ -194,9 +188,17 @@ function updateMuteButton() {
     muteButton.textContent = "🔊 Sound On";
     muteButton.setAttribute("aria-pressed", "false");
   }
-  // Apply to currently playing audio
   if (currentAudio) {
     currentAudio.muted = isMuted;
+  }
+}
+
+// Keep CSS var --env-height in sync with environment frame
+function updateEnvironmentHeightVar() {
+  if (!environmentFrame) return;
+  const h = environmentFrame.clientHeight;
+  if (h > 0) {
+    document.documentElement.style.setProperty("--env-height", `${h}px`);
   }
 }
 
@@ -247,7 +249,6 @@ function setSongDetailsVisible(visible) {
   karaokeSongDetails.style.display = visible ? "flex" : "none";
 }
 
-// Clear hover UI (label) – useful when changing rooms
 function clearHoverUI() {
   if (hoverLabel) {
     hoverLabel.classList.remove("is-visible");
@@ -261,7 +262,6 @@ function clearHoverUI() {
 function renderHotspotsForRoom(roomId) {
   if (!environmentFrame) return;
 
-  // Remove any existing hotspots
   environmentFrame.querySelectorAll(".hotspot").forEach((el) => el.remove());
 
   const hotspots = HOTSPOTS[roomId] || [];
@@ -286,13 +286,10 @@ function renderHotspotsForRoom(roomId) {
 // Room transitions
 // -------------------------
 
-// room can be "bar" or "karaoke"
-// options.initial = true means "first time setup", so no extra log entry
 function goToRoom(room, options = {}) {
   const { initial = false } = options;
   currentRoom = room;
 
-  // Whenever we change environments, clear any hover text
   clearHoverUI();
 
   if (room === "bar") {
@@ -306,7 +303,6 @@ function goToRoom(room, options = {}) {
     dialogueText.textContent =
       "The bar hums with low conversation and clinking glasses.";
 
-    // Leaving karaoke: stop audio, clear karaoke screen & song list overlay
     stopCurrentAudio();
     setSongDetailsVisible(false);
     hideSongListOverlay();
@@ -320,6 +316,9 @@ function goToRoom(room, options = {}) {
 
   renderActions();
   renderHotspotsForRoom(room);
+
+  // Update env height variable in case layout changed
+  updateEnvironmentHeightVar();
 }
 
 // helper for karaoke dialogue
@@ -345,7 +344,6 @@ function renderSongList() {
 
   const enabledSongs = SONG_LIST.filter((song) => song.enabled !== false);
 
-  // Sort by artist name A–Z
   enabledSongs.sort((a, b) => a.artist.localeCompare(b.artist));
 
   enabledSongs.forEach((song) => {
@@ -393,11 +391,8 @@ const commonActionEffects = {
 
 function getActionsForRoom() {
   if (currentRoom === "bar") {
-    // Karaoke Room is now hotspot-only, so just keep Order a drink here
     return [{ key: "order-drink", label: "Order a drink" }];
   }
-
-  // Karaoke room: all interactions via hotspots only
   return [];
 }
 
@@ -431,29 +426,23 @@ function renderActions() {
 // Karaoke song playback
 // -------------------------
 
-// Main song-playing logic, used by song list overlay
 function playSongById(songId) {
   const song = SONGS_BY_ID[songId];
   if (!song) return;
 
-  // Any new selection stops whatever is playing
   stopCurrentAudio();
 
-  // If customDialogue is provided, only update dialogue + log
   if (song.customDialogue && song.customDialogue.trim().length > 0) {
     appendToLog(
       `You select "${song.title}" by ${song.artist}, but Rockin Ronnie hesitates.`
     );
     dialogueText.textContent = song.customDialogue;
-    // Karaoke screen / audio remain as they were
     return;
   }
 
-  // Normal song behaviour
   const hasAudio =
     song.mp3Url && typeof song.mp3Url === "string" && song.mp3Url.trim() !== "";
 
-  // Update overlay with song title/artist
   setCurrentSong(song.id);
   setSongDetailsVisible(true);
 
@@ -461,13 +450,11 @@ function playSongById(songId) {
   dialogueText.textContent = getSelectDialogue(song);
 
   if (hasAudio) {
-    // Play the audio once; overlay visible only while it plays
     const audio = new Audio(song.mp3Url);
     currentAudio = audio;
     currentAudio.muted = isMuted;
 
     audio.addEventListener("ended", () => {
-      // Only clear if this is still the active audio instance
       if (currentAudio === audio) {
         setSongDetailsVisible(false);
         const endMsg = getRandomKaraokeEndLogMessage();
@@ -495,8 +482,6 @@ function playSongById(songId) {
           currentAudio = null;
         }
       });
-  } else {
-    // No audio available: keep overlay visible (or you could add a timeout here)
   }
 }
 
@@ -504,9 +489,7 @@ function playSongById(songId) {
 // Action dispatcher
 // -------------------------
 
-// General action dispatcher used by buttons + hotspots
 function performAction(actionKey) {
-  // Room navigation
   if (actionKey === "go-karaoke") {
     goToRoom("karaoke");
     return;
@@ -516,13 +499,11 @@ function performAction(actionKey) {
     return;
   }
 
-  // Open song list (karaoke only)
   if (actionKey === "open-song-list" && currentRoom === "karaoke") {
     showSongListOverlay();
     return;
   }
 
-  // Bar-only actions (currently just "order-drink")
   const effect = commonActionEffects[actionKey];
   if (effect) {
     appendToLog(effect.log);
@@ -550,7 +531,6 @@ function handleActionClick(event) {
 window.addEventListener("DOMContentLoaded", () => {
   actionsRow.addEventListener("click", handleActionClick);
 
-  // Mute button handling
   if (muteButton) {
     muteButton.addEventListener("click", () => {
       isMuted = !isMuted;
@@ -559,7 +539,6 @@ window.addEventListener("DOMContentLoaded", () => {
     updateMuteButton();
   }
 
-  // Set up custom cursor element inside environment frame
   if (environmentFrame) {
     customCursorEl = document.createElement("img");
     customCursorEl.src = POINTER_URL;
@@ -567,7 +546,6 @@ window.addEventListener("DOMContentLoaded", () => {
     customCursorEl.className = "custom-cursor";
     environmentFrame.appendChild(customCursorEl);
 
-    // Hotspot click handling
     environmentFrame.addEventListener("click", (event) => {
       const hotspot = event.target.closest(".hotspot");
       if (!hotspot) return;
@@ -577,11 +555,9 @@ window.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // Cursor movement + hover label
     environmentFrame.addEventListener("mousemove", (event) => {
       const frameRect = environmentFrame.getBoundingClientRect();
 
-      // Move custom cursor
       if (customCursorEl) {
         const cx = event.clientX - frameRect.left;
         const cy = event.clientY - frameRect.top;
@@ -590,7 +566,6 @@ window.addEventListener("DOMContentLoaded", () => {
         customCursorEl.style.display = "block";
       }
 
-      // Show/hide label based on hotspot under cursor
       if (hoverLabel) {
         const hotspot = event.target.closest(".hotspot");
         if (hotspot && hotspot.dataset.hoverText) {
@@ -600,14 +575,12 @@ window.addEventListener("DOMContentLoaded", () => {
           const hotRect = hotspot.getBoundingClientRect();
           const centerX = hotRect.left + hotRect.width / 2 - frameRect.left;
 
-          // Temporarily position to measure height
           hoverLabel.style.left = `${centerX}px`;
           hoverLabel.style.top = `0px`;
 
           const labelRect = hoverLabel.getBoundingClientRect();
           const labelHeight = labelRect.height || 0;
 
-          // Label bottom should be at least 14px above hotspot top
           const offsetAboveHotspot = 14;
           const desiredBottom =
             hotRect.top - frameRect.top - offsetAboveHotspot;
@@ -633,7 +606,6 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Song list item selection
   if (songListContainer) {
     songListContainer.addEventListener("click", (event) => {
       const btn = event.target.closest(".song-list-item");
@@ -644,15 +616,19 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Close button for song list
   if (songListCloseBtn) {
     songListCloseBtn.addEventListener("click", () => {
       hideSongListOverlay();
     });
   }
 
-  // Initial entry already in HTML: "You step into the bar."
-  // We set up the bar state without adding another log entry.
+  // Keep env height updated on load and resize
+  updateEnvironmentHeightVar();
+  window.addEventListener("resize", updateEnvironmentHeightVar);
+  if (environmentBaseImg) {
+    environmentBaseImg.addEventListener("load", updateEnvironmentHeightVar);
+  }
+
   goToRoom("bar", { initial: true });
   setSongDetailsVisible(false);
 });
