@@ -9,11 +9,17 @@
   <div class="game-shell">
     <header class="game-header">
       <div class="header-main">
-        <div class="location-name" id="location-name">Pub – Bar</div>
+        <div class="location-name" id="location-name">THE UNION - BAR AREA</div>
       </div>
       <div class="header-status">
-        <div>Lev Miserables</div>
-        <div>Build: dev</div>
+        <button
+          id="mute-button"
+          class="mute-button"
+          type="button"
+          aria-pressed="false"
+        >
+          🔊 Sound On
+        </button>
       </div>
     </header>
 
@@ -68,7 +74,7 @@
 
         <!-- Action log -->
         <aside class="log-panel">
-          <h2 class="panel-title">Action Log</h2>
+          <h2 class="panel-title">History</h2>
           <ul id="action-log" class="log-list">
             <li>You step into the bar.</li>
           </ul>
@@ -94,7 +100,6 @@
 
       <!-- Actions -->
       <section class="actions-panel">
-        <h2 class="panel-title">Actions</h2>
         <div id="actions-row" class="actions-row">
           <!-- Populated by script.js -->
         </div>
