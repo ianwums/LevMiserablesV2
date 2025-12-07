@@ -26,6 +26,15 @@ SONG_LIST.forEach((song) => {
   SONGS_BY_ID[song.id] = song;
 });
 
+// Action log messages for end-of-song
+const KARAOKE_END_LOG_MESSAGES = [
+  "The crowd go wild",
+  "The room is notably emptier than before you sang",
+  "You might not sing again after that performance",
+  "Mary seems to have stuffed tissue in her ears",
+  "That's My Dad!"
+];
+
 // State
 let currentRoom = "bar"; // "bar" | "karaoke"
 let currentSongId = SONG_LIST.length ? SONG_LIST[0].id : null;
@@ -80,6 +89,13 @@ function stopCurrentAudio() {
     }
     currentAudio = null;
   }
+}
+
+// Pick a random karaoke end-of-song log line
+function getRandomKaraokeEndLogMessage() {
+  if (!KARAOKE_END_LOG_MESSAGES.length) return "";
+  const index = Math.floor(Math.random() * KARAOKE_END_LOG_MESSAGES.length);
+  return KARAOKE_END_LOG_MESSAGES[index];
 }
 
 function adjustSongFontSizes(titleText) {
@@ -261,7 +277,10 @@ function handleActionClick(event) {
         // Only clear if this is still the active audio instance
         if (currentAudio === audio) {
           setSongDetailsVisible(false);
-          appendToLog("The track ends and the karaoke screen clears.");
+          const endMsg = getRandomKaraokeEndLogMessage();
+          if (endMsg) {
+            appendToLog(endMsg);
+          }
           currentAudio = null;
         }
       });
@@ -284,8 +303,7 @@ function handleActionClick(event) {
           }
         });
     } else {
-      // No audio available: keep overlay visible (legacy behaviour)
-      // You can change this if you prefer a timeout-based clear.
+      // No audio available: keep overlay visible (or you could add a timeout here)
     }
 
     return;
