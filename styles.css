@@ -93,6 +93,11 @@ body {
   background: #090910;
   box-shadow: 0 0 16px rgba(0, 0, 0, 0.45);
   position: relative;
+
+  /* Custom cursor only in this area */
+  cursor: url("https://levmiserables.s3.eu-north-1.amazonaws.com/UI_Elements/pointer.gif")
+      0 0,
+    pointer;
 }
 
 /* Base environment image (bar / karaoke room) */
@@ -373,6 +378,25 @@ body {
 .song-list-item:hover {
   background: #27293b;
   border-color: #7a7cff;
+}
+
+/* -------------------------
+   HOTSPOTS
+-------------------------- */
+
+.hotspot {
+  position: absolute;
+  border: none;
+  padding: 0;
+  background: transparent;
+  border-radius: 50%;
+  cursor: inherit; /* use the same custom cursor as the frame */
+}
+
+/* subtle brightness / highlight over the image when hovering a hotspot */
+.hotspot:hover {
+  background: rgba(255, 255, 255, 0.18);
+  mix-blend-mode: screen;
 }
 
 /* -------------------------
