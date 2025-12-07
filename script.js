@@ -9,6 +9,11 @@ const locationNameEl = document.getElementById("location-name");
 const songTitleEl = document.querySelector(".song-title");
 const songArtistEl = document.querySelector(".song-artist");
 
+// Song list overlay DOM
+const songListOverlay = document.getElementById("song-list-overlay");
+const songListContainer = document.getElementById("song-list-container");
+const songListCloseBtn = document.getElementById("song-list-close");
+
 // Image URLs
 const BAR_IMAGE =
   "https://levmiserables.s3.eu-north-1.amazonaws.com/images/unionbarpixel.png";
@@ -163,6 +168,7 @@ function goToRoom(room, options = {}) {
     // Leaving karaoke: stop audio and clear the karaoke screen
     stopCurrentAudio();
     setSongDetailsVisible(false);
+    hideSongListOverlay();
   } else if (room === "karaoke") {
     locationNameEl.textContent = "Karaoke Room";
     environmentBaseImg.src = KARAOKE_ROOM_IMAGE;
@@ -187,6 +193,51 @@ function getSelectDialogue(song) {
 }
 
 // -------------------------
+// Song list overlay helpers
+// -------------------------
+
+function renderSongList() {
+  if (!songListContainer) return;
+
+  songListContainer.innerHTML = "";
+
+  const enabledSongs = SONG_LIST.filter((song) => song.enabled !== false);
+
+  // Sort by artist name A–Z
+  enabledSongs.sort((a, b) => a.artist.localeCompare(b.artist));
+
+  enabledSongs.forEach((song) => {
+    const btn = document.createElement("button");
+    btn.className = "song-list-item";
+    btn.dataset.songId = song.id;
+
+    const artistSpan = document.createElement("span");
+    artistSpan.className = "song-list-artist";
+    artistSpan.textContent = song.artist;
+
+    const titleSpan = document.createElement("span");
+    titleSpan.className = "song-list-title";
+    titleSpan.textContent = song.title;
+
+    btn.appendChild(artistSpan);
+    btn.appendChild(titleSpan);
+
+    songListContainer.appendChild(btn);
+  });
+}
+
+function showSongListOverlay() {
+  if (!songListOverlay) return;
+  renderSongList();
+  songListOverlay.classList.add("is-visible");
+}
+
+function hideSongListOverlay() {
+  if (!songListOverlay) return;
+  songListOverlay.classList.remove("is-visible");
+}
+
+// -------------------------
 // Actions & effects
 // -------------------------
 
@@ -206,16 +257,9 @@ function getActionsForRoom() {
     ];
   }
 
-  // Karaoke room
-  const songActions = SONG_LIST.filter(
-    (song) => song.enabled !== false
-  ).map((song) => ({
-    key: `play:${song.id}`,
-    label: `Sing "${song.title}" by ${song.artist}`
-  }));
-
+  // Karaoke room: just Song list + back
   return [
-    ...songActions,
+    { key: "open-song-list", label: "Song list" },
     { key: "back-to-bar", label: "Go back to bar" }
   ];
 }
@@ -231,6 +275,74 @@ function renderActions() {
     button.textContent = action.label;
     actionsRow.appendChild(button);
   });
+}
+
+// Main song-playing logic, used by song list overlay
+function playSongById(songId) {
+  const song = SONGS_BY_ID[songId];
+  if (!song) return;
+
+  // Any new selection stops whatever is playing
+  stopCurrentAudio();
+
+  // If customDialogue is provided, only update dialogue + log
+  if (song.customDialogue && song.customDialogue.trim().length > 0) {
+    appendToLog(
+      `You select "${song.title}" by ${song.artist}, but Rockin Ronnie hesitates.`
+    );
+    dialogueText.textContent = song.customDialogue;
+    // Karaoke screen / audio remain as they were
+    return;
+  }
+
+  // Normal song behaviour
+  const hasAudio =
+    song.mp3Url && typeof song.mp3Url === "string" && song.mp3Url.trim() !== "";
+
+  // Update overlay with song title/artist
+  setCurrentSong(song.id);
+  setSongDetailsVisible(true);
+
+  appendToLog(`You queue up "${song.title}" by ${song.artist}.`);
+  dialogueText.textContent = getSelectDialogue(song);
+
+  if (hasAudio) {
+    // Play the audio once; overlay visible only while it plays
+    const audio = new Audio(song.mp3Url);
+    currentAudio = audio;
+
+    audio.addEventListener("ended", () => {
+      // Only clear if this is still the active audio instance
+      if (currentAudio === audio) {
+        setSongDetailsVisible(false);
+        const endMsg = getRandomKaraokeEndLogMessage();
+        if (endMsg) {
+          appendToLog(endMsg);
+        }
+        currentAudio = null;
+      }
+    });
+
+    audio.addEventListener("error", () => {
+      if (currentAudio === audio) {
+        setSongDetailsVisible(false);
+        appendToLog("The speakers crackle, but nothing plays.");
+        currentAudio = null;
+      }
+    });
+
+    audio
+      .play()
+      .catch(() => {
+        if (currentAudio === audio) {
+          setSongDetailsVisible(false);
+          appendToLog("The speakers crackle, but nothing plays.");
+          currentAudio = null;
+        }
+      });
+  } else {
+    // No audio available: keep overlay visible (or you could add a timeout here)
+  }
 }
 
 function handleActionClick(event) {
@@ -249,74 +361,9 @@ function handleActionClick(event) {
     return;
   }
 
-  // Karaoke: song selection
-  if (actionKey.startsWith("play:") && currentRoom === "karaoke") {
-    const songId = actionKey.split(":")[1];
-    const song = SONGS_BY_ID[songId];
-    if (!song) return;
-
-    // Any new selection stops whatever is playing
-    stopCurrentAudio();
-
-    // If customDialogue is provided, only update dialogue + log
-    if (song.customDialogue && song.customDialogue.trim().length > 0) {
-      appendToLog(
-        `You select "${song.title}" by ${song.artist}, but Rockin Ronnie hesitates.`
-      );
-      dialogueText.textContent = song.customDialogue;
-      // Karaoke screen / audio remain as they were
-      return;
-    }
-
-    // Normal song behaviour
-    const hasAudio =
-      song.mp3Url && typeof song.mp3Url === "string" && song.mp3Url.trim() !== "";
-
-    // Update overlay with song title/artist
-    setCurrentSong(song.id);
-    setSongDetailsVisible(true);
-
-    appendToLog(`You queue up "${song.title}" by ${song.artist}.`);
-    dialogueText.textContent = getSelectDialogue(song);
-
-    if (hasAudio) {
-      // Play the audio once; overlay visible only while it plays
-      const audio = new Audio(song.mp3Url);
-      currentAudio = audio;
-
-      audio.addEventListener("ended", () => {
-        // Only clear if this is still the active audio instance
-        if (currentAudio === audio) {
-          setSongDetailsVisible(false);
-          const endMsg = getRandomKaraokeEndLogMessage();
-          if (endMsg) {
-            appendToLog(endMsg);
-          }
-          currentAudio = null;
-        }
-      });
-
-      audio.addEventListener("error", () => {
-        if (currentAudio === audio) {
-          setSongDetailsVisible(false);
-          appendToLog("The speakers crackle, but nothing plays.");
-          currentAudio = null;
-        }
-      });
-
-      audio
-        .play()
-        .catch(() => {
-          if (currentAudio === audio) {
-            setSongDetailsVisible(false);
-            appendToLog("The speakers crackle, but nothing plays.");
-            currentAudio = null;
-          }
-        });
-    } else {
-      // No audio available: keep overlay visible (or you could add a timeout here)
-    }
-
+  // Open song list overlay
+  if (actionKey === "open-song-list" && currentRoom === "karaoke") {
+    showSongListOverlay();
     return;
   }
 
@@ -338,6 +385,24 @@ function handleActionClick(event) {
 
 window.addEventListener("DOMContentLoaded", () => {
   actionsRow.addEventListener("click", handleActionClick);
+
+  // Song list item selection
+  if (songListContainer) {
+    songListContainer.addEventListener("click", (event) => {
+      const btn = event.target.closest(".song-list-item");
+      if (!btn) return;
+      const songId = btn.dataset.songId;
+      hideSongListOverlay();
+      playSongById(songId);
+    });
+  }
+
+  // Close button for song list
+  if (songListCloseBtn) {
+    songListCloseBtn.addEventListener("click", () => {
+      hideSongListOverlay();
+    });
+  }
 
   if (currentSongId) {
     setCurrentSong(currentSongId);
