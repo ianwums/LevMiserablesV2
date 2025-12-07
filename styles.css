@@ -105,25 +105,27 @@ body {
 
 /* -------------------------
    KARAOKE TEXT OVERLAY
-   (fits inside the green box you drew)
+   (exactly inside the green box you drew)
 -------------------------- */
 
-/* This box is positioned over the green rectangle on the Sunfly screen.
-   It centers text inside that area. Adjust top/left/width/height slightly
-   if you need pixel-perfect alignment. */
+/* The green box in the 800x600 karaoke image runs from:
+   x: 250–500, y: 125–201
+   This translates to:
+   left ≈ 31.25%, top ≈ 20.8%, width ≈ 31.25%, height ≈ 12.7%
+*/
 .karaoke-song-details {
   position: absolute;
-  top: 34%;     /* vertical placement of the green box */
-  left: 57%;    /* horizontal placement of the green box */
-  width: 26%;   /* width of the green box */
-  height: 21%;  /* height of the green box */
+  top: 21%;      /* ≈125/600 */
+  left: 31.5%;   /* ≈250/800 */
+  width: 31%;    /* ≈(500-250)/800 */
+  height: 13%;   /* ≈(201-125)/600 */
 
   display: none;              /* toggled via JS */
   flex-direction: column;
-  justify-content: center;    /* center vertically */
+  justify-content: center;    /* center vertically in the box */
   align-items: center;        /* center horizontally */
   text-align: center;
-  padding: 4%;
+  padding: 3%;
   pointer-events: none;
 }
 
