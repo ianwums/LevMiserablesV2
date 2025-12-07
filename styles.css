@@ -94,10 +94,8 @@ body {
   box-shadow: 0 0 16px rgba(0, 0, 0, 0.45);
   position: relative;
 
-  /* Custom cursor only in this area */
-  cursor: url("https://levmiserables.s3.eu-north-1.amazonaws.com/UI_Elements/pointer.gif")
-      0 0,
-    pointer;
+  /* Hide native cursor inside the frame; we draw our own */
+  cursor: none;
 }
 
 /* Base environment image (bar / karaoke room) */
@@ -106,6 +104,22 @@ body {
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+/* -------------------------
+   CUSTOM CURSOR (inside environment)
+-------------------------- */
+
+.custom-cursor {
+  position: absolute;
+  width: 48px;   /* roughly 2× a typical 24px cursor */
+  height: 48px;
+  pointer-events: none;
+  display: none;
+  z-index: 50;
+
+  /* Slight offset so the tip of the arrow feels like the click point */
+  transform: translate(-4px, -4px);
 }
 
 /* -------------------------
@@ -390,7 +404,7 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.35);
   background: rgba(255, 255, 255, 0.08);
   padding: 0;
-  cursor: inherit; /* use same custom cursor as the frame */
+  cursor: inherit; /* follow the custom cursor behaviour */
 }
 
 /* subtle brightness / highlight over the image when hovering a hotspot */
