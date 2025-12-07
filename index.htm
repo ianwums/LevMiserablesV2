@@ -12,6 +12,9 @@
         <div class="location-name" id="location-name">THE UNION - BAR AREA</div>
       </div>
       <div class="header-status">
+        <div id="drunkness-display" class="drunkness-display">
+          Drunkness: 0
+        </div>
         <button
           id="mute-button"
           class="mute-button"
@@ -108,7 +111,7 @@
           <!-- Populated by script.js -->
         </div>
 
-        <!-- Simple drinks menu (shown when "Order a drink" is clicked) -->
+        <!-- Simple drinks menu (shown when "Order a drink" hotspot is used) -->
         <div id="drink-menu" class="drink-menu">
           <button
             type="button"
@@ -127,6 +130,13 @@
         </div>
       </section>
     </main>
+  </div>
+
+  <!-- Game over overlay -->
+  <div id="game-over-overlay" class="game-over-overlay">
+    <div class="game-over-message">
+      GAME OVER - YOU DRANK TOO MUCH AND PASSED OUT
+    </div>
   </div>
 
   <script src="songs.js"></script>
