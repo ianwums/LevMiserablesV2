@@ -149,6 +149,28 @@ function addDrinkIcon() {
   }, 3000);
 }
 
+// Floating pint visual in environment at (200,450)
+function showFloatingPint() {
+  if (!environmentFrame) return;
+
+  const img = document.createElement("img");
+  img.src = FULL_PINT_URL;
+  img.alt = "Fresh pint";
+  img.className = "environment-pint-float";
+
+  environmentFrame.appendChild(img);
+
+  // start fade near the end of its lifetime
+  setTimeout(() => {
+    img.classList.add("fade-out");
+  }, 4000);
+
+  // remove from DOM after fade completes
+  setTimeout(() => {
+    img.remove();
+  }, 5000);
+}
+
 // Stop any currently playing audio
 function stopCurrentAudio() {
   if (currentAudio) {
@@ -508,6 +530,7 @@ function performAction(actionKey) {
 
     if (actionKey === "order-drink" && currentRoom === "bar") {
       addDrinkIcon();
+      showFloatingPint();
     }
   }
 }
