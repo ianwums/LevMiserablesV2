@@ -160,7 +160,6 @@ body {
   pointer-events: none;
   display: none;
   z-index: 50;
-
   transform: translate(-4px, -4px);
 }
 
@@ -217,9 +216,10 @@ body {
   display: flex;
   flex-direction: column;
 
-  /* Taller: 48% of env height, scroll when exceeded */
+  /* FIXED HEIGHT: 48% of environment height */
+  height: calc(var(--env-height) * 0.48);
+  min-height: calc(var(--env-height) * 0.48);
   max-height: calc(var(--env-height) * 0.48);
-  min-height: 0;
 }
 
 .panel-title {
@@ -238,7 +238,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  overflow-y: scroll; /* always show scrollbar */
+  overflow-y: scroll;      /* always show scrollbar track */
   scrollbar-width: thin;
   flex: 1;
 }
@@ -283,9 +283,10 @@ body {
   display: flex;
   flex-direction: column;
 
-  /* Taller: 48% of env height, scroll contents */
+  /* FIXED HEIGHT: 48% of environment height */
+  height: calc(var(--env-height) * 0.48);
+  min-height: calc(var(--env-height) * 0.48);
   max-height: calc(var(--env-height) * 0.48);
-  min-height: 0;
 }
 
 .icon-row {
@@ -295,8 +296,8 @@ body {
   align-items: flex-end;
   min-height: 0;
   max-height: 100%;
-  overflow-y: scroll;    /* always show scrollbar */
-  scrollbar-width: thin; /* thinner scrollbar like history */
+  overflow-y: scroll;      /* always show scrollbar */
+  scrollbar-width: thin;
 }
 
 .drink-slot {
