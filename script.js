@@ -378,26 +378,23 @@ function showLocationCardFor(info) {
 
   const frameRect = environmentFrame.getBoundingClientRect();
 
-  // Base position from hotspot centre (0–800 / 0–600 -> frame size)
+  // Base position from hotspot centre (scaled from 800x600 to frame size)
   const baseX = (info.cardCenterX / 800) * frameRect.width;
   const baseY = (info.cardCenterY / 600) * frameRect.height;
 
-  // Offset card above or below hotspot depending on whether it's in
-  // the top or bottom half of the map.
+  // Offset card above or below hotspot depending on whether it's
+  // in the top or bottom half of the map.
   const verticalOffset = frameRect.height * 0.1; // 10% of frame height
   let x = baseX;
   let y = baseY + (info.cardCenterY < 300 ? verticalOffset : -verticalOffset);
 
-  // Approximate card size as a fraction of frame size for clamping
-  const approxCardWidth = frameRect.width * 0.3;  // ~30% of width
-  const approxCardHeight = frameRect.height * 0.23; // ~23% of height
-  const halfW = approxCardWidth / 2;
-  const halfH = approxCardHeight / 2;
-
-  const minX = halfW;
-  const maxX = frameRect.width - halfW;
-  const minY = halfH;
-  const maxY = frameRect.height - halfH;
+  // Clamp so the card's centre is never closer than 75px
+  // to any edge of the environment frame.
+  const margin = 75;
+  const minX = margin;
+  const maxX = frameRect.width - margin;
+  const minY = margin;
+  const maxY = frameRect.height - margin;
 
   if (x < minX) x = minX;
   if (x > maxX) x = maxX;
