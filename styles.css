@@ -100,13 +100,13 @@ body {
   width: 100%;
   max-width: 800px;
   margin: 0 auto;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 4 / 3; /* 800x600 */
   border-radius: 6px;
   overflow: hidden;
   background: #090910;
   box-shadow: 0 0 16px rgba(0, 0, 0, 0.45);
   position: relative;
-  cursor: none;
+  cursor: none; /* hide native cursor inside the frame */
 }
 
 #environment-base {
@@ -129,7 +129,7 @@ body {
 
 .custom-cursor {
   position: absolute;
-  width: 34px;
+  width: 34px; /* ~70% of previous 48px size */
   height: 34px;
   pointer-events: none;
   display: none;
@@ -147,7 +147,7 @@ body {
   left: 47%;
   width: 15.5%;
   height: 10%;
-  display: none;
+  display: none; /* shown/hidden via JS */
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -189,7 +189,7 @@ body {
   background: #14151f;
   display: flex;
   flex-direction: column;
-  height: 40vh;
+  height: 40vh;      /* fixed-ish height */
   min-height: 150px;
   max-height: 260px;
 }
@@ -215,6 +215,7 @@ body {
   flex: 1;
 }
 
+/* Most recent action bold */
 .log-list li:first-child {
   font-weight: 600;
 }
@@ -282,6 +283,7 @@ body {
   min-height: 60px;
 }
 
+/* right-hand spacer (empty for now) */
 .spacer-panel {
   border-radius: 6px;
 }
@@ -355,7 +357,7 @@ body {
   pointer-events: none;
 }
 
-/* Coords: 445,358 652,341 429,583 668,586 */
+/* Coords: 445,358 652,341 429,583 668,586 => box around bottom-right TV area */
 .song-list-overlay-inner {
   position: absolute;
   left: 53.625%;
@@ -375,18 +377,21 @@ body {
 }
 
 .song-list-header h2 {
-  display: none;
+  display: none; /* title hidden to save space */
 }
 
 .song-list-close-button {
   border: none;
   background: transparent;
   padding: 0;
-  cursor: inherit;
+  cursor: inherit;          /* use custom cursor only */
   font-family: inherit;
   font-size: 0.9rem;
   color: #000000;
-  text-shadow: 0 1px 2px #ffffff, 1px 0 2px #ffffff, -1px 0 2px #ffffff,
+  text-shadow:
+    0 1px 2px #ffffff,
+    1px 0 2px #ffffff,
+    -1px 0 2px #ffffff,
     0 -1px 2px #ffffff;
 }
 
@@ -418,7 +423,10 @@ body {
   font-family: inherit;
   font-size: 0.8rem;
   color: #000000;
-  text-shadow: 0 1px 2px #ffffff, 1px 0 2px #ffffff, -1px 0 2px #ffffff,
+  text-shadow:
+    0 1px 2px #ffffff,
+    1px 0 2px #ffffff,
+    -1px 0 2px #ffffff,
     0 -1px 2px #ffffff;
 }
 
@@ -432,6 +440,60 @@ body {
 
 .song-list-item:hover {
   text-decoration: underline;
+}
+
+/* -------------------------
+   HOTSPOTS
+-------------------------- */
+
+.hotspot {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0;
+  cursor: inherit; /* follow custom cursor */
+}
+
+/* subtle highlight over bar/karaoke image when hovering a hotspot */
+.hotspot:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.75);
+  mix-blend-mode: screen;
+}
+
+/* Map-specific: hotspots are invisible (we rely on green dots in the image) */
+.environment-frame.map-mode .hotspot,
+.environment-frame.map-mode .hotspot:hover {
+  border: none;
+  background: transparent;
+  mix-blend-mode: normal;
+}
+
+/* -------------------------
+   ENVIRONMENT HOVER LABEL
+-------------------------- */
+
+.environment-hover-label {
+  position: absolute;
+  transform: translateX(-50%);
+  padding: 2px 8px;
+  pointer-events: none;
+  display: none;
+  font-family: "Times New Roman", "TimesNewRoman", serif;
+  font-size: 0.9rem;
+  color: #000000;
+  text-align: center;
+  white-space: nowrap;
+  text-shadow:
+    0 1px 2px #ffffff,
+    1px 0 2px #ffffff,
+    -1px 0 2px #ffffff,
+    0 -1px 2px #ffffff;
+}
+
+.environment-hover-label.is-visible {
+  display: block;
 }
 
 /* -------------------------
@@ -464,62 +526,31 @@ body {
   color: #000000;
 }
 
-.location-hover-card-image {
+/* Shared sizing for icon slot (image or placeholder) */
+.location-hover-card-image,
+.location-hover-card-placeholder {
   width: 110px;
   height: 110px;
-  object-fit: cover;
   border-radius: 6px;
+}
+
+/* Real image (shown only when we have a URL) */
+.location-hover-card-image {
+  object-fit: cover;
   border: 3px solid #000000;
+  display: none; /* JS turns this on when needed */
 }
 
-/* -------------------------
-   HOTSPOTS
--------------------------- */
-
-.hotspot {
-  position: absolute;
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  background: rgba(255, 255, 255, 0.08);
-  padding: 0;
-  cursor: inherit;
-}
-
-.hotspot:hover {
-  background: rgba(255, 255, 255, 0.18);
-  border-color: rgba(255, 255, 255, 0.75);
-  mix-blend-mode: screen;
-}
-
-/* Map-specific: hotspots are invisible (we rely on the green dots) */
-.environment-frame.map-mode .hotspot,
-.environment-frame.map-mode .hotspot:hover {
-  border: none;
-  background: transparent;
-  mix-blend-mode: normal;
-}
-
-/* -------------------------
-   ENVIRONMENT HOVER LABEL
--------------------------- */
-
-.environment-hover-label {
-  position: absolute;
-  transform: translateX(-50%);
-  padding: 2px 8px;
-  pointer-events: none;
-  display: none;
-  font-family: "Times New Roman", "TimesNewRoman", serif;
+/* Placeholder "ICON" box for locations with no image yet */
+.location-hover-card-placeholder {
+  display: flex; /* JS toggles between flex and none */
+  align-items: center;
+  justify-content: center;
+  border: 3px dashed #000000;
+  font-weight: 700;
   font-size: 0.9rem;
   color: #000000;
-  text-align: center;
-  white-space: nowrap;
-  text-shadow: 0 1px 2px #ffffff, 1px 0 2px #ffffff, -1px 0 2px #ffffff,
-    0 -1px 2px #ffffff;
-}
-
-.environment-hover-label.is-visible {
-  display: block;
+  background: rgba(255, 255, 255, 0.3);
 }
 
 /* -------------------------
