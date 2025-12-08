@@ -75,133 +75,169 @@ const GUINNESS_DIALOGUE_OPTIONS = [
 // HOTSPOTS (percent relative to 800x600)
 // -------------------------
 
-// All hotspots are 50x50 circles, expressed as percentages.
-// xPercent / yPercent = top-left corner.
-
+// Default hotspot size for bar/karaoke: 50x50px
 const HOTSPOT_SIZE = {
   widthPercent: (50 / 800) * 100, // 6.25
   heightPercent: (50 / 600) * 100 // 8.333...
 };
+
+// Map hotspots: 22px radius => 44px diameter
+const MAP_HOTSPOT_WIDTH_PERCENT = (44 / 800) * 100; // 5.5
+const MAP_HOTSPOT_HEIGHT_PERCENT = (44 / 600) * 100; // 7.333...
 
 const HOTSPOTS = {
   // MAP: each green circle on the map
   map: [
     {
       id: "map-bakery",
-      xPercent: 15.375,
-      yPercent: 0,
+      xPercent: 15.75,
+      yPercent: 0, // clamped to top
+      widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
+      heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "Levenshulme Bakery",
       actionKey: "map-closed"
     },
     {
       id: "map-station-hop",
-      xPercent: 16.875,
-      yPercent: 30.333,
+      xPercent: 17.25,
+      yPercent: 30.833,
+      widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
+      heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "Station Hop",
       actionKey: "map-closed"
     },
     {
       id: "map-ny-krispy",
-      xPercent: 21.375,
-      yPercent: 40.167,
+      xPercent: 21.75,
+      yPercent: 40.667,
+      widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
+      heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "New York Krispy",
       actionKey: "map-closed"
     },
     {
       id: "map-union-inn",
-      xPercent: 21.5,
-      yPercent: 45.5,
+      xPercent: 21.875,
+      yPercent: 46.0,
+      widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
+      heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "Union Inn",
       actionKey: "go-union-from-map"
     },
     {
       id: "map-overdraught",
-      xPercent: 20.875,
-      yPercent: 50.5,
+      xPercent: 21.25,
+      yPercent: 51.0,
+      widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
+      heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "OverDraught",
       actionKey: "map-closed"
     },
     {
       id: "map-home",
-      xPercent: 4.375,
-      yPercent: 59.833,
+      xPercent: 4.75,
+      yPercent: 60.333,
+      widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
+      heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "Home",
       actionKey: "map-closed"
     },
     {
       id: "map-long-bois",
-      xPercent: 0,
-      yPercent: 69.5,
+      xPercent: 0, // clamped from -0.875
+      yPercent: 70.0,
+      widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
+      heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "Long Boi's",
       actionKey: "map-closed"
     },
     {
       id: "map-tesco",
-      xPercent: 22.875,
-      yPercent: 67.5,
+      xPercent: 23.25,
+      yPercent: 68.0,
+      widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
+      heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "Tesco Superstore",
       actionKey: "map-closed"
     },
     {
       id: "map-atm",
-      xPercent: 24.625,
-      yPercent: 72.0,
+      xPercent: 25.0,
+      yPercent: 72.5,
+      widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
+      heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "ATM",
       actionKey: "map-closed"
     },
     {
       id: "map-levenshulme",
-      xPercent: 29.25,
-      yPercent: 79.833,
+      xPercent: 29.625,
+      yPercent: 80.333,
+      widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
+      heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "The Levenshulme",
       actionKey: "map-closed"
     },
     {
       id: "map-talleyrand",
-      xPercent: 28.125,
-      yPercent: 80.833,
+      xPercent: 28.5,
+      yPercent: 81.333,
+      widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
+      heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "The Talleyrand",
       actionKey: "map-closed"
     },
     {
       id: "map-isca",
-      xPercent: 27.625,
-      yPercent: 83.333,
+      xPercent: 28.0,
+      yPercent: 83.833,
+      widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
+      heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "Isca",
       actionKey: "map-closed"
     },
     {
       id: "map-nordie",
-      xPercent: 30.375,
-      yPercent: 86.833,
+      xPercent: 30.75,
+      yPercent: 87.333,
+      widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
+      heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "Nordie",
       actionKey: "map-closed"
     },
     {
       id: "map-antiques",
-      xPercent: 30.0,
-      yPercent: 92.167,
+      xPercent: 30.375,
+      yPercent: 92.667,
+      widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
+      heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "Levenshulme Antiques Village",
       actionKey: "map-closed"
     },
     {
       id: "map-station-south",
-      xPercent: 34.25,
-      yPercent: 92.833,
+      xPercent: 34.625,
+      yPercent: 93.333,
+      widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
+      heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "Station South",
       actionKey: "map-closed"
     },
     {
       id: "map-blue-bell",
-      xPercent: 62.5,
-      yPercent: 33.333,
+      xPercent: 62.875,
+      yPercent: 33.833,
+      widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
+      heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "The Blue Bell Inn",
       actionKey: "map-closed"
     },
     {
       id: "map-trawlers-2",
-      xPercent: 82.875,
-      yPercent: 23.0,
+      xPercent: 83.25,
+      yPercent: 23.5,
+      widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
+      heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "Trawlers 2",
       actionKey: "map-closed"
     }
@@ -209,27 +245,24 @@ const HOTSPOTS = {
 
   // UNION – BAR AREA
   bar: [
-    // Order drink – bottom left area
     {
       id: "bar-order-drink",
-      xPercent: (200 - 25) / 800 * 100,
-      yPercent: (400 - 25) / 600 * 100,
+      xPercent: ((200 - 25) / 800) * 100,
+      yPercent: ((400 - 25) / 600) * 100,
       hoverText: "Order drink",
       actionKey: "order-drink"
     },
-    // Karaoke room – top right (EXIT sign area)
     {
       id: "bar-karaoke-room",
-      xPercent: (650 - 25) / 800 * 100,
-      yPercent: (50 - 25) / 600 * 100,
+      xPercent: ((650 - 25) / 800) * 100,
+      yPercent: ((50 - 25) / 600) * 100,
       hoverText: "Karaoke Room",
       actionKey: "go-karaoke"
     },
-    // Exit back to map – mid-right EXIT sign
     {
       id: "bar-exit-to-map",
-      xPercent: (455 - 25) / 800 * 100,
-      yPercent: (345 - 25) / 600 * 100,
+      xPercent: ((455 - 25) / 800) * 100,
+      yPercent: ((345 - 25) / 600) * 100,
       hoverText: "Back to map",
       actionKey: "back-to-map"
     }
@@ -237,19 +270,17 @@ const HOTSPOTS = {
 
   // UNION – KARAOKE ROOM
   karaoke: [
-    // Back to bar – top left of karaoke room
     {
       id: "karaoke-back-bar",
-      xPercent: (75 - 25) / 800 * 100,
-      yPercent: (50 - 25) / 600 * 100,
+      xPercent: ((75 - 25) / 800) * 100,
+      yPercent: ((50 - 25) / 600) * 100,
       hoverText: "Back to bar",
       actionKey: "back-to-bar"
     },
-    // Pick a song – bottom right area
     {
       id: "karaoke-pick-song",
-      xPercent: (647 - 25) / 800 * 100,
-      yPercent: (514 - 25) / 600 * 100,
+      xPercent: ((647 - 25) / 800) * 100,
+      yPercent: ((514 - 25) / 600) * 100,
       hoverText: "Pick a song",
       actionKey: "open-song-list"
     }
@@ -343,7 +374,6 @@ function addDrinkTrophy(imageUrl, altText) {
   iconRow.appendChild(slot);
 }
 
-// Spawn a drink visual on the bar, with optional full→empty fade
 function spawnDrinkOnBar(options) {
   if (!environmentFrame) return;
   const {
@@ -360,17 +390,15 @@ function spawnDrinkOnBar(options) {
   img.alt = "";
   img.className = "spawned-drink";
 
-  // position: bottom centre at (x, y)
   img.style.left = `${x}px`;
   img.style.top = `${y}px`;
   environmentFrame.appendChild(img);
 
   if (emptyUrl) {
-    // Fade from full to empty
     setTimeout(() => {
       img.classList.add("drink-fade-out");
       setTimeout(() => {
-        img.src = emptyUrl;
+        img.src = EMPTY_PINT_URL;
         img.classList.remove("drink-fade-out");
         img.classList.add("drink-fade-in");
 
@@ -382,7 +410,6 @@ function spawnDrinkOnBar(options) {
       }, fullMs / 2);
     }, 0);
   } else {
-    // Just fade out and remove
     setTimeout(() => {
       img.classList.add("drink-fade-out");
       setTimeout(() => img.remove(), fullMs / 2);
@@ -413,7 +440,6 @@ function triggerGameOver() {
 }
 
 function resetGame() {
-  // Reset state
   currentRoom = "map";
   currentSongId = SONG_LIST.length ? SONG_LIST[0].id : null;
   currentAudio = null;
@@ -424,7 +450,6 @@ function resetGame() {
   updateDrunknessDisplay();
   updateTrophyTitle();
 
-  // Clear UI
   if (iconRow) iconRow.innerHTML = "";
   if (actionLog) actionLog.innerHTML = "";
   if (actionsRow) actionsRow.innerHTML = "";
@@ -432,7 +457,6 @@ function resetGame() {
 
   if (gameOverOverlay) gameOverOverlay.classList.remove("is-visible");
 
-  // Back to map
   goToRoom("map", { initial: true });
   appendToLog("You unfold the map of Levenshulme.");
   dialogueText.textContent = "Where will you start tonight?";
@@ -489,7 +513,6 @@ function getSelectDialogue(song) {
   );
 }
 
-// Build song list overlay
 function renderSongList() {
   if (!songListContainer) return;
   songListContainer.innerHTML = "";
@@ -540,12 +563,25 @@ function renderHotspotsForRoom(roomId) {
     const el = document.createElement("button");
     el.className = "hotspot";
     el.dataset.actionKey = h.actionKey;
-    if (h.hoverText) el.dataset.hoverText = h.hoverText;
+
+    // Only attach hover text for non-map rooms
+    if (roomId !== "map" && h.hoverText) {
+      el.dataset.hoverText = h.hoverText;
+    }
+
+    const widthPercent =
+      typeof h.widthPercent === "number"
+        ? h.widthPercent
+        : HOTSPOT_SIZE.widthPercent;
+    const heightPercent =
+      typeof h.heightPercent === "number"
+        ? h.heightPercent
+        : HOTSPOT_SIZE.heightPercent;
 
     el.style.left = `${h.xPercent}%`;
     el.style.top = `${h.yPercent}%`;
-    el.style.width = `${HOTSPOT_SIZE.widthPercent}%`;
-    el.style.height = `${HOTSPOT_SIZE.heightPercent}%`;
+    el.style.width = `${widthPercent}%`;
+    el.style.height = `${heightPercent}%`;
     environmentFrame.appendChild(el);
   });
 }
@@ -623,7 +659,6 @@ function clearActions() {
   ensureActionsPanelVisible(false);
 }
 
-// Show drink menu in the actions area
 function showDrinkMenu() {
   actionsRow.innerHTML = "";
   ensureActionsPanelVisible(true);
@@ -699,7 +734,6 @@ function playSongById(songId) {
     });
 }
 
-// Main action dispatcher
 function performAction(actionKey, options = {}) {
   if (isGameOver) return;
 
@@ -753,7 +787,9 @@ function performAction(actionKey, options = {}) {
 
     const ref = { value: null };
     const res = getRandomFromArray(GUINNESS_DIALOGUE_OPTIONS, ref);
-    dialogueText.textContent = res ? res.value : "Mags hands you a Guinness.";
+    dialogueText.textContent = res
+      ? res.value
+      : "Mags hands you a Guinness.";
     appendToLog("You order a drink, Steve cackles.");
 
     addDrinkTrophy(FULL_PINT_URL, `Pint of stout #${drinkCount}`);
@@ -807,7 +843,6 @@ function handleActionsClick(event) {
 // -------------------------
 
 window.addEventListener("DOMContentLoaded", () => {
-  // Custom cursor inside environment frame
   if (environmentFrame) {
     customCursorEl = document.createElement("img");
     customCursorEl.src = POINTER_URL;
@@ -815,7 +850,6 @@ window.addEventListener("DOMContentLoaded", () => {
     customCursorEl.className = "custom-cursor";
     environmentFrame.appendChild(customCursorEl);
 
-    // Clicks on hotspots
     environmentFrame.addEventListener("click", (event) => {
       const hotspot = event.target.closest(".hotspot");
       if (!hotspot) return;
@@ -826,16 +860,22 @@ window.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // Cursor movement + hover label
     environmentFrame.addEventListener("mousemove", (event) => {
       const frameRect = environmentFrame.getBoundingClientRect();
 
+      // Move custom cursor
       if (customCursorEl) {
         const cx = event.clientX - frameRect.left;
         const cy = event.clientY - frameRect.top;
         customCursorEl.style.left = `${cx}px`;
         customCursorEl.style.top = `${cy}px`;
         customCursorEl.style.display = "block";
+      }
+
+      // No hover text on the map – hide label and bail
+      if (currentRoom === "map") {
+        if (hoverLabel) hoverLabel.classList.remove("is-visible");
+        return;
       }
 
       if (hoverLabel) {
@@ -873,12 +913,10 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Actions row (drink menu)
   if (actionsRow) {
     actionsRow.addEventListener("click", handleActionsClick);
   }
 
-  // Song list click
   if (songListContainer) {
     songListContainer.addEventListener("click", (event) => {
       const btn = event.target.closest(".song-list-item");
@@ -895,7 +933,6 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Mute toggle
   if (muteToggleBtn) {
     muteToggleBtn.addEventListener("click", () => {
       isMuted = !isMuted;
@@ -904,7 +941,6 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Restart
   if (restartButton) {
     restartButton.addEventListener("click", resetGame);
   }
