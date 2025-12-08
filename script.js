@@ -86,49 +86,46 @@ const MAP_HOTSPOT_WIDTH_PERCENT = (22 / 800) * 100; // 2.75
 const MAP_HOTSPOT_HEIGHT_PERCENT = (22 / 600) * 100; // 3.6667
 
 const HOTSPOTS = {
-  // MAP: each green circle on the map
+  // MAP: all locations, using your exact centre coordinates
   map: [
     {
-      id: "map-bakery",
-      // centre 147,17 => top-left (136,6) => 17%, 1%
-      xPercent: 17.0,
-      yPercent: 1.0,
+      id: "map-bakery", // Levenshulme Bakery 147,17
+      xPercent: 17.0, // (147-11)/800*100
+      yPercent: 1.0,  // (17-11)/600*100
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
       heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "Levenshulme Bakery",
       actionKey: "map-closed"
     },
     {
-      id: "map-station-hop",
-      xPercent: 17.25,
-      yPercent: 30.833,
+      id: "map-station-hop", // 160,208
+      xPercent: 18.625,
+      yPercent: 32.8333333333,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
       heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "Station Hop",
       actionKey: "map-closed"
     },
     {
-      id: "map-ny-krispy",
-      xPercent: 21.75,
-      yPercent: 40.667,
+      id: "map-ny-krispy", // 196,266
+      xPercent: 23.125,
+      yPercent: 42.5,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
       heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "New York Krispy",
       actionKey: "map-closed"
     },
     {
-      id: "map-union-inn",
-      xPercent: 21.875,
-      yPercent: 46.0,
+      id: "map-union-inn", // 196,298
+      xPercent: 23.125,
+      yPercent: 47.8333333333,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
       heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "Union Inn",
       actionKey: "go-union-from-map"
     },
     {
-      id: "map-overdraught",
-      // centre 192,328 => top-left (181,317)
-      // x% = 181/800*100 ≈ 22.625, y% = 317/600*100 ≈ 52.833
+      id: "map-overdraught", // 192,328
       xPercent: 22.625,
       yPercent: 52.8333333333,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
@@ -137,18 +134,16 @@ const HOTSPOTS = {
       actionKey: "map-closed"
     },
     {
-      id: "map-home",
-      xPercent: 4.75,
-      yPercent: 60.333,
+      id: "map-home", // 59,384
+      xPercent: 6.0,
+      yPercent: 62.1666666667,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
       heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "Home",
       actionKey: "map-closed"
     },
     {
-      id: "map-long-bois",
-      // centre 15,442 => top-left (4,431)
-      // x% = 4/800*100 = 0.5, y% = 431/600*100 ≈ 71.833
+      id: "map-long-bois", // 15,442
       xPercent: 0.5,
       yPercent: 71.8333333333,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
@@ -157,90 +152,88 @@ const HOTSPOTS = {
       actionKey: "map-closed"
     },
     {
-      id: "map-tesco",
-      xPercent: 23.25,
-      yPercent: 68.0,
+      id: "map-tesco", // 208,430
+      xPercent: 24.625,
+      yPercent: 69.8333333333,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
       heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "Tesco Superstore",
       actionKey: "map-closed"
     },
     {
-      id: "map-atm",
-      xPercent: 25.0,
-      yPercent: 72.5,
+      id: "map-atm", // 222,457
+      xPercent: 26.375,
+      yPercent: 74.3333333333,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
       heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "ATM",
       actionKey: "map-closed"
     },
     {
-      id: "map-levenshulme",
-      xPercent: 29.625,
-      yPercent: 80.333,
+      id: "map-levenshulme", // The Levenshulme 258,504
+      xPercent: 30.875,
+      yPercent: 82.1666666667,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
       heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "The Levenshulme",
       actionKey: "map-closed"
     },
     {
-      id: "map-talleyrand",
-      xPercent: 28.5,
-      yPercent: 81.333,
+      id: "map-talleyrand", // 244,524
+      xPercent: 29.125,
+      yPercent: 85.5,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
       heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "The Talleyrand",
       actionKey: "map-closed"
     },
     {
-      id: "map-isca",
-      xPercent: 28.0,
-      yPercent: 83.833,
+      id: "map-isca", // 258,552
+      xPercent: 30.875,
+      yPercent: 90.1666666667,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
       heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "Isca",
       actionKey: "map-closed"
     },
     {
-      id: "map-nordie",
-      xPercent: 30.75,
-      yPercent: 87.333,
-      widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
-      heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
-      hoverText: "Nordie",
-      actionKey: "map-closed"
-    },
-    {
-      id: "map-antiques",
-      xPercent: 30.375,
-      yPercent: 92.667,
+      id: "map-antiques", // Levenshulme Antiques Village 278,539
+      xPercent: 33.375,
+      yPercent: 88.0,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
       heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "Levenshulme Antiques Village",
       actionKey: "map-closed"
     },
     {
-      id: "map-station-south",
-      xPercent: 34.625,
-      yPercent: 93.333,
+      id: "map-nordie", // 264,578
+      xPercent: 31.625,
+      yPercent: 94.5,
+      widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
+      heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
+      hoverText: "Nordie",
+      actionKey: "map-closed"
+    },
+    {
+      id: "map-station-south", // 299,581
+      xPercent: 36.0,
+      yPercent: 95.0,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
       heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "Station South",
       actionKey: "map-closed"
     },
     {
-      id: "map-blue-bell",
-      xPercent: 62.875,
-      yPercent: 33.833,
+      id: "map-blue-bell", // The Blue Bell Inn 525,225
+      xPercent: 64.25,
+      yPercent: 35.6666666667,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
       heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "The Blue Bell Inn",
       actionKey: "map-closed"
     },
     {
-      id: "map-trawlers-2",
-      // centre 688,163 => top-left (677,152)
-      // x% = 677/800*100 ≈ 84.625, y% = 152/600*100 ≈ 25.333
+      id: "map-trawlers-2", // 688,163
       xPercent: 84.625,
       yPercent: 25.3333333333,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
@@ -601,6 +594,15 @@ function goToRoom(room, options = {}) {
   const { initial = false } = options;
   currentRoom = room;
   clearHoverUI();
+
+  // Toggle map-mode class so we can hide map hotspots visually
+  if (environmentFrame) {
+    if (room === "map") {
+      environmentFrame.classList.add("map-mode");
+    } else {
+      environmentFrame.classList.remove("map-mode");
+    }
+  }
 
   if (room === "map") {
     locationNameEl.textContent = "MAP";
