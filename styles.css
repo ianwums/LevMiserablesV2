@@ -2,11 +2,6 @@
    GLOBAL
 -------------------------- */
 
-:root {
-  /* Updated dynamically from JS based on environment height */
-  --env-height: 400px;
-}
-
 *,
 *::before,
 *::after {
@@ -42,7 +37,6 @@ body {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  align-items: center;
   gap: 8px;
 }
 
@@ -58,50 +52,24 @@ body {
 
 .header-status {
   display: flex;
-  gap: 10px;
+  gap: 12px;
+  align-items: center;
   font-size: 0.85rem;
   opacity: 0.9;
-  align-items: center;
 }
 
-/* Drunkness indicator */
-.drunkness-display {
-  padding: 2px 10px;
-  border-radius: 999px;
-  border: 1px solid #555;
-  background: rgba(120, 50, 50, 0.35);
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+.header-status-item {
+  white-space: nowrap;
 }
 
-/* Mute button in header */
-.mute-button {
+.mute-toggle {
   border-radius: 999px;
   border: 1px solid #555;
-  padding: 4px 10px;
+  padding: 6px 12px;
   background: #202231;
   color: inherit;
   font: inherit;
-  font-size: 0.85rem;
   cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  transition: background 0.1s ease-out, border-color 0.1s ease-out,
-    box-shadow 0.1s ease-out, transform 0.05s ease-out;
-}
-
-.mute-button:hover {
-  background: #27293b;
-  border-color: #7a7cff;
-  box-shadow: 0 0 6px rgba(122, 124, 255, 0.4);
-  transform: translateY(-1px);
-}
-
-.mute-button:active {
-  transform: translateY(0);
-  box-shadow: none;
 }
 
 /* -------------------------
@@ -114,7 +82,6 @@ body {
   gap: 12px;
 }
 
-/* Row 1: environment + right-hand column (history + trophies) */
 .scene-row {
   display: grid;
   grid-template-columns: minmax(0, 2.3fr) minmax(260px, 1fr);
@@ -122,7 +89,6 @@ body {
   align-items: flex-start;
 }
 
-/* Environment / image panel */
 .environment-panel {
   border: 1px solid #333;
   border-radius: 6px;
@@ -134,18 +100,15 @@ body {
   width: 100%;
   max-width: 800px;
   margin: 0 auto;
-  aspect-ratio: 4 / 3; /* 800x600 */
+  aspect-ratio: 4 / 3;
   border-radius: 6px;
   overflow: hidden;
   background: #090910;
   box-shadow: 0 0 16px rgba(0, 0, 0, 0.45);
   position: relative;
-
-  /* Hide native cursor inside the frame; we draw our own */
   cursor: none;
 }
 
-/* Base environment image (bar / karaoke room) */
 #environment-base {
   width: 100%;
   height: 100%;
@@ -153,20 +116,20 @@ body {
   display: block;
 }
 
-/* Right-hand column: stack history and trophies */
-.side-column {
+/* Right-hand column: history + trophies stacked */
+.log-trophies-column {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
 /* -------------------------
-   CUSTOM CURSOR (inside environment)
+   CUSTOM CURSOR
 -------------------------- */
 
 .custom-cursor {
   position: absolute;
-  width: 34px; /* ~70% of previous 48px size */
+  width: 34px;
   height: 34px;
   pointer-events: none;
   display: none;
@@ -216,7 +179,7 @@ body {
 }
 
 /* -------------------------
-   HISTORY (ACTION LOG)
+   HISTORY
 -------------------------- */
 
 .log-panel {
@@ -226,9 +189,9 @@ body {
   background: #14151f;
   display: flex;
   flex-direction: column;
-  height: calc(var(--env-height) * 0.48);
-  min-height: calc(var(--env-height) * 0.48);
-  max-height: calc(var(--env-height) * 0.48);
+  height: 40vh; /* fixed-ish height on desktop */
+  min-height: 150px;
+  max-height: 260px;
 }
 
 .panel-title {
@@ -247,41 +210,18 @@ body {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  overflow-y: scroll;      /* always show scrollbar track */
+  overflow-y: auto;
   scrollbar-width: thin;
   flex: 1;
 }
 
-/* Most recent action (first li) in bold */
+/* Most recent action bold */
 .log-list li:first-child {
   font-weight: 600;
 }
 
 /* -------------------------
-   DIALOGUE
--------------------------- */
-
-.lower-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 12px;
-}
-
-.dialogue-panel {
-  border: 1px solid #333;
-  border-radius: 6px;
-  padding: 8px 10px;
-  background: #14151f;
-}
-
-.dialogue-text {
-  font-size: 0.9rem;
-  line-height: 1.4;
-  min-height: 60px;
-}
-
-/* -------------------------
-   TROPHIES (ICONS)
+   TROPHIES
 -------------------------- */
 
 .icons-panel {
@@ -291,9 +231,9 @@ body {
   background: #14151f;
   display: flex;
   flex-direction: column;
-  height: calc(var(--env-height) * 0.48);
-  min-height: calc(var(--env-height) * 0.48);
-  max-height: calc(var(--env-height) * 0.48);
+  height: 40vh;
+  min-height: 150px;
+  max-height: 260px;
 }
 
 .icon-row {
@@ -301,10 +241,9 @@ body {
   flex-wrap: wrap;
   gap: 6px;
   align-items: flex-end;
-  min-height: 0;
-  max-height: 100%;
-  overflow-y: scroll;      /* always show scrollbar */
+  overflow-y: auto;
   scrollbar-width: thin;
+  flex: 1;
 }
 
 .drink-slot {
@@ -322,14 +261,47 @@ body {
 }
 
 /* -------------------------
-   ACTION BUTTON ROW
+   DIALOGUE ROW
+-------------------------- */
+
+.lower-row {
+  display: grid;
+  grid-template-columns: minmax(0, 2.3fr) minmax(220px, 1fr);
+  gap: 12px;
+}
+
+.dialogue-panel {
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 8px 10px;
+  background: #14151f;
+}
+
+.dialogue-text {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  min-height: 60px;
+}
+
+/* right-hand spacer (empty for now) */
+.spacer-panel {
+  border-radius: 6px;
+}
+
+/* -------------------------
+   ACTIONS
 -------------------------- */
 
 .actions-panel {
   border: 1px solid #333;
   border-radius: 6px;
-  padding: 4px 10px;
+  padding: 6px 10px;
   background: #14151f;
+  display: none;
+}
+
+.actions-panel.has-actions {
+  display: block;
 }
 
 .actions-row {
@@ -364,47 +336,7 @@ body {
 }
 
 /* -------------------------
-   DRINKS MENU (simple version)
--------------------------- */
-
-.drink-menu {
-  margin-top: 6px;
-  display: none;          /* toggled via JS */
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.drink-menu.is-visible {
-  display: flex;
-}
-
-.drink-menu-button {
-  border-radius: 999px;
-  border: 1px solid #555;
-  padding: 6px 12px;
-  background: #181927;
-  color: inherit;
-  font: inherit;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: background 0.1s ease-out, border-color 0.1s ease-out,
-    box-shadow 0.05s ease-out, transform 0.05s ease-out;
-}
-
-.drink-menu-button:hover {
-  background: #27293b;
-  border-color: #7a7cff;
-  box-shadow: 0 0 6px rgba(122, 124, 255, 0.4);
-  transform: translateY(-1px);
-}
-
-.drink-menu-button:active {
-  transform: translateY(0);
-  box-shadow: none;
-}
-
-/* -------------------------
-   SONG LIST OVERLAY
+   SONG LIST OVERLAY (KARAOKE)
 -------------------------- */
 
 .song-list-overlay {
@@ -425,6 +357,7 @@ body {
   pointer-events: none;
 }
 
+/* Coords: 445,358 652,341 429,583 668,586 */
 .song-list-overlay-inner {
   position: absolute;
   left: 53.625%;
@@ -455,10 +388,7 @@ body {
   font-family: inherit;
   font-size: 0.9rem;
   color: #000000;
-  text-shadow:
-    0 1px 2px #ffffff,
-    1px 0 2px #ffffff,
-    -1px 0 2px #ffffff,
+  text-shadow: 0 1px 2px #ffffff, 1px 0 2px #ffffff, -1px 0 2px #ffffff,
     0 -1px 2px #ffffff;
 }
 
@@ -490,10 +420,7 @@ body {
   font-family: inherit;
   font-size: 0.8rem;
   color: #000000;
-  text-shadow:
-    0 1px 2px #ffffff,
-    1px 0 2px #ffffff,
-    -1px 0 2px #ffffff,
+  text-shadow: 0 1px 2px #ffffff, 1px 0 2px #ffffff, -1px 0 2px #ffffff,
     0 -1px 2px #ffffff;
 }
 
@@ -529,49 +456,6 @@ body {
 }
 
 /* -------------------------
-   FLOATING PINT EFFECT
--------------------------- */
-
-.environment-pint-float {
-  position: absolute;
-  left: 13.5%;
-  top: 77%;
-  transform: translate(-50%, -100%);
-  height: 60px;
-  width: auto;
-  pointer-events: none;
-  opacity: 1;
-  z-index: 45;
-  transition: opacity 0.8s ease-out;
-}
-
-.environment-pint-full,
-.environment-pint-empty {
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: auto;
-  transition: opacity 0.9s ease-in-out;
-}
-
-.environment-pint-empty {
-  opacity: 0;
-}
-
-.environment-pint-empty.is-visible {
-  opacity: 1;
-}
-
-.environment-pint-full.is-fading {
-  opacity: 0;
-}
-
-.environment-pint-float.fade-out {
-  opacity: 0;
-}
-
-/* -------------------------
    ENVIRONMENT HOVER LABEL
 -------------------------- */
 
@@ -586,15 +470,34 @@ body {
   color: #000000;
   text-align: center;
   white-space: nowrap;
-  text-shadow:
-    0 1px 2px #ffffff,
-    1px 0 2px #ffffff,
-    -1px 0 2px #ffffff,
+  text-shadow: 0 1px 2px #ffffff, 1px 0 2px #ffffff, -1px 0 2px #ffffff,
     0 -1px 2px #ffffff;
 }
 
 .environment-hover-label.is-visible {
   display: block;
+}
+
+/* -------------------------
+   SPAWNED DRINK EFFECT
+-------------------------- */
+
+.spawned-drink {
+  position: absolute;
+  width: 50%;
+  max-width: 120px;
+  transform: translate(-50%, -100%);
+  pointer-events: none;
+  z-index: 20;
+  transition: opacity 0.4s linear;
+}
+
+.drink-fade-out {
+  opacity: 0;
+}
+
+.drink-fade-in {
+  opacity: 1;
 }
 
 /* -------------------------
@@ -604,73 +507,50 @@ body {
 .game-over-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.8); /* slightly more transparent than before */
+  background: rgba(0, 0, 0, 0.8);
   display: none;
   align-items: center;
   justify-content: center;
-  z-index: 999;
-  text-align: center;
-  padding: 20px;
+  z-index: 100;
 }
 
 .game-over-overlay.is-visible {
   display: flex;
 }
 
-.game-over-message {
-  color: #ff4444;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  line-height: 1.4;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
+.game-over-inner {
+  text-align: center;
+  max-width: 480px;
+  padding: 24px;
+  border-radius: 12px;
+  background: rgba(15, 15, 25, 0.9);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
 }
 
-/* "GAME OVER" double the previous 2rem size => 4rem */
-.game-over-title {
-  font-size: 4rem;
-  font-weight: 800;
+.game-over-text-large {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
 }
 
-/* Sub-line text */
-.game-over-subtitle {
-  font-size: 1.2rem;
-  max-width: 28rem;
+.game-over-text-sub {
+  font-size: 0.95rem;
+  margin-bottom: 16px;
 }
 
-/* Restart button */
 .restart-button {
-  margin-top: 8px;
   border-radius: 999px;
-  border: 1px solid #ff6666;
+  border: 1px solid #555;
   padding: 8px 18px;
-  background: #201010;
-  color: #ffdddd;
+  background: #202231;
+  color: inherit;
   font: inherit;
-  font-size: 0.9rem;
   cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  transition: background 0.1s ease-out, border-color 0.1s ease-out,
-    transform 0.05s ease-out, box-shadow 0.1s ease-out;
-}
-
-.restart-button:hover {
-  background: #3a1818;
-  border-color: #ffaaaa;
-  box-shadow: 0 0 10px rgba(255, 102, 102, 0.5);
-  transform: translateY(-1px);
-}
-
-.restart-button:active {
-  transform: translateY(0);
-  box-shadow: none;
 }
 
 /* -------------------------
-   ACCESSIBILITY HELPERS
+   ACCESSIBILITY
 -------------------------- */
 
 .visually-hidden {
@@ -697,10 +577,6 @@ body {
   .lower-row {
     grid-template-columns: 1fr;
   }
-
-  .game-over-title {
-    font-size: 3rem;
-  }
 }
 
 @media (max-width: 600px) {
@@ -718,17 +594,8 @@ body {
     flex-direction: column;
   }
 
-  .action-button,
-  .drink-menu-button {
+  .action-button {
     width: 100%;
     text-align: left;
-  }
-
-  .game-over-title {
-    font-size: 2.4rem;
-  }
-
-  .game-over-subtitle {
-    font-size: 1rem;
   }
 }
