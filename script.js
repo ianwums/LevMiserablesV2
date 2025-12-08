@@ -85,17 +85,14 @@ const HOTSPOT_SIZE = {
 const MAP_HOTSPOT_WIDTH_PERCENT = (22 / 800) * 100; // 2.75
 const MAP_HOTSPOT_HEIGHT_PERCENT = (22 / 600) * 100; // 3.6667
 
-// Small global offset so white rings sit centrally over green circles
-const MAP_HOTSPOT_OFFSET_X = -1.0; // shift left ~8px
-const MAP_HOTSPOT_OFFSET_Y = -0.5; // shift up  ~3px
-
 const HOTSPOTS = {
   // MAP: each green circle on the map
   map: [
     {
       id: "map-bakery",
-      xPercent: 15.75,
-      yPercent: 0,
+      // centre 147,17 => top-left (136,6) => 17%, 1%
+      xPercent: 17.0,
+      yPercent: 1.0,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
       heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "Levenshulme Bakery",
@@ -130,8 +127,10 @@ const HOTSPOTS = {
     },
     {
       id: "map-overdraught",
-      xPercent: 21.25,
-      yPercent: 51.0,
+      // centre 192,328 => top-left (181,317)
+      // x% = 181/800*100 ≈ 22.625, y% = 317/600*100 ≈ 52.833
+      xPercent: 22.625,
+      yPercent: 52.8333333333,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
       heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "OverDraught",
@@ -148,8 +147,10 @@ const HOTSPOTS = {
     },
     {
       id: "map-long-bois",
-      xPercent: 0,
-      yPercent: 70.0,
+      // centre 15,442 => top-left (4,431)
+      // x% = 4/800*100 = 0.5, y% = 431/600*100 ≈ 71.833
+      xPercent: 0.5,
+      yPercent: 71.8333333333,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
       heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "Long Boi's",
@@ -238,8 +239,10 @@ const HOTSPOTS = {
     },
     {
       id: "map-trawlers-2",
-      xPercent: 83.25,
-      yPercent: 23.5,
+      // centre 688,163 => top-left (677,152)
+      // x% = 677/800*100 ≈ 84.625, y% = 152/600*100 ≈ 25.333
+      xPercent: 84.625,
+      yPercent: 25.3333333333,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
       heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "Trawlers 2",
@@ -582,11 +585,8 @@ function renderHotspotsForRoom(roomId) {
         ? h.heightPercent
         : HOTSPOT_SIZE.heightPercent;
 
-    const offsetX = roomId === "map" ? MAP_HOTSPOT_OFFSET_X : 0;
-    const offsetY = roomId === "map" ? MAP_HOTSPOT_OFFSET_Y : 0;
-
-    el.style.left = `${h.xPercent + offsetX}%`;
-    el.style.top = `${h.yPercent + offsetY}%`;
+    el.style.left = `${h.xPercent}%`;
+    el.style.top = `${h.yPercent}%`;
     el.style.width = `${widthPercent}%`;
     el.style.height = `${heightPercent}%`;
     environmentFrame.appendChild(el);
@@ -870,7 +870,6 @@ window.addEventListener("DOMContentLoaded", () => {
     environmentFrame.addEventListener("mousemove", (event) => {
       const frameRect = environmentFrame.getBoundingClientRect();
 
-      // Move custom cursor
       if (customCursorEl) {
         const cx = event.clientX - frameRect.left;
         const cy = event.clientY - frameRect.top;
@@ -879,7 +878,7 @@ window.addEventListener("DOMContentLoaded", () => {
         customCursorEl.style.display = "block";
       }
 
-      // No hover text on the map – hide label and bail
+      // No hover text on the map
       if (currentRoom === "map") {
         if (hoverLabel) hoverLabel.classList.remove("is-visible");
         return;
