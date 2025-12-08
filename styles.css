@@ -100,13 +100,13 @@ body {
   width: 100%;
   max-width: 800px;
   margin: 0 auto;
-  aspect-ratio: 4 / 3; /* 800x600 */
+  aspect-ratio: 4 / 3;
   border-radius: 6px;
   overflow: hidden;
   background: #090910;
   box-shadow: 0 0 16px rgba(0, 0, 0, 0.45);
   position: relative;
-  cursor: none; /* hide native cursor inside the frame */
+  cursor: none;
 }
 
 #environment-base {
@@ -129,7 +129,7 @@ body {
 
 .custom-cursor {
   position: absolute;
-  width: 34px; /* ~70% of previous 48px size */
+  width: 34px;
   height: 34px;
   pointer-events: none;
   display: none;
@@ -147,7 +147,7 @@ body {
   left: 47%;
   width: 15.5%;
   height: 10%;
-  display: none; /* shown/hidden via JS */
+  display: none;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -215,6 +215,7 @@ body {
   flex: 1;
 }
 
+/* Most recent history bold */
 .log-list li:first-child {
   font-weight: 600;
 }
@@ -282,7 +283,7 @@ body {
   min-height: 60px;
 }
 
-/* right-hand spacer (empty for now) */
+/* right-hand spacer (placeholder for future UI) */
 .spacer-panel {
   border-radius: 6px;
 }
@@ -356,7 +357,7 @@ body {
   pointer-events: none;
 }
 
-/* Coords: 445,358 652,341 429,583 668,586 => box around bottom-right TV area */
+/* Coords: 445,358 652,341 429,583 668,586 */
 .song-list-overlay-inner {
   position: absolute;
   left: 53.625%;
@@ -387,10 +388,7 @@ body {
   font-family: inherit;
   font-size: 0.9rem;
   color: #000000;
-  text-shadow:
-    0 1px 2px #ffffff,
-    1px 0 2px #ffffff,
-    -1px 0 2px #ffffff,
+  text-shadow: 0 1px 2px #ffffff, 1px 0 2px #ffffff, -1px 0 2px #ffffff,
     0 -1px 2px #ffffff;
 }
 
@@ -422,10 +420,7 @@ body {
   font-family: inherit;
   font-size: 0.8rem;
   color: #000000;
-  text-shadow:
-    0 1px 2px #ffffff,
-    1px 0 2px #ffffff,
-    -1px 0 2px #ffffff,
+  text-shadow: 0 1px 2px #ffffff, 1px 0 2px #ffffff, -1px 0 2px #ffffff,
     0 -1px 2px #ffffff;
 }
 
@@ -454,13 +449,14 @@ body {
   cursor: inherit;
 }
 
+/* subtle brightness / highlight when hovering a hotspot */
 .hotspot:hover {
   background: rgba(255, 255, 255, 0.18);
   border-color: rgba(255, 255, 255, 0.75);
   mix-blend-mode: screen;
 }
 
-/* Map-specific: hotspots are invisible (we rely on green dots in the image) */
+/* Map-specific: hotspots invisible (rely on green dots) */
 .environment-frame.map-mode .hotspot,
 .environment-frame.map-mode .hotspot:hover {
   border: none;
@@ -483,10 +479,7 @@ body {
   color: #000000;
   text-align: center;
   white-space: nowrap;
-  text-shadow:
-    0 1px 2px #ffffff,
-    1px 0 2px #ffffff,
-    -1px 0 2px #ffffff,
+  text-shadow: 0 1px 2px #ffffff, 1px 0 2px #ffffff, -1px 0 2px #ffffff,
     0 -1px 2px #ffffff;
 }
 
@@ -495,58 +488,68 @@ body {
 }
 
 /* -------------------------
-   MAP LOCATION HOVER CARD
+   MAP LOCATION CARD
 -------------------------- */
 
-.location-hover-card {
+.map-location-card {
   position: absolute;
   display: none;
   z-index: 35;
-  transform: translate(-50%, -50%);
-  pointer-events: none; /* critical to avoid flicker over hotspots */
+  pointer-events: none; /* prevents flicker */
 }
 
-.location-hover-card-inner {
+.map-location-card.is-visible {
+  display: block;
+}
+
+.map-location-card-inner {
+  background: #f2a632;
+  color: #111;
+  border-radius: 20px;
+  padding: 16px 20px;
+  min-width: 220px;
+  max-width: 260px;
+  min-height: 110px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  border-radius: 24px;
-  background: #f2aa2a;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
-  min-width: 220px;
-  max-width: 320px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
 }
 
-.location-hover-card-title {
-  font-weight: 800;
-  font-size: 1.1rem;
-  letter-spacing: 0.06em;
-  color: #000000;
+.map-location-card-title {
+  font-weight: 700;
+  font-size: 1rem;
+  margin-right: 16px;
 }
 
-.location-hover-card-image,
-.location-hover-card-placeholder {
-  width: 110px;
-  height: 110px;
+.map-location-card-image-wrapper {
+  width: 90px;
+  height: 90px;
   border-radius: 6px;
-}
-
-.location-hover-card-image {
-  object-fit: cover;
-  border: 3px solid #000000;
-  display: none;
-}
-
-.location-hover-card-placeholder {
+  overflow: hidden;
+  position: relative;
+  background: rgba(0, 0, 0, 0.12);
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 3px dashed #000000;
-  font-weight: 700;
-  font-size: 0.9rem;
-  color: #000000;
-  background: rgba(255, 255, 255, 0.3);
+}
+
+.map-location-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: none;
+}
+
+.map-location-card-placeholder {
+  width: 100%;
+  height: 100%;
+  border: 2px dashed rgba(0, 0, 0, 0.6);
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* -------------------------
@@ -561,14 +564,15 @@ body {
   pointer-events: none;
   z-index: 20;
   transition: opacity 0.4s linear;
-}
-
-.drink-fade-out {
   opacity: 0;
 }
 
 .drink-fade-in {
   opacity: 1;
+}
+
+.drink-fade-out {
+  opacity: 0;
 }
 
 /* -------------------------
