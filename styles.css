@@ -446,13 +446,22 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.35);
   background: rgba(255, 255, 255, 0.08);
   padding: 0;
-  cursor: inherit;
+  cursor: inherit; /* follow the custom cursor behaviour */
 }
 
+/* subtle brightness / highlight over the image when hovering a hotspot */
 .hotspot:hover {
   background: rgba(255, 255, 255, 0.18);
   border-color: rgba(255, 255, 255, 0.75);
   mix-blend-mode: screen;
+}
+
+/* Map-specific: hotspots are invisible (we rely on the green dots in the image) */
+.environment-frame.map-mode .hotspot,
+.environment-frame.map-mode .hotspot:hover {
+  border: none;
+  background: transparent;
+  mix-blend-mode: normal;
 }
 
 /* -------------------------
