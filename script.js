@@ -23,6 +23,11 @@ const gameOverOverlay = document.getElementById("game-over-overlay");
 const restartButton = document.getElementById("restart-button");
 const trophiesTitle = document.getElementById("trophies-title");
 
+// Map hover card DOM
+const locationCard = document.getElementById("location-hover-card");
+const locationCardTitle = document.getElementById("location-card-title");
+const locationCardImage = document.getElementById("location-card-image");
+
 // -------------------------
 // CONSTANTS / ASSETS
 // -------------------------
@@ -43,6 +48,9 @@ const JAEGER_URL =
 
 const POINTER_URL =
   "https://levmiserables.s3.eu-north-1.amazonaws.com/UI_Elements/pointer.gif";
+
+const HOME_ICON_URL =
+  "https://levmiserables.s3.eu-north-1.amazonaws.com/images/locationicons/homeiconpix.png";
 
 const DRUNKNESS_LIMIT = 10;
 
@@ -72,26 +80,26 @@ const GUINNESS_DIALOGUE_OPTIONS = [
 ];
 
 // -------------------------
-// HOTSPOTS (percent relative to 800x600)
+// HOTSPOTS
 // -------------------------
 
 // Default hotspot size for bar/karaoke: 50x50px
 const HOTSPOT_SIZE = {
-  widthPercent: (50 / 800) * 100, // 6.25
-  heightPercent: (50 / 600) * 100 // 8.333...
+  widthPercent: (50 / 800) * 100,
+  heightPercent: (50 / 600) * 100
 };
 
-// Map hotspots: 22px × 22px
-const MAP_HOTSPOT_WIDTH_PERCENT = (22 / 800) * 100; // 2.75
-const MAP_HOTSPOT_HEIGHT_PERCENT = (22 / 600) * 100; // 3.6667
+// Map hotspots: 22x22px
+const MAP_HOTSPOT_WIDTH_PERCENT = (22 / 800) * 100;
+const MAP_HOTSPOT_HEIGHT_PERCENT = (22 / 600) * 100;
 
 const HOTSPOTS = {
-  // MAP: all locations, using your exact centre coordinates
+  // MAP: using provided 800x600 centre coordinates
   map: [
     {
       id: "map-bakery", // Levenshulme Bakery 147,17
-      xPercent: 17.0, // (147-11)/800*100
-      yPercent: 1.0,  // (17-11)/600*100
+      xPercent: ((147 - 11) / 800) * 100,
+      yPercent: ((17 - 11) / 600) * 100,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
       heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "Levenshulme Bakery",
@@ -99,8 +107,8 @@ const HOTSPOTS = {
     },
     {
       id: "map-station-hop", // 160,208
-      xPercent: 18.625,
-      yPercent: 32.8333333333,
+      xPercent: ((160 - 11) / 800) * 100,
+      yPercent: ((208 - 11) / 600) * 100,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
       heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "Station Hop",
@@ -108,8 +116,8 @@ const HOTSPOTS = {
     },
     {
       id: "map-ny-krispy", // 196,266
-      xPercent: 23.125,
-      yPercent: 42.5,
+      xPercent: ((196 - 11) / 800) * 100,
+      yPercent: ((266 - 11) / 600) * 100,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
       heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "New York Krispy",
@@ -117,8 +125,8 @@ const HOTSPOTS = {
     },
     {
       id: "map-union-inn", // 196,298
-      xPercent: 23.125,
-      yPercent: 47.8333333333,
+      xPercent: ((196 - 11) / 800) * 100,
+      yPercent: ((298 - 11) / 600) * 100,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
       heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "Union Inn",
@@ -126,8 +134,8 @@ const HOTSPOTS = {
     },
     {
       id: "map-overdraught", // 192,328
-      xPercent: 22.625,
-      yPercent: 52.8333333333,
+      xPercent: ((192 - 11) / 800) * 100,
+      yPercent: ((328 - 11) / 600) * 100,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
       heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "OverDraught",
@@ -135,8 +143,8 @@ const HOTSPOTS = {
     },
     {
       id: "map-home", // 59,384
-      xPercent: 6.0,
-      yPercent: 62.1666666667,
+      xPercent: ((59 - 11) / 800) * 100,
+      yPercent: ((384 - 11) / 600) * 100,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
       heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "Home",
@@ -144,8 +152,8 @@ const HOTSPOTS = {
     },
     {
       id: "map-long-bois", // 15,442
-      xPercent: 0.5,
-      yPercent: 71.8333333333,
+      xPercent: ((15 - 11) / 800) * 100,
+      yPercent: ((442 - 11) / 600) * 100,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
       heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "Long Boi's",
@@ -153,8 +161,8 @@ const HOTSPOTS = {
     },
     {
       id: "map-tesco", // 208,430
-      xPercent: 24.625,
-      yPercent: 69.8333333333,
+      xPercent: ((208 - 11) / 800) * 100,
+      yPercent: ((430 - 11) / 600) * 100,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
       heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "Tesco Superstore",
@@ -162,17 +170,17 @@ const HOTSPOTS = {
     },
     {
       id: "map-atm", // 222,457
-      xPercent: 26.375,
-      yPercent: 74.3333333333,
+      xPercent: ((222 - 11) / 800) * 100,
+      yPercent: ((457 - 11) / 600) * 100,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
       heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "ATM",
       actionKey: "map-closed"
     },
     {
-      id: "map-levenshulme", // The Levenshulme 258,504
-      xPercent: 30.875,
-      yPercent: 82.1666666667,
+      id: "map-levenshulme", // 258,504
+      xPercent: ((258 - 11) / 800) * 100,
+      yPercent: ((504 - 11) / 600) * 100,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
       heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "The Levenshulme",
@@ -180,8 +188,8 @@ const HOTSPOTS = {
     },
     {
       id: "map-talleyrand", // 244,524
-      xPercent: 29.125,
-      yPercent: 85.5,
+      xPercent: ((244 - 11) / 800) * 100,
+      yPercent: ((524 - 11) / 600) * 100,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
       heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "The Talleyrand",
@@ -189,17 +197,17 @@ const HOTSPOTS = {
     },
     {
       id: "map-isca", // 258,552
-      xPercent: 30.875,
-      yPercent: 90.1666666667,
+      xPercent: ((258 - 11) / 800) * 100,
+      yPercent: ((552 - 11) / 600) * 100,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
       heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "Isca",
       actionKey: "map-closed"
     },
     {
-      id: "map-antiques", // Levenshulme Antiques Village 278,539
-      xPercent: 33.375,
-      yPercent: 88.0,
+      id: "map-antiques", // 278,539
+      xPercent: ((278 - 11) / 800) * 100,
+      yPercent: ((539 - 11) / 600) * 100,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
       heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "Levenshulme Antiques Village",
@@ -207,8 +215,8 @@ const HOTSPOTS = {
     },
     {
       id: "map-nordie", // 264,578
-      xPercent: 31.625,
-      yPercent: 94.5,
+      xPercent: ((264 - 11) / 800) * 100,
+      yPercent: ((578 - 11) / 600) * 100,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
       heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "Nordie",
@@ -216,17 +224,17 @@ const HOTSPOTS = {
     },
     {
       id: "map-station-south", // 299,581
-      xPercent: 36.0,
-      yPercent: 95.0,
+      xPercent: ((299 - 11) / 800) * 100,
+      yPercent: ((581 - 11) / 600) * 100,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
       heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "Station South",
       actionKey: "map-closed"
     },
     {
-      id: "map-blue-bell", // The Blue Bell Inn 525,225
-      xPercent: 64.25,
-      yPercent: 35.6666666667,
+      id: "map-blue-bell", // 525,225
+      xPercent: ((525 - 11) / 800) * 100,
+      yPercent: ((225 - 11) / 600) * 100,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
       heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "The Blue Bell Inn",
@@ -234,8 +242,8 @@ const HOTSPOTS = {
     },
     {
       id: "map-trawlers-2", // 688,163
-      xPercent: 84.625,
-      yPercent: 25.3333333333,
+      xPercent: ((688 - 11) / 800) * 100,
+      yPercent: ((163 - 11) / 600) * 100,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
       heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "Trawlers 2",
@@ -285,6 +293,17 @@ const HOTSPOTS = {
       actionKey: "open-song-list"
     }
   ]
+};
+
+// Map location metadata for hover cards (only HOME for now)
+const MAP_LOCATION_INFO = {
+  "map-home": {
+    title: "HOME",
+    imageUrl: HOME_ICON_URL,
+    // Card centre in 800x600 coords (roughly matching your mock)
+    cardCenterX: 270,
+    cardCenterY: 300
+  }
 };
 
 // -------------------------
@@ -352,6 +371,35 @@ function updateTrophyTitle() {
 function updateDrunknessDisplay() {
   if (!drunknessDisplay) return;
   drunknessDisplay.textContent = `Drunkness: ${drunkness}`;
+}
+
+// -------------------------
+// MAP HOVER CARD HELPERS
+// -------------------------
+
+function hideLocationCard() {
+  if (locationCard) {
+    locationCard.style.display = "none";
+  }
+}
+
+function showLocationCardFor(info) {
+  if (!locationCard || !locationCardTitle || !locationCardImage) return;
+  if (!environmentFrame) return;
+
+  const frameRect = environmentFrame.getBoundingClientRect();
+
+  const x =
+    (info.cardCenterX / 800) * frameRect.width; // 800x600 logical to pixels
+  const y = (info.cardCenterY / 600) * frameRect.height;
+
+  locationCard.style.left = `${x}px`;
+  locationCard.style.top = `${y}px`;
+
+  locationCardTitle.textContent = info.title;
+  locationCardImage.src = info.imageUrl;
+
+  locationCard.style.display = "block";
 }
 
 // -------------------------
@@ -434,6 +482,7 @@ function triggerGameOver() {
   stopCurrentAudio();
   setSongDetailsVisible(false);
   hideSongListOverlay();
+  hideLocationCard();
   if (gameOverOverlay) {
     gameOverOverlay.classList.add("is-visible");
   }
@@ -563,6 +612,7 @@ function renderHotspotsForRoom(roomId) {
     const el = document.createElement("button");
     el.className = "hotspot";
     el.dataset.actionKey = h.actionKey;
+    if (h.id) el.id = h.id;
 
     // Only attach hover text for non-map rooms
     if (roomId !== "map" && h.hoverText) {
@@ -594,8 +644,8 @@ function goToRoom(room, options = {}) {
   const { initial = false } = options;
   currentRoom = room;
   clearHoverUI();
+  hideLocationCard();
 
-  // Toggle map-mode class so we can hide map hotspots visually
   if (environmentFrame) {
     if (room === "map") {
       environmentFrame.classList.add("map-mode");
@@ -839,12 +889,15 @@ function performAction(actionKey, options = {}) {
 // EVENT HANDLERS
 // -------------------------
 
-function handleActionsClick(event) {
-  const button = event.target.closest(".action-button");
-  if (!button) return;
-  const key = button.dataset.action;
-  if (!key) return;
-  performAction(key);
+function ensureActionsClickHandler() {
+  if (!actionsRow) return;
+  actionsRow.addEventListener("click", (event) => {
+    const button = event.target.closest(".action-button");
+    if (!button) return;
+    const key = button.dataset.action;
+    if (!key) return;
+    performAction(key);
+  });
 }
 
 // -------------------------
@@ -872,6 +925,7 @@ window.addEventListener("DOMContentLoaded", () => {
     environmentFrame.addEventListener("mousemove", (event) => {
       const frameRect = environmentFrame.getBoundingClientRect();
 
+      // Move custom cursor
       if (customCursorEl) {
         const cx = event.clientX - frameRect.left;
         const cy = event.clientY - frameRect.top;
@@ -880,11 +934,21 @@ window.addEventListener("DOMContentLoaded", () => {
         customCursorEl.style.display = "block";
       }
 
-      // No hover text on the map
+      // MAP: no text label, but show hover card if known location
       if (currentRoom === "map") {
         if (hoverLabel) hoverLabel.classList.remove("is-visible");
+
+        const hotspot = event.target.closest(".hotspot");
+        if (hotspot && hotspot.id && MAP_LOCATION_INFO[hotspot.id]) {
+          showLocationCardFor(MAP_LOCATION_INFO[hotspot.id]);
+        } else {
+          hideLocationCard();
+        }
         return;
       }
+
+      // Non-map rooms: standard hover label, no map card
+      hideLocationCard();
 
       if (hoverLabel) {
         const hotspot = event.target.closest(".hotspot");
@@ -918,12 +982,11 @@ window.addEventListener("DOMContentLoaded", () => {
     environmentFrame.addEventListener("mouseleave", () => {
       if (customCursorEl) customCursorEl.style.display = "none";
       clearHoverUI();
+      hideLocationCard();
     });
   }
 
-  if (actionsRow) {
-    actionsRow.addEventListener("click", handleActionsClick);
-  }
+  ensureActionsClickHandler();
 
   if (songListContainer) {
     songListContainer.addEventListener("click", (event) => {
