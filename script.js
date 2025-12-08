@@ -87,8 +87,6 @@ const GUINNESS_DIALOGUE_OPTIONS = [
 // HOTSPOTS
 // =========================
 
-// Helper to convert centre coordinates to percentage top-left with
-// a given diameter (relative to 800x600 base).
 function hotspotFromCenter(x, y, diameter) {
   const r = diameter / 2;
   const left = x - r;
@@ -101,10 +99,8 @@ function hotspotFromCenter(x, y, diameter) {
   };
 }
 
-// All hotspots keyed by room
 const HOTSPOTS = {
   map: [
-    // 22px diameter circles centred on the green dots
     (() => {
       const d = 22;
       const defs = [
@@ -136,14 +132,12 @@ const HOTSPOTS = {
           yPercent: b.yPercent,
           widthPercent: b.widthPercent,
           heightPercent: b.heightPercent
-          // no hoverText on the map – labels are baked into the image
         };
       });
     })()
   ].flat(),
 
   bar: [
-    // Order drink hotspot – centre 200,400
     (() => {
       const d = 50;
       const b = hotspotFromCenter(200, 400, d);
@@ -157,7 +151,6 @@ const HOTSPOTS = {
         actionKey: "order-drink"
       };
     })(),
-    // Karaoke room hotspot – centre 650,50
     (() => {
       const d = 50;
       const b = hotspotFromCenter(650, 50, d);
@@ -174,7 +167,6 @@ const HOTSPOTS = {
   ],
 
   karaoke: [
-    // Back to bar – centre 75,50
     (() => {
       const d = 50;
       const b = hotspotFromCenter(75, 50, d);
@@ -188,7 +180,6 @@ const HOTSPOTS = {
         actionKey: "back-to-bar"
       };
     })(),
-    // Song list – centre 647,514
     (() => {
       const d = 50;
       const b = hotspotFromCenter(647, 514, d);
@@ -343,7 +334,6 @@ function updateTrophiesTitle() {
   }
 }
 
-// Stop any currently playing audio
 function stopCurrentAudio() {
   if (currentAudio) {
     try {
@@ -356,7 +346,6 @@ function stopCurrentAudio() {
   }
 }
 
-// Pick random karaoke end-of-song log line (no immediate repeats)
 function getRandomKaraokeEndLogMessage() {
   const len = KARAOKE_END_LOG_MESSAGES.length;
   if (!len) return "";
@@ -371,7 +360,6 @@ function getRandomKaraokeEndLogMessage() {
   return KARAOKE_END_LOG_MESSAGES[index];
 }
 
-// Clear hover label
 function clearHoverUI() {
   if (hoverLabel) {
     hoverLabel.classList.remove("is-visible");
@@ -390,8 +378,31 @@ function showLocationCardFor(info) {
 
   const frameRect = environmentFrame.getBoundingClientRect();
 
-  const x = (info.cardCenterX / 800) * frameRect.width;
-  const y = (info.cardCenterY / 600) * frameRect.height;
+  // Base position from hotspot centre (0–800 / 0–600 -> frame size)
+  const baseX = (info.cardCenterX / 800) * frameRect.width;
+  const baseY = (info.cardCenterY / 600) * frameRect.height;
+
+  // Offset card above or below hotspot depending on whether it's in
+  // the top or bottom half of the map.
+  const verticalOffset = frameRect.height * 0.1; // 10% of frame height
+  let x = baseX;
+  let y = baseY + (info.cardCenterY < 300 ? verticalOffset : -verticalOffset);
+
+  // Approximate card size as a fraction of frame size for clamping
+  const approxCardWidth = frameRect.width * 0.3;  // ~30% of width
+  const approxCardHeight = frameRect.height * 0.23; // ~23% of height
+  const halfW = approxCardWidth / 2;
+  const halfH = approxCardHeight / 2;
+
+  const minX = halfW;
+  const maxX = frameRect.width - halfW;
+  const minY = halfH;
+  const maxY = frameRect.height - halfH;
+
+  if (x < minX) x = minX;
+  if (x > maxX) x = maxX;
+  if (y < minY) y = minY;
+  if (y > maxY) y = maxY;
 
   locationCard.style.left = `${x}px`;
   locationCard.style.top = `${y}px`;
@@ -495,7 +506,6 @@ function setCurrentSong(songId) {
   adjustSongFontSizes(titleText);
 }
 
-// Show/hide actions panel
 function clearActions() {
   actionsRow.innerHTML = "";
   actionsPanel.classList.remove("has-actions");
@@ -630,7 +640,6 @@ function addDrinkIcon(type) {
   iconRow.appendChild(slot);
 }
 
-// Spawn drink on bar with fade effect
 function spawnDrinkOnBar(type) {
   if (!environmentFrame) return;
 
@@ -638,7 +647,6 @@ function spawnDrinkOnBar(type) {
   fullImg.className = "spawned-drink";
   fullImg.src = type === "jaeger" ? JAEGER_URL : FULL_PINT_URL;
 
-  // For now both drinks spawn at same coordinate (bottom-centre)
   const spawnX = 108;
   const spawnY = 462;
 
@@ -648,13 +656,11 @@ function spawnDrinkOnBar(type) {
 
   environmentFrame.appendChild(fullImg);
 
-  // Fade in
   requestAnimationFrame(() => {
     fullImg.classList.add("drink-fade-in");
   });
 
   if (type === "jaeger") {
-    // Just fade away after a short time
     setTimeout(() => {
       fullImg.classList.remove("drink-fade-in");
       fullImg.classList.add("drink-fade-out");
@@ -664,7 +670,6 @@ function spawnDrinkOnBar(type) {
       fullImg.remove();
     }, 3400);
   } else {
-    // Guinness: crossfade to empty glass, then fade out
     const emptyImg = document.createElement("img");
     emptyImg.className = "spawned-drink";
     emptyImg.src = EMPTY_PINT_URL;
@@ -825,9 +830,7 @@ function showDrinkMenu() {
   actionsPanel.classList.add("has-actions");
 }
 
-// General action dispatcher for buttons + hotspots
 function performAction(actionKey) {
-  // Navigation
   if (actionKey === "go-union-bar") {
     goToRoom("bar");
     return;
@@ -841,26 +844,22 @@ function performAction(actionKey) {
     return;
   }
 
-  // Map closed locations
   if (actionKey === "map-closed") {
     appendToLog("Looks like they are closed.");
     dialogueText.textContent = "Looks like they are closed.";
     return;
   }
 
-  // Karaoke song list
   if (actionKey === "open-song-list" && currentRoom === "karaoke") {
     showSongListOverlay();
     return;
   }
 
-  // Bar drink menu
   if (actionKey === "order-drink" && currentRoom === "bar") {
     showDrinkMenu();
     return;
   }
 
-  // Drink choices
   if (actionKey === "order-guinness") {
     const line =
       GUINNESS_DIALOGUE_OPTIONS[
@@ -895,15 +894,12 @@ function handleActionClick(event) {
 // =========================
 
 window.addEventListener("DOMContentLoaded", () => {
-  // Actions bar clicks
   actionsRow.addEventListener("click", handleActionClick);
 
-  // Restart
   if (restartButton) {
     restartButton.addEventListener("click", resetGameState);
   }
 
-  // Mute toggle
   if (muteToggleBtn) {
     muteToggleBtn.addEventListener("click", () => {
       isMuted = !isMuted;
@@ -914,7 +910,6 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Custom cursor + hotspot interactions
   if (environmentFrame) {
     customCursorEl = document.createElement("img");
     customCursorEl.src = POINTER_URL;
@@ -922,7 +917,6 @@ window.addEventListener("DOMContentLoaded", () => {
     customCursorEl.className = "custom-cursor";
     environmentFrame.appendChild(customCursorEl);
 
-    // Hotspot click handling
     environmentFrame.addEventListener("click", (event) => {
       const hotspot = event.target.closest(".hotspot");
       if (!hotspot) return;
@@ -932,11 +926,9 @@ window.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // Cursor movement + hover label / map card
     environmentFrame.addEventListener("mousemove", (event) => {
       const frameRect = environmentFrame.getBoundingClientRect();
 
-      // Move custom cursor
       if (customCursorEl) {
         const cx = event.clientX - frameRect.left;
         const cy = event.clientY - frameRect.top;
@@ -948,7 +940,6 @@ window.addEventListener("DOMContentLoaded", () => {
       const hotspot = event.target.closest(".hotspot");
 
       if (currentRoom === "map") {
-        // Map: use hover cards, no text label
         clearHoverUI();
 
         if (hotspot && hotspot.id && MAP_LOCATION_INFO[hotspot.id]) {
@@ -957,7 +948,6 @@ window.addEventListener("DOMContentLoaded", () => {
           hideLocationCard();
         }
       } else {
-        // Bar / Karaoke: use text hover label, no map card
         hideLocationCard();
 
         if (hoverLabel && hotspot && hotspot.dataset.hoverText) {
@@ -967,7 +957,6 @@ window.addEventListener("DOMContentLoaded", () => {
           const hotRect = hotspot.getBoundingClientRect();
           const centerX = hotRect.left + hotRect.width / 2 - frameRect.left;
 
-          // Position label above hotspot
           hoverLabel.style.left = `${centerX}px`;
           hoverLabel.style.top = `0px`;
 
@@ -1000,7 +989,6 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Song list selection
   if (songListContainer) {
     songListContainer.addEventListener("click", (event) => {
       const btn = event.target.closest(".song-list-item");
@@ -1011,7 +999,6 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Song list close button
   if (songListCloseBtn) {
     songListCloseBtn.addEventListener("click", () => {
       hideSongListOverlay();
@@ -1022,7 +1009,6 @@ window.addEventListener("DOMContentLoaded", () => {
     setCurrentSong(currentSongId);
   }
 
-  // Initial state
   updateDrunknessDisplay();
   updateTrophiesTitle();
 
