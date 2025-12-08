@@ -14,27 +14,33 @@ const songTitleEl = document.querySelector(".song-title");
 const songArtistEl = document.querySelector(".song-artist");
 const environmentFrame = document.getElementById("environment-frame");
 const hoverLabel = document.getElementById("environment-hover-label");
-const drunknessDisplay = document.getElementById("drunkness-display");
+const drunknessValueEl = document.getElementById("drunkness-value");
+const trophiesTitleEl = document.getElementById("trophies-title");
 const muteToggleBtn = document.getElementById("mute-toggle");
-const gameOverOverlay = document.getElementById("game-over-overlay");
-const restartButton = document.getElementById("restart-button");
-const trophiesTitle = document.getElementById("trophies-title");
 
 // Song list overlay
 const songListOverlay = document.getElementById("song-list-overlay");
 const songListContainer = document.getElementById("song-list-container");
 const songListCloseBtn = document.getElementById("song-list-close");
 
-// Map hover card
-const locationCard = document.getElementById("location-hover-card");
-const locationCardTitle = document.getElementById("location-card-title");
-const locationCardImage = document.getElementById("location-card-image");
-const locationCardPlaceholder = document.getElementById(
-  "location-card-placeholder"
+// Game over overlay
+const gameOverOverlay = document.getElementById("game-over-overlay");
+const gameOverRestartBtn = document.getElementById("game-over-restart");
+
+// Map location card
+const mapLocationCardEl = document.getElementById("map-location-card");
+const mapLocationCardTitleEl = document.getElementById(
+  "map-location-card-title"
+);
+const mapLocationCardImageEl = document.getElementById(
+  "map-location-card-image"
+);
+const mapLocationCardPlaceholderEl = document.getElementById(
+  "map-location-card-placeholder"
 );
 
 // =========================
-// CONSTANTS / ASSETS
+// IMAGE / AUDIO URLS
 // =========================
 
 const MAP_IMAGE =
@@ -48,25 +54,30 @@ const FULL_PINT_URL =
   "https://levmiserables.s3.eu-north-1.amazonaws.com/images/guinesspint_full.gif";
 const EMPTY_PINT_URL =
   "https://levmiserables.s3.eu-north-1.amazonaws.com/images/guinesspint_empty.gif";
-const JAEGER_URL =
+const JAGER_IMAGE_URL =
   "https://levmiserables.s3.eu-north-1.amazonaws.com/images/Ja%CC%88gerbombPixel.png";
 
 const POINTER_URL =
   "https://levmiserables.s3.eu-north-1.amazonaws.com/UI_Elements/pointer.gif";
 
-const HOME_ICON_URL =
-  "https://levmiserables.s3.eu-north-1.amazonaws.com/images/locationicons/homeiconpix.png";
+// Map location card icons
+const MAP_LOCATION_ICONS = {
+  home:
+    "https://levmiserables.s3.eu-north-1.amazonaws.com/images/locationicons/homeiconpix.png"
+  // others will use placeholder for now
+};
 
-const DRUNKNESS_LIMIT = 10;
+// =========================
+// SONG DATA (FROM songs.js)
+// =========================
 
-// Karaoke songs come from songs.js
 const SONG_LIST = (window.KARAOKE_SONGS || []).slice();
 const SONGS_BY_ID = {};
 SONG_LIST.forEach((song) => {
   SONGS_BY_ID[song.id] = song;
 });
 
-// Action log messages for end-of-song
+// End-of-song log messages
 const KARAOKE_END_LOG_MESSAGES = [
   "The crowd go wild",
   "The room is notably emptier than before you sang",
@@ -75,235 +86,116 @@ const KARAOKE_END_LOG_MESSAGES = [
   "That's My Dad!"
 ];
 
-// Guinness random dialogue lines
-const GUINNESS_DIALOGUE_OPTIONS = [
-  "Mags hands you a Guinness topped with a Musical Note.",
-  "Mags hands you a Guinness topped with a Shamrock.",
-  "Mags hands you a Guinness topped with a Heart.",
-  "Mags hands you a Guinness topped with MUFC."
-];
+let lastKaraokeEndIndex = null;
 
 // =========================
 // HOTSPOTS
 // =========================
 
-function hotspotFromCenter(x, y, diameter) {
-  const r = diameter / 2;
-  const left = x - r;
-  const top = y - r;
-  return {
+// 50x50 hotspots for bar & karaoke; 22x22 for map.
+const HOTSPOTS = {
+  bar: [
+    {
+      id: "bar-order-drink",
+      xPercent: (200 - 25) / 8, // centre 200,400 -> top-left 175
+      yPercent: ((400 - 25) / 600) * 100,
+      widthPercent: (50 / 800) * 100,
+      heightPercent: (50 / 600) * 100,
+      hoverText: "Order drink",
+      actionKey: "open-drink-menu"
+    },
+    {
+      id: "bar-karaoke-room",
+      xPercent: (650 - 25) / 8, // centre 650,50 -> top-left 625
+      yPercent: ((50 - 25) / 600) * 100,
+      widthPercent: (50 / 800) * 100,
+      heightPercent: (50 / 600) * 100,
+      hoverText: "Karaoke Room",
+      actionKey: "go-karaoke"
+    }
+  ],
+  karaoke: [
+    {
+      id: "karaoke-back-bar",
+      xPercent: (75 - 25) / 8, // centre 75,50
+      yPercent: ((50 - 25) / 600) * 100,
+      widthPercent: (50 / 800) * 100,
+      heightPercent: (50 / 600) * 100,
+      hoverText: "Back to bar",
+      actionKey: "back-to-bar"
+    },
+    {
+      id: "karaoke-pick-song",
+      xPercent: ((647 - 25) / 800) * 100, // centre 647,514
+      yPercent: ((514 - 25) / 600) * 100,
+      widthPercent: (50 / 800) * 100,
+      heightPercent: (50 / 600) * 100,
+      hoverText: "Pick a song",
+      actionKey: "open-song-list"
+    }
+  ],
+  map: [] // filled from MAP_LOCATIONS below
+};
+
+// Map locations (centres in 800x600 space)
+const MAP_LOCATIONS = [
+  { id: "levenshulme_bakery", name: "Levenshulme Bakery", x: 147, y: 17 },
+  { id: "overdraught", name: "OverDraught", x: 192, y: 328 },
+  { id: "trawlers_2", name: "Trawlers 2", x: 688, y: 163 },
+  { id: "long_bois", name: "Long Boi's", x: 15, y: 442 },
+  { id: "station_hop", name: "Station Hop", x: 160, y: 208 },
+  { id: "new_york_krispy", name: "New York Krispy", x: 196, y: 266 },
+  { id: "union_inn", name: "The Union Inn", x: 196, y: 298 },
+  { id: "tesco", name: "Tesco Superstore", x: 208, y: 430 },
+  { id: "atm", name: "ATM", x: 222, y: 457 },
+  { id: "the_levenshulme", name: "The Levenshulme", x: 258, y: 504 },
+  { id: "talleyrand", name: "The Talleyrand", x: 244, y: 524 },
+  { id: "isca", name: "Isca", x: 258, y: 552 },
+  {
+    id: "levenshulme_antiques",
+    name: "Levenshulme Antiques Village",
+    x: 278,
+    y: 539
+  },
+  { id: "nordie", name: "Nordie", x: 264, y: 578 },
+  { id: "station_south", name: "Station South", x: 299, y: 581 },
+  { id: "home", name: "Home", x: 59, y: 384 },
+  { id: "blue_bell", name: "The Blue Bell Inn", x: 525, y: 225 }
+];
+
+// build map hotspots (22x22)
+MAP_LOCATIONS.forEach((loc) => {
+  const left = loc.x - 11;
+  const top = loc.y - 11;
+  HOTSPOTS.map.push({
+    id: `map-${loc.id}`,
     xPercent: (left / 800) * 100,
     yPercent: (top / 600) * 100,
-    widthPercent: (diameter / 800) * 100,
-    heightPercent: (diameter / 600) * 100
-  };
-}
+    widthPercent: (22 / 800) * 100,
+    heightPercent: (22 / 600) * 100,
+    hoverText: "", // map uses cards, no text label
+    actionKey: "map-location",
+    locationId: loc.id
+  });
+});
 
-const HOTSPOTS = {
-  map: [
-    (() => {
-      const d = 22;
-      const defs = [
-        ["map-bakery", 147, 17, "map-closed"],
-        ["map-station-hop", 160, 208, "map-closed"],
-        ["map-ny-krispy", 196, 266, "map-closed"],
-        ["map-union-inn", 196, 298, "go-union-bar"],
-        ["map-overdraught", 192, 328, "map-closed"],
-        ["map-tesco", 208, 430, "map-closed"],
-        ["map-atm", 222, 457, "map-closed"],
-        ["map-levenshulme", 258, 504, "map-closed"],
-        ["map-talleyrand", 244, 524, "map-closed"],
-        ["map-isca", 258, 552, "map-closed"],
-        ["map-antiques", 278, 539, "map-closed"],
-        ["map-nordie", 264, 578, "map-closed"],
-        ["map-station-south", 299, 581, "map-closed"],
-        ["map-home", 59, 384, "map-closed"],
-        ["map-long-bois", 15, 442, "map-closed"],
-        ["map-blue-bell", 525, 225, "map-closed"],
-        ["map-trawlers-2", 688, 163, "map-closed"]
-      ];
-
-      return defs.map(([id, x, y, actionKey]) => {
-        const b = hotspotFromCenter(x, y, d);
-        return {
-          id,
-          actionKey,
-          xPercent: b.xPercent,
-          yPercent: b.yPercent,
-          widthPercent: b.widthPercent,
-          heightPercent: b.heightPercent
-        };
-      });
-    })()
-  ].flat(),
-
-  bar: [
-    (() => {
-      const d = 50;
-      const b = hotspotFromCenter(200, 400, d);
-      return {
-        id: "bar-order-drink",
-        xPercent: b.xPercent,
-        yPercent: b.yPercent,
-        widthPercent: b.widthPercent,
-        heightPercent: b.heightPercent,
-        hoverText: "Order drink",
-        actionKey: "order-drink"
-      };
-    })(),
-    (() => {
-      const d = 50;
-      const b = hotspotFromCenter(650, 50, d);
-      return {
-        id: "bar-karaoke-room",
-        xPercent: b.xPercent,
-        yPercent: b.yPercent,
-        widthPercent: b.widthPercent,
-        heightPercent: b.heightPercent,
-        hoverText: "Karaoke Room",
-        actionKey: "go-karaoke"
-      };
-    })()
-  ],
-
-  karaoke: [
-    (() => {
-      const d = 50;
-      const b = hotspotFromCenter(75, 50, d);
-      return {
-        id: "karaoke-back-bar",
-        xPercent: b.xPercent,
-        yPercent: b.yPercent,
-        widthPercent: b.widthPercent,
-        heightPercent: b.heightPercent,
-        hoverText: "Back to Bar",
-        actionKey: "back-to-bar"
-      };
-    })(),
-    (() => {
-      const d = 50;
-      const b = hotspotFromCenter(647, 514, d);
-      return {
-        id: "karaoke-pick-song",
-        xPercent: b.xPercent,
-        yPercent: b.yPercent,
-        widthPercent: b.widthPercent,
-        heightPercent: b.heightPercent,
-        hoverText: "Pick a song",
-        actionKey: "open-song-list"
-      };
-    })()
-  ]
-};
-
-// =========================
-// MAP LOCATION METADATA
-// =========================
-
-const MAP_LOCATION_INFO = {
-  "map-bakery": {
-    title: "Levenshulme Bakery",
-    cardCenterX: 147,
-    cardCenterY: 17
-  },
-  "map-station-hop": {
-    title: "Station Hop",
-    cardCenterX: 160,
-    cardCenterY: 208
-  },
-  "map-ny-krispy": {
-    title: "New York Krispy",
-    cardCenterX: 196,
-    cardCenterY: 266
-  },
-  "map-union-inn": {
-    title: "Union Inn",
-    cardCenterX: 196,
-    cardCenterY: 298
-  },
-  "map-overdraught": {
-    title: "OverDraught",
-    cardCenterX: 192,
-    cardCenterY: 328
-  },
-  "map-tesco": {
-    title: "Tesco Superstore",
-    cardCenterX: 208,
-    cardCenterY: 430
-  },
-  "map-atm": {
-    title: "ATM",
-    cardCenterX: 222,
-    cardCenterY: 457
-  },
-  "map-levenshulme": {
-    title: "The Levenshulme",
-    cardCenterX: 258,
-    cardCenterY: 504
-  },
-  "map-talleyrand": {
-    title: "The Talleyrand",
-    cardCenterX: 244,
-    cardCenterY: 524
-  },
-  "map-isca": {
-    title: "Isca",
-    cardCenterX: 258,
-    cardCenterY: 552
-  },
-  "map-antiques": {
-    title: "Levenshulme Antiques Village",
-    cardCenterX: 278,
-    cardCenterY: 539
-  },
-  "map-nordie": {
-    title: "Nordie",
-    cardCenterX: 264,
-    cardCenterY: 578
-  },
-  "map-station-south": {
-    title: "Station South",
-    cardCenterX: 299,
-    cardCenterY: 581
-  },
-  "map-home": {
-    title: "Home",
-    imageUrl: HOME_ICON_URL,
-    cardCenterX: 59,
-    cardCenterY: 384
-  },
-  "map-long-bois": {
-    title: "Long Boi's",
-    cardCenterX: 15,
-    cardCenterY: 442
-  },
-  "map-blue-bell": {
-    title: "The Blue Bell Inn",
-    cardCenterX: 525,
-    cardCenterY: 225
-  },
-  "map-trawlers-2": {
-    title: "Trawlers 2",
-    cardCenterX: 688,
-    cardCenterY: 163
-  }
-};
+const MAP_LOCATIONS_BY_ID = {};
+MAP_LOCATIONS.forEach((loc) => (MAP_LOCATIONS_BY_ID[loc.id] = loc));
 
 // =========================
 // STATE
 // =========================
 
 let currentRoom = "map"; // "map" | "bar" | "karaoke"
-let previousRoom = null;
-
 let currentSongId = SONG_LIST.length ? SONG_LIST[0].id : null;
 let drinkCount = 0;
 let trophyCount = 0;
 let drunkness = 0;
 let currentAudio = null;
-let isMuted = false;
 let customCursorEl = null;
-let lastKaraokeEndIndex = null;
+let isMuted = false;
+
+let currentMapHoverLocationId = null;
 
 // =========================
 // UTILS
@@ -323,14 +215,35 @@ function appendToLog(text) {
 }
 
 function updateDrunknessDisplay() {
-  if (drunknessDisplay) {
-    drunknessDisplay.textContent = `Drunkness: ${drunkness}`;
-  }
+  drunknessValueEl.textContent = drunkness;
 }
 
-function updateTrophiesTitle() {
-  if (trophiesTitle) {
-    trophiesTitle.textContent = `TROPHIES: ${trophyCount}`;
+function updateTrophiesDisplay() {
+  trophiesTitleEl.textContent = `TROPHIES: ${trophyCount}`;
+}
+
+function addTrophy(imgUrl, altText) {
+  trophyCount += 1;
+  updateTrophiesDisplay();
+
+  const slot = document.createElement("div");
+  slot.className = "drink-slot";
+
+  const img = document.createElement("img");
+  img.className = "drink-image";
+  img.src = imgUrl;
+  img.alt = altText;
+
+  slot.appendChild(img);
+  iconRow.appendChild(slot);
+}
+
+function incrementDrunkness() {
+  drunkness += 1;
+  updateDrunknessDisplay();
+
+  if (drunkness >= 10) {
+    showGameOverOverlay();
   }
 }
 
@@ -339,7 +252,7 @@ function stopCurrentAudio() {
     try {
       currentAudio.pause();
       currentAudio.currentTime = 0;
-    } catch {
+    } catch (e) {
       // ignore
     }
     currentAudio = null;
@@ -358,119 +271,6 @@ function getRandomKaraokeEndLogMessage() {
 
   lastKaraokeEndIndex = index;
   return KARAOKE_END_LOG_MESSAGES[index];
-}
-
-function clearHoverUI() {
-  if (hoverLabel) {
-    hoverLabel.classList.remove("is-visible");
-  }
-}
-
-// Map hover card helpers
-function hideLocationCard() {
-  if (locationCard) {
-    locationCard.style.display = "none";
-  }
-}
-
-function showLocationCardFor(info) {
-  if (!locationCard || !locationCardTitle || !environmentFrame) return;
-
-  const frameRect = environmentFrame.getBoundingClientRect();
-
-  // Base position from hotspot centre (scaled from 800x600 to frame size)
-  const baseX = (info.cardCenterX / 800) * frameRect.width;
-  const baseY = (info.cardCenterY / 600) * frameRect.height;
-
-  // Offset card above or below hotspot depending on whether it's
-  // in the top or bottom half of the map.
-  const verticalOffset = frameRect.height * 0.1; // 10% of frame height
-  let x = baseX;
-  let y = baseY + (info.cardCenterY < 300 ? verticalOffset : -verticalOffset);
-
-  // Clamp so the card's centre is never closer than 75px
-  // to any edge of the environment frame.
-  const margin = 75;
-  const minX = margin;
-  const maxX = frameRect.width - margin;
-  const minY = margin;
-  const maxY = frameRect.height - margin;
-
-  if (x < minX) x = minX;
-  if (x > maxX) x = maxX;
-  if (y < minY) y = minY;
-  if (y > maxY) y = maxY;
-
-  locationCard.style.left = `${x}px`;
-  locationCard.style.top = `${y}px`;
-
-  locationCardTitle.textContent = info.title;
-
-  if (info.imageUrl && locationCardImage) {
-    locationCardImage.src = info.imageUrl;
-    locationCardImage.style.display = "block";
-    if (locationCardPlaceholder) {
-      locationCardPlaceholder.style.display = "none";
-    }
-  } else {
-    if (locationCardImage) {
-      locationCardImage.style.display = "none";
-    }
-    if (locationCardPlaceholder) {
-      locationCardPlaceholder.style.display = "flex";
-    }
-  }
-
-  locationCard.style.display = "block";
-}
-
-// =========================
-// HOTSPOT RENDERING
-// =========================
-
-function renderHotspotsForRoom(roomId) {
-  if (!environmentFrame) return;
-
-  environmentFrame.querySelectorAll(".hotspot").forEach((el) => el.remove());
-
-  const hotspots = HOTSPOTS[roomId] || [];
-  hotspots.forEach((h) => {
-    const el = document.createElement("button");
-    el.className = "hotspot";
-    el.dataset.actionKey = h.actionKey;
-    if (h.hoverText) {
-      el.dataset.hoverText = h.hoverText;
-    }
-    if (h.id) {
-      el.id = h.id;
-    }
-
-    el.style.left = `${h.xPercent}%`;
-    el.style.top = `${h.yPercent}%`;
-    el.style.width = `${h.widthPercent}%`;
-    el.style.height = `${h.heightPercent}%`;
-
-    environmentFrame.appendChild(el);
-  });
-}
-
-// =========================
-// ROOM TRANSITIONS
-// =========================
-
-function getSelectDialogue(song) {
-  if (song.selectDialogue && song.selectDialogue.trim().length > 0) {
-    return song.selectDialogue;
-  }
-  return (
-    "The intro crackles through the speakers as the screen flashes " +
-    song.artist.toUpperCase() +
-    "."
-  );
-}
-
-function setSongDetailsVisible(visible) {
-  karaokeSongDetails.style.display = visible ? "flex" : "none";
 }
 
 function adjustSongFontSizes(titleText) {
@@ -494,7 +294,6 @@ function setCurrentSong(songId) {
   if (!song) return;
 
   currentSongId = songId;
-
   const titleText = song.title.toUpperCase();
   const artistText = song.artist.toUpperCase();
 
@@ -503,51 +302,83 @@ function setCurrentSong(songId) {
   adjustSongFontSizes(titleText);
 }
 
-function clearActions() {
-  actionsRow.innerHTML = "";
-  actionsPanel.classList.remove("has-actions");
+function setSongDetailsVisible(visible) {
+  karaokeSongDetails.style.display = visible ? "flex" : "none";
 }
+
+function clearHoverUI() {
+  if (hoverLabel) hoverLabel.classList.remove("is-visible");
+}
+
+function hideMapLocationCard() {
+  currentMapHoverLocationId = null;
+  if (mapLocationCardEl) {
+    mapLocationCardEl.classList.remove("is-visible");
+  }
+}
+
+// =========================
+// HOTSPOT RENDERING
+// =========================
+
+function renderHotspotsForRoom(roomId) {
+  if (!environmentFrame) return;
+
+  environmentFrame.querySelectorAll(".hotspot").forEach((el) => el.remove());
+
+  const hotspots = HOTSPOTS[roomId] || [];
+  hotspots.forEach((h) => {
+    const el = document.createElement("button");
+    el.className = "hotspot";
+    el.dataset.actionKey = h.actionKey;
+    if (h.hoverText) el.dataset.hoverText = h.hoverText;
+    if (h.locationId) el.dataset.locationId = h.locationId;
+
+    el.style.left = `${h.xPercent}%`;
+    el.style.top = `${h.yPercent}%`;
+    el.style.width = `${h.widthPercent}%`;
+    el.style.height = `${h.heightPercent}%`;
+
+    environmentFrame.appendChild(el);
+  });
+
+  // map-specific visual mode
+  if (roomId === "map") {
+    environmentFrame.classList.add("map-mode");
+  } else {
+    environmentFrame.classList.remove("map-mode");
+  }
+}
+
+// =========================
+// ROOMS
+// =========================
 
 function goToRoom(room, options = {}) {
   const { initial = false } = options;
-
-  previousRoom = currentRoom;
   currentRoom = room;
 
   clearHoverUI();
-  hideLocationCard();
+  hideMapLocationCard();
   stopCurrentAudio();
   setSongDetailsVisible(false);
   hideSongListOverlay();
-  clearActions();
-
-  if (environmentFrame) {
-    if (room === "map") {
-      environmentFrame.classList.add("map-mode");
-    } else {
-      environmentFrame.classList.remove("map-mode");
-    }
-  }
 
   if (room === "map") {
-    locationNameEl.textContent = "MAP";
+    locationNameEl.textContent = "Map";
     environmentBaseImg.src = MAP_IMAGE;
+
     if (!initial) {
-      appendToLog("You return to the map.");
+      appendToLog("You unfold the map of Levenshulme.");
     }
+
     dialogueText.textContent = "Where will you start tonight?";
   } else if (room === "bar") {
     locationNameEl.textContent = "THE UNION - BAR AREA";
     environmentBaseImg.src = BAR_IMAGE;
 
     if (!initial) {
-      if (previousRoom === "map") {
-        appendToLog(
-          "You step into the Union with a mean thirst and a song to sing."
-        );
-      } else if (previousRoom === "karaoke") {
-        appendToLog("To the bar!");
-      }
+      appendToLog("To the bar!");
     }
 
     dialogueText.textContent =
@@ -556,15 +387,26 @@ function goToRoom(room, options = {}) {
     locationNameEl.textContent = "THE UNION - KARAOKE ROOM";
     environmentBaseImg.src = KARAOKE_ROOM_IMAGE;
 
-    if (!initial) {
-      appendToLog("The baying mob approach Ronnie, song slips in hand.");
-    }
-
+    appendToLog(
+      "The baying mob approach Ronnie, song slips in hand."
+    );
     dialogueText.textContent =
-      "The baying mob approach Ronnie, song slips in hand.";
+      "A small crowd hovers near the screen, waiting for their turn to murder a classic.";
   }
 
+  renderActions();
   renderHotspotsForRoom(room);
+}
+
+function getSelectDialogue(song) {
+  if (song.selectDialogue && song.selectDialogue.trim().length > 0) {
+    return song.selectDialogue;
+  }
+  return (
+    "The intro crackles through the speakers as the screen flashes " +
+    song.artist.toUpperCase() +
+    "."
+  );
 }
 
 // =========================
@@ -573,7 +415,6 @@ function goToRoom(room, options = {}) {
 
 function renderSongList() {
   if (!songListContainer) return;
-
   songListContainer.innerHTML = "";
 
   const enabledSongs = SONG_LIST.filter((song) => song.enabled !== false);
@@ -611,105 +452,133 @@ function hideSongListOverlay() {
 }
 
 // =========================
-// DRINKS & TROPHIES
+// ACTIONS
 // =========================
 
-function addDrinkIcon(type) {
-  drinkCount += 1;
-  trophyCount += 1;
-  updateTrophiesTitle();
+const GUINNESS_DIALOGUE_OPTIONS = [
+  "Mags hands you a Guinness topped with a Musical Note",
+  "Mags hands you a Guinness topped with a Shamrock",
+  "Mags hands you a Guinness topped with a Heart",
+  "Mags hands you a Guinness topped with MUFC"
+];
 
-  const slot = document.createElement("div");
-  slot.className = "drink-slot";
-
-  const img = document.createElement("img");
-  img.className = "drink-image";
-
-  if (type === "jaeger") {
-    img.src = JAEGER_URL;
-    img.alt = `Jägerbomb #${drinkCount}`;
-  } else {
-    img.src = FULL_PINT_URL;
-    img.alt = `Pint of stout #${drinkCount}`;
-  }
-
-  slot.appendChild(img);
-  iconRow.appendChild(slot);
+function getRandomGuinnessDialogue() {
+  const idx = Math.floor(Math.random() * GUINNESS_DIALOGUE_OPTIONS.length);
+  return GUINNESS_DIALOGUE_OPTIONS[idx];
 }
 
-function spawnDrinkOnBar(type) {
-  if (!environmentFrame) return;
+function getActionsForRoom() {
+  if (currentRoom === "bar") {
+    // No fixed actions – drink menu appears only when opened.
+    return [];
+  }
 
-  const fullImg = document.createElement("img");
-  fullImg.className = "spawned-drink";
-  fullImg.src = type === "jaeger" ? JAEGER_URL : FULL_PINT_URL;
+  if (currentRoom === "karaoke") {
+    return [
+      { key: "open-song-list", label: "Song list" },
+      { key: "back-to-bar", label: "Go back to bar" }
+    ];
+  }
 
-  const spawnX = 108;
-  const spawnY = 462;
+  // map: no actions
+  return [];
+}
 
-  fullImg.style.left = `${(spawnX / 800) * 100}%`;
-  fullImg.style.top = `${(spawnY / 600) * 100}%`;
-  fullImg.style.opacity = "0";
+function renderActions() {
+  const actions = getActionsForRoom();
+  actionsRow.innerHTML = "";
 
-  environmentFrame.appendChild(fullImg);
+  if (!actions.length) {
+    actionsPanel.classList.remove("has-actions");
+    return;
+  }
 
-  requestAnimationFrame(() => {
-    fullImg.classList.add("drink-fade-in");
+  actionsPanel.classList.add("has-actions");
+
+  actions.forEach((action) => {
+    const button = document.createElement("button");
+    button.className = "action-button";
+    button.dataset.action = action.key;
+    button.textContent = action.label;
+    actionsRow.appendChild(button);
+  });
+}
+
+function showDrinkMenu() {
+  // Drink menu replaces actions row contents but keeps panel visible
+  actionsRow.innerHTML = "";
+
+  const drinks = [
+    { key: "drink-guinness", label: "Pint of Guinness" },
+    { key: "drink-jagerbomb", label: "Jägerbomb" }
+  ];
+
+  drinks.forEach((drink) => {
+    const btn = document.createElement("button");
+    btn.className = "action-button";
+    btn.dataset.action = drink.key;
+    btn.textContent = drink.label;
+    actionsRow.appendChild(btn);
   });
 
-  if (type === "jaeger") {
-    setTimeout(() => {
-      fullImg.classList.remove("drink-fade-in");
-      fullImg.classList.add("drink-fade-out");
-    }, 3000);
-
-    setTimeout(() => {
-      fullImg.remove();
-    }, 3400);
-  } else {
-    const emptyImg = document.createElement("img");
-    emptyImg.className = "spawned-drink";
-    emptyImg.src = EMPTY_PINT_URL;
-    emptyImg.style.left = `${(spawnX / 800) * 100}%`;
-    emptyImg.style.top = `${(spawnY / 600) * 100}%`;
-    emptyImg.style.opacity = "0";
-    environmentFrame.appendChild(emptyImg);
-
-    setTimeout(() => {
-      fullImg.classList.remove("drink-fade-in");
-      fullImg.classList.add("drink-fade-out");
-      emptyImg.classList.add("drink-fade-in");
-    }, 3000);
-
-    setTimeout(() => {
-      emptyImg.classList.remove("drink-fade-in");
-      emptyImg.classList.add("drink-fade-out");
-    }, 6000);
-
-    setTimeout(() => {
-      fullImg.remove();
-      emptyImg.remove();
-    }, 6400);
-  }
-}
-
-function incrementDrunkness() {
-  drunkness += 1;
-  updateDrunknessDisplay();
-  if (drunkness >= DRUNKNESS_LIMIT) {
-    stopCurrentAudio();
-    showGameOverOverlay();
-  }
-}
-
-function handleDrinkConsumed(type) {
-  addDrinkIcon(type);
-  spawnDrinkOnBar(type);
-  incrementDrunkness();
+  actionsPanel.classList.add("has-actions");
 }
 
 // =========================
-// KARAOKE SONG PLAYBACK
+// DRINK SPAWN EFFECT
+// =========================
+
+function spawnDrinkEffect(type) {
+  if (!environmentFrame) return;
+
+  const img = document.createElement("img");
+  img.className = "spawned-drink";
+  img.style.opacity = "0";
+
+  // Spawn position in image coordinates
+  let spawnX = 108;
+  let spawnY = 462;
+
+  let fullUrl = FULL_PINT_URL;
+  let emptyUrl = EMPTY_PINT_URL;
+
+  if (type === "jager") {
+    fullUrl = JAGER_IMAGE_URL;
+    emptyUrl = ""; // no empty version
+    spawnX = 150;
+    spawnY = 460;
+  }
+
+  img.src = fullUrl;
+
+  const leftPercent = (spawnX / 800) * 100;
+  const topPercent = (spawnY / 600) * 100;
+
+  img.style.left = `${leftPercent}%`;
+  img.style.top = `${topPercent}%`;
+
+  environmentFrame.appendChild(img);
+
+  // Fade in full, then fade out and (for Guinness) swap to empty before disappearing.
+  requestAnimationFrame(() => {
+    img.classList.add("drink-fade-in");
+  });
+
+  setTimeout(() => {
+    if (emptyUrl) {
+      img.src = emptyUrl;
+    }
+    img.classList.remove("drink-fade-in");
+    img.classList.add("drink-fade-out");
+  }, 3000);
+
+  setTimeout(() => {
+    img.remove();
+  }, 6000);
+}
+
+// =========================
+// KARAOKE PLAYBACK
 // =========================
 
 function playSongById(songId) {
@@ -744,9 +613,7 @@ function playSongById(songId) {
       if (currentAudio === audio) {
         setSongDetailsVisible(false);
         const endMsg = getRandomKaraokeEndLogMessage();
-        if (endMsg) {
-          appendToLog(endMsg);
-        }
+        if (endMsg) appendToLog(endMsg);
         currentAudio = null;
       }
     });
@@ -772,66 +639,10 @@ function playSongById(songId) {
 }
 
 // =========================
-// GAME OVER
+// ACTION DISPATCH
 // =========================
-
-function showGameOverOverlay() {
-  if (gameOverOverlay) {
-    gameOverOverlay.classList.add("is-visible");
-  }
-}
-
-function hideGameOverOverlay() {
-  if (gameOverOverlay) {
-    gameOverOverlay.classList.remove("is-visible");
-  }
-}
-
-function resetGameState() {
-  stopCurrentAudio();
-  drunkness = 0;
-  drinkCount = 0;
-  trophyCount = 0;
-  updateDrunknessDisplay();
-  updateTrophiesTitle();
-
-  actionLog.innerHTML = "";
-  iconRow.innerHTML = "";
-
-  appendToLog("You unfold the map of Levenshulme.");
-  dialogueText.textContent = "Where will you start tonight?";
-
-  hideGameOverOverlay();
-  goToRoom("map", { initial: true });
-}
-
-// =========================
-// ACTIONS
-// =========================
-
-function showDrinkMenu() {
-  clearActions();
-
-  const guinnessBtn = document.createElement("button");
-  guinnessBtn.className = "action-button";
-  guinnessBtn.dataset.action = "order-guinness";
-  guinnessBtn.textContent = "Pint of Guinness";
-
-  const jaegerBtn = document.createElement("button");
-  jaegerBtn.className = "action-button";
-  jaegerBtn.dataset.action = "order-jaeger";
-  jaegerBtn.textContent = "Jägerbomb";
-
-  actionsRow.appendChild(guinnessBtn);
-  actionsRow.appendChild(jaegerBtn);
-  actionsPanel.classList.add("has-actions");
-}
 
 function performAction(actionKey) {
-  if (actionKey === "go-union-bar") {
-    goToRoom("bar");
-    return;
-  }
   if (actionKey === "go-karaoke") {
     goToRoom("karaoke");
     return;
@@ -840,41 +651,34 @@ function performAction(actionKey) {
     goToRoom("bar");
     return;
   }
-
-  if (actionKey === "map-closed") {
-    appendToLog("Looks like they are closed.");
-    dialogueText.textContent = "Looks like they are closed.";
-    return;
-  }
-
   if (actionKey === "open-song-list" && currentRoom === "karaoke") {
     showSongListOverlay();
     return;
   }
-
-  if (actionKey === "order-drink" && currentRoom === "bar") {
+  if (actionKey === "open-drink-menu" && currentRoom === "bar") {
     showDrinkMenu();
     return;
   }
 
-  if (actionKey === "order-guinness") {
-    const line =
-      GUINNESS_DIALOGUE_OPTIONS[
-        Math.floor(Math.random() * GUINNESS_DIALOGUE_OPTIONS.length)
-      ];
-    appendToLog(line);
+  // Drink selections
+  if (actionKey === "drink-guinness") {
+    const line = getRandomGuinnessDialogue();
+    appendToLog("You order a drink, Steve cackles.");
     dialogueText.textContent = line;
-    handleDrinkConsumed("guinness");
-    clearActions();
+
+    addTrophy(FULL_PINT_URL, "Pint of Guinness");
+    incrementDrunkness();
+    spawnDrinkEffect("guinness");
     return;
   }
 
-  if (actionKey === "order-jaeger") {
-    const line = "You order a Jägerbomb. Julie looks on approvingly.";
-    appendToLog(line);
-    dialogueText.textContent = line;
-    handleDrinkConsumed("jaeger");
-    clearActions();
+  if (actionKey === "drink-jagerbomb") {
+    appendToLog("You order a Jägerbomb.");
+    dialogueText.textContent = "Julie looks on approvingly";
+
+    addTrophy(JAGER_IMAGE_URL, "Jägerbomb");
+    incrementDrunkness();
+    spawnDrinkEffect("jager");
     return;
   }
 }
@@ -887,26 +691,144 @@ function handleActionClick(event) {
 }
 
 // =========================
+// MAP LOGIC
+// =========================
+
+function handleMapLocationClick(locationId) {
+  const loc = MAP_LOCATIONS_BY_ID[locationId];
+  if (!loc) return;
+
+  if (locationId === "union_inn") {
+    goToRoom("bar");
+    return;
+  }
+
+  appendToLog(`You check ${loc.name}, but it looks closed.`);
+  dialogueText.textContent = "Looks like they are closed.";
+}
+
+// Show map card near hotspot, clamped 75px from edges
+const MAP_CARD_MARGIN = 75;
+
+function showMapLocationCard(locationId, hotspotEl) {
+  if (!mapLocationCardEl || !environmentFrame) return;
+  if (!locationId) return;
+
+  currentMapHoverLocationId = locationId;
+
+  const loc = MAP_LOCATIONS_BY_ID[locationId];
+  if (!loc) return;
+
+  // Update title
+  mapLocationCardTitleEl.textContent = loc.name;
+
+  // Image vs placeholder
+  const iconUrl = MAP_LOCATION_ICONS[locationId] || "";
+  if (iconUrl) {
+    mapLocationCardImageEl.src = iconUrl;
+    mapLocationCardImageEl.style.display = "block";
+    mapLocationCardPlaceholderEl.style.display = "none";
+  } else {
+    mapLocationCardImageEl.style.display = "none";
+    mapLocationCardPlaceholderEl.style.display = "flex";
+  }
+
+  mapLocationCardEl.classList.add("is-visible");
+
+  const frameRect = environmentFrame.getBoundingClientRect();
+  const hotRect = hotspotEl.getBoundingClientRect();
+
+  // Temporarily let the browser calculate card size
+  const cardRect = mapLocationCardEl.getBoundingClientRect();
+
+  const hotCenterX = hotRect.left + hotRect.width / 2;
+  const hotCenterY = hotRect.top + hotRect.height / 2;
+
+  // Start to the right of hotspot
+  let left = hotRect.right - frameRect.left + 16;
+  let top = hotCenterY - frameRect.top - cardRect.height / 2;
+
+  const maxLeft = frameRect.width - cardRect.width - MAP_CARD_MARGIN;
+  const maxTop = frameRect.height - cardRect.height - MAP_CARD_MARGIN;
+
+  left = Math.max(MAP_CARD_MARGIN, Math.min(left, maxLeft));
+  top = Math.max(MAP_CARD_MARGIN, Math.min(top, maxTop));
+
+  mapLocationCardEl.style.left = `${left}px`;
+  mapLocationCardEl.style.top = `${top}px`;
+}
+
+// =========================
+// GAME OVER
+// =========================
+
+function showGameOverOverlay() {
+  if (!gameOverOverlay) return;
+  gameOverOverlay.classList.add("is-visible");
+}
+
+function hideGameOverOverlay() {
+  if (!gameOverOverlay) return;
+  gameOverOverlay.classList.remove("is-visible");
+}
+
+// Reset basic game state
+function resetGameState() {
+  drunkness = 0;
+  drinkCount = 0;
+  trophyCount = 0;
+  updateDrunknessDisplay();
+  updateTrophiesDisplay();
+
+  iconRow.innerHTML = "";
+  actionLog.innerHTML = "";
+  appendToLog("You unfold the map of Levenshulme.");
+  dialogueText.textContent = "Where will you start tonight?";
+
+  stopCurrentAudio();
+  hideSongListOverlay();
+  setSongDetailsVisible(false);
+
+  goToRoom("map", { initial: true });
+}
+
+// =========================
+// MUTE TOGGLE
+// =========================
+
+function updateMuteButtonLabel() {
+  muteToggleBtn.textContent = isMuted ? "🔇 Muted" : "🔊 Sound On";
+}
+
+function toggleMute() {
+  isMuted = !isMuted;
+  updateMuteButtonLabel();
+
+  if (currentAudio) {
+    currentAudio.muted = isMuted;
+  }
+}
+
+// =========================
 // INIT
 // =========================
 
 window.addEventListener("DOMContentLoaded", () => {
   actionsRow.addEventListener("click", handleActionClick);
 
-  if (restartButton) {
-    restartButton.addEventListener("click", resetGameState);
+  if (muteToggleBtn) {
+    muteToggleBtn.addEventListener("click", toggleMute);
+    updateMuteButtonLabel();
   }
 
-  if (muteToggleBtn) {
-    muteToggleBtn.addEventListener("click", () => {
-      isMuted = !isMuted;
-      if (currentAudio) {
-        currentAudio.muted = isMuted;
-      }
-      muteToggleBtn.textContent = isMuted ? "🔇 Muted" : "🔊 Sound On";
+  if (gameOverRestartBtn) {
+    gameOverRestartBtn.addEventListener("click", () => {
+      hideGameOverOverlay();
+      resetGameState();
     });
   }
 
+  // Custom cursor + hotspot behaviour
   if (environmentFrame) {
     customCursorEl = document.createElement("img");
     customCursorEl.src = POINTER_URL;
@@ -914,18 +836,25 @@ window.addEventListener("DOMContentLoaded", () => {
     customCursorEl.className = "custom-cursor";
     environmentFrame.appendChild(customCursorEl);
 
+    // Hotspot click handling
     environmentFrame.addEventListener("click", (event) => {
       const hotspot = event.target.closest(".hotspot");
       if (!hotspot) return;
-      const actionKey = hotspot.dataset.actionKey;
-      if (actionKey) {
-        performAction(actionKey);
+
+      if (currentRoom === "map" && hotspot.dataset.locationId) {
+        handleMapLocationClick(hotspot.dataset.locationId);
+        return;
       }
+
+      const actionKey = hotspot.dataset.actionKey;
+      if (actionKey) performAction(actionKey);
     });
 
+    // Mouse move: cursor + hover label / map card
     environmentFrame.addEventListener("mousemove", (event) => {
       const frameRect = environmentFrame.getBoundingClientRect();
 
+      // Move custom cursor
       if (customCursorEl) {
         const cx = event.clientX - frameRect.left;
         const cy = event.clientY - frameRect.top;
@@ -939,15 +868,20 @@ window.addEventListener("DOMContentLoaded", () => {
       if (currentRoom === "map") {
         clearHoverUI();
 
-        if (hotspot && hotspot.id && MAP_LOCATION_INFO[hotspot.id]) {
-          showLocationCardFor(MAP_LOCATION_INFO[hotspot.id]);
+        if (hotspot && hotspot.dataset.locationId) {
+          showMapLocationCard(hotspot.dataset.locationId, hotspot);
         } else {
-          hideLocationCard();
+          hideMapLocationCard();
         }
-      } else {
-        hideLocationCard();
 
-        if (hoverLabel && hotspot && hotspot.dataset.hoverText) {
+        return;
+      }
+
+      // Non-map rooms: no map card
+      hideMapLocationCard();
+
+      if (hoverLabel) {
+        if (hotspot && hotspot.dataset.hoverText) {
           hoverLabel.textContent = hotspot.dataset.hoverText;
           hoverLabel.classList.add("is-visible");
 
@@ -965,27 +899,24 @@ window.addEventListener("DOMContentLoaded", () => {
             hotRect.top - frameRect.top - offsetAboveHotspot;
           let labelTop = desiredBottom - labelHeight;
 
-          if (labelTop < 0) {
-            labelTop = 0;
-          }
+          if (labelTop < 0) labelTop = 0;
 
           hoverLabel.style.left = `${centerX}px`;
           hoverLabel.style.top = `${labelTop}px`;
-        } else if (hoverLabel) {
+        } else {
           hoverLabel.classList.remove("is-visible");
         }
       }
     });
 
     environmentFrame.addEventListener("mouseleave", () => {
-      if (customCursorEl) {
-        customCursorEl.style.display = "none";
-      }
+      if (customCursorEl) customCursorEl.style.display = "none";
       clearHoverUI();
-      hideLocationCard();
+      hideMapLocationCard();
     });
   }
 
+  // Song list selection
   if (songListContainer) {
     songListContainer.addEventListener("click", (event) => {
       const btn = event.target.closest(".song-list-item");
@@ -1002,13 +933,12 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  if (currentSongId) {
-    setCurrentSong(currentSongId);
-  }
+  if (currentSongId) setCurrentSong(currentSongId);
 
+  // Initial setup: already seeded log entry in HTML
   updateDrunknessDisplay();
-  updateTrophiesTitle();
+  updateTrophiesDisplay();
 
-  appendToLog("You unfold the map of Levenshulme.");
   goToRoom("map", { initial: true });
+  setSongDetailsVisible(false);
 });
