@@ -10,11 +10,11 @@
     <!-- HEADER -->
     <header class="game-header">
       <div class="header-main">
-        <div class="location-name" id="location-name">MAP</div>
+        <div class="location-name" id="location-name">Map</div>
       </div>
       <div class="header-status">
-        <div id="drunkness-display" class="header-status-item">
-          Drunkness: 0
+        <div class="header-status-item">
+          Drunkness: <span id="drunkness-value">0</span>
         </div>
         <button id="mute-toggle" class="mute-toggle" type="button">
           🔊 Sound On
@@ -22,10 +22,11 @@
       </div>
     </header>
 
-    <!-- MAIN LAYOUT -->
+    <!-- MAIN -->
     <main class="game-main">
+      <!-- ROW: ENVIRONMENT + HISTORY / TROPHIES -->
       <section class="scene-row">
-        <!-- ENVIRONMENT PANEL -->
+        <!-- ENVIRONMENT -->
         <div class="environment-panel">
           <div class="environment-frame" id="environment-frame">
             <img
@@ -34,13 +35,13 @@
               alt="Environment"
             />
 
-            <!-- Karaoke song details overlay (Karaoke TV area) -->
+            <!-- Karaoke song details overlay -->
             <div id="karaoke-song-details" class="karaoke-song-details">
               <div class="song-title"></div>
               <div class="song-artist"></div>
             </div>
 
-            <!-- Song list overlay (in-environment, karaoke only) -->
+            <!-- Song list overlay (karaoke) -->
             <div id="song-list-overlay" class="song-list-overlay">
               <img
                 src="https://levmiserables.s3.eu-north-1.amazonaws.com/images/songlistoverlay.gif"
@@ -64,37 +65,35 @@
               </div>
             </div>
 
-            <!-- Hover label for bar/karaoke hotspots -->
+            <!-- Hover label for hotspots (bar / karaoke only) -->
             <div
               id="environment-hover-label"
               class="environment-hover-label"
             ></div>
 
-            <!-- MAP LOCATION HOVER CARD -->
-            <div id="location-hover-card" class="location-hover-card">
-              <div class="location-hover-card-inner">
+            <!-- Map location hover card -->
+            <div id="map-location-card" class="map-location-card">
+              <div class="map-location-card-inner">
                 <div
-                  id="location-card-title"
-                  class="location-hover-card-title"
+                  id="map-location-card-title"
+                  class="map-location-card-title"
                 >
-                  HOME
+                  LOCATION
                 </div>
-
-                <!-- Placeholder ICON slot (shown when no image yet) -->
-                <div
-                  id="location-card-placeholder"
-                  class="location-hover-card-placeholder"
-                >
-                  ICON
+                <div class="map-location-card-image-wrapper">
+                  <img
+                    id="map-location-card-image"
+                    class="map-location-card-image"
+                    src=""
+                    alt=""
+                  />
+                  <div
+                    id="map-location-card-placeholder"
+                    class="map-location-card-placeholder"
+                  >
+                    ICON
+                  </div>
                 </div>
-
-                <!-- Real image (shown when imageUrl is provided for a location) -->
-                <img
-                  id="location-card-image"
-                  class="location-hover-card-image"
-                  src=""
-                  alt=""
-                />
               </div>
             </div>
           </div>
@@ -102,19 +101,19 @@
 
         <!-- HISTORY + TROPHIES COLUMN -->
         <div class="log-trophies-column">
-          <!-- History -->
+          <!-- HISTORY -->
           <aside class="log-panel">
-            <h2 class="panel-title">HISTORY</h2>
+            <h2 class="panel-title">History</h2>
             <ul id="action-log" class="log-list">
-              <!-- Populated by script.js -->
+              <li>You unfold the map of Levenshulme.</li>
             </ul>
           </aside>
 
-          <!-- Trophies -->
+          <!-- TROPHIES -->
           <aside class="icons-panel">
-            <h2 id="trophies-title" class="panel-title">TROPHIES: 0</h2>
+            <h2 class="panel-title" id="trophies-title">TROPHIES: 0</h2>
             <div id="icon-row" class="icon-row">
-              <!-- Trophy icons (drinks etc.) -->
+              <!-- Trophy images -->
             </div>
           </aside>
         </div>
@@ -123,15 +122,12 @@
       <!-- DIALOGUE ROW -->
       <section class="lower-row">
         <section class="dialogue-panel">
-          <h2 class="panel-title">DIALOGUE</h2>
+          <h2 class="panel-title">Dialogue</h2>
           <div id="dialogue-text" class="dialogue-text">
             Where will you start tonight?
           </div>
         </section>
-
-        <aside class="spacer-panel">
-          <!-- Reserved for future UI -->
-        </aside>
+        <aside class="spacer-panel"></aside>
       </section>
 
       <!-- ACTIONS -->
@@ -150,7 +146,7 @@
       <div class="game-over-text-sub">
         YOU DRANK TOO MUCH AND PASSED OUT
       </div>
-      <button id="restart-button" class="restart-button" type="button">
+      <button id="game-over-restart" class="restart-button" type="button">
         Restart game
       </button>
     </div>
