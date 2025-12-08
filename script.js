@@ -81,9 +81,13 @@ const HOTSPOT_SIZE = {
   heightPercent: (50 / 600) * 100 // 8.333...
 };
 
-// Map hotspots: 22px × 22px (so they neatly fit the green circles)
+// Map hotspots: 22px × 22px
 const MAP_HOTSPOT_WIDTH_PERCENT = (22 / 800) * 100; // 2.75
 const MAP_HOTSPOT_HEIGHT_PERCENT = (22 / 600) * 100; // 3.6667
+
+// Small global offset so white rings sit centrally over green circles
+const MAP_HOTSPOT_OFFSET_X = -1.0; // shift left ~8px
+const MAP_HOTSPOT_OFFSET_Y = -0.5; // shift up  ~3px
 
 const HOTSPOTS = {
   // MAP: each green circle on the map
@@ -578,8 +582,11 @@ function renderHotspotsForRoom(roomId) {
         ? h.heightPercent
         : HOTSPOT_SIZE.heightPercent;
 
-    el.style.left = `${h.xPercent}%`;
-    el.style.top = `${h.yPercent}%`;
+    const offsetX = roomId === "map" ? MAP_HOTSPOT_OFFSET_X : 0;
+    const offsetY = roomId === "map" ? MAP_HOTSPOT_OFFSET_Y : 0;
+
+    el.style.left = `${h.xPercent + offsetX}%`;
+    el.style.top = `${h.yPercent + offsetY}%`;
     el.style.width = `${widthPercent}%`;
     el.style.height = `${heightPercent}%`;
     environmentFrame.appendChild(el);
