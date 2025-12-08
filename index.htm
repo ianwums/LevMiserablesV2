@@ -1,130 +1,148 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Lev Miserables</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <div class="game-shell">
-      <!-- HEADER -->
-      <header class="game-header">
-        <div class="header-main">
-          <div id="location-name" class="location-name">MAP</div>
-        </div>
-        <div class="header-status">
-          <div id="drunkness-display" class="header-status-item">
-            Drunkness: 0
-          </div>
-          <button id="mute-toggle" class="mute-toggle" type="button">
-            🔊 Sound On
-          </button>
-        </div>
-      </header>
-
-      <main class="game-main">
-        <!-- TOP ROW: ENVIRONMENT + HISTORY / TROPHIES -->
-        <section class="scene-row">
-          <!-- Environment panel -->
-          <div class="environment-panel">
-            <div id="environment-frame" class="environment-frame">
-              <!-- Base environment image (map / bar / karaoke) -->
-              <img
-                id="environment-base"
-                src="https://levmiserables.s3.eu-north-1.amazonaws.com/images/mvpfullmap.png"
-                alt="Environment"
-              />
-
-              <!-- Karaoke song details overlay (TV area in karaoke room) -->
-              <div id="karaoke-song-details" class="karaoke-song-details">
-                <div class="song-title"></div>
-                <div class="song-artist"></div>
-              </div>
-
-              <!-- Song list overlay (karaoke room only) -->
-              <div id="song-list-overlay" class="song-list-overlay">
-                <img
-                  src="https://levmiserables.s3.eu-north-1.amazonaws.com/images/songlistoverlay.gif"
-                  alt=""
-                  class="song-list-overlay-image"
-                />
-                <div class="song-list-overlay-inner">
-                  <div class="song-list-header">
-                    <h2>Song List</h2>
-                    <button
-                      id="song-list-close"
-                      class="song-list-close-button"
-                      type="button"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                  <div id="song-list-container" class="song-list-container">
-                    <!-- Populated by script.js -->
-                  </div>
-                </div>
-              </div>
-
-              <!-- Hover label for hotspots -->
-              <div
-                id="environment-hover-label"
-                class="environment-hover-label"
-              ></div>
-            </div>
-          </div>
-
-          <!-- Right-hand column: HISTORY + TROPHIES -->
-          <aside class="log-trophies-column">
-            <!-- History -->
-            <section class="log-panel">
-              <h2 class="panel-title">HISTORY</h2>
-              <ul id="action-log" class="log-list"></ul>
-            </section>
-
-            <!-- Trophies -->
-            <section class="icons-panel">
-              <h2 id="trophies-title" class="panel-title">TROPHIES: 0</h2>
-              <div id="icon-row" class="icon-row">
-                <!-- Drink / other trophy images -->
-              </div>
-            </section>
-          </aside>
-        </section>
-
-        <!-- DIALOGUE ROW -->
-        <section class="lower-row">
-          <section class="dialogue-panel">
-            <h2 class="panel-title">DIALOGUE</h2>
-            <div id="dialogue-text" class="dialogue-text"></div>
-          </section>
-
-          <!-- Empty right-hand space reserved for future UI -->
-          <aside class="spacer-panel"></aside>
-        </section>
-
-        <!-- ACTIONS ROW (used for drink menu etc.) -->
-        <section id="actions-panel" class="actions-panel">
-          <div id="actions-row" class="actions-row">
-            <!-- Populated dynamically -->
-          </div>
-        </section>
-      </main>
-    </div>
-
-    <!-- GAME OVER OVERLAY -->
-    <div id="game-over-overlay" class="game-over-overlay">
-      <div class="game-over-inner">
-        <div class="game-over-text-large">GAME OVER</div>
-        <div class="game-over-text-sub">
-          YOU DRANK TOO MUCH AND PASSED OUT
-        </div>
-        <button id="restart-button" type="button" class="restart-button">
-          Restart game
+<head>
+  <meta charset="UTF-8" />
+  <title>Lev Miserables</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="game-shell">
+    <header class="game-header">
+      <div class="header-main">
+        <div class="location-name" id="location-name">MAP</div>
+      </div>
+      <div class="header-status">
+        <div id="drunkness-display" class="header-status-item">Drunkness: 0</div>
+        <button id="mute-toggle" class="mute-toggle" type="button">
+          🔊 Sound On
         </button>
       </div>
-    </div>
+    </header>
 
-    <script src="songs.js"></script>
-    <script src="script.js"></script>
-  </body>
+    <main class="game-main">
+      <section class="scene-row">
+        <!-- Environment panel -->
+        <div class="environment-panel">
+          <div class="environment-frame" id="environment-frame">
+            <img
+              id="environment-base"
+              src="https://levmiserables.s3.eu-north-1.amazonaws.com/images/mvpfullmap.png"
+              alt="Environment"
+            />
+
+            <!-- Karaoke song details overlay (on karaoke TV area) -->
+            <div id="karaoke-song-details" class="karaoke-song-details">
+              <div class="song-title"></div>
+              <div class="song-artist"></div>
+            </div>
+
+            <!-- Song list overlay (in-environment, only in karaoke room) -->
+            <div id="song-list-overlay" class="song-list-overlay">
+              <img
+                src="https://levmiserables.s3.eu-north-1.amazonaws.com/images/songlistoverlay.gif"
+                alt=""
+                class="song-list-overlay-image"
+              />
+              <div class="song-list-overlay-inner">
+                <div class="song-list-header">
+                  <h2>Song List</h2>
+                  <button
+                    id="song-list-close"
+                    class="song-list-close-button"
+                    type="button"
+                  >
+                    ✕
+                  </button>
+                </div>
+                <div id="song-list-container" class="song-list-container">
+                  <!-- Populated by script.js -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Hover label for hotspots (bar/karaoke only) -->
+            <div
+              id="environment-hover-label"
+              class="environment-hover-label"
+            ></div>
+
+            <!-- Map location hover card (e.g. HOME) -->
+            <div id="location-hover-card" class="location-hover-card">
+              <div class="location-hover-card-inner">
+                <div
+                  id="location-card-title"
+                  class="location-hover-card-title"
+                >
+                  HOME
+                </div>
+                <img
+                  id="location-card-image"
+                  class="location-hover-card-image"
+                  src=""
+                  alt=""
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- History + trophies column -->
+        <div class="log-trophies-column">
+          <!-- History -->
+          <aside class="log-panel">
+            <h2 class="panel-title">HISTORY</h2>
+            <ul id="action-log" class="log-list">
+              <!-- Filled by JS -->
+            </ul>
+          </aside>
+
+          <!-- Trophies -->
+          <aside class="icons-panel">
+            <h2 id="trophies-title" class="panel-title">TROPHIES: 0</h2>
+            <div id="icon-row" class="icon-row">
+              <!-- Drink images etc. -->
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- Dialogue + spacer row -->
+      <section class="lower-row">
+        <section class="dialogue-panel">
+          <h2 class="panel-title">DIALOGUE</h2>
+          <div id="dialogue-text" class="dialogue-text">
+            Where will you start tonight?
+          </div>
+        </section>
+
+        <aside class="spacer-panel">
+          <!-- Reserved for future UI -->
+        </aside>
+      </section>
+
+      <!-- Actions -->
+      <section id="actions-panel" class="actions-panel">
+        <div id="actions-row" class="actions-row">
+          <!-- Populated by script.js -->
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Game over overlay -->
+  <div id="game-over-overlay" class="game-over-overlay">
+    <div class="game-over-inner">
+      <div class="game-over-text-large">GAME OVER</div>
+      <div class="game-over-text-sub">
+        YOU DRANK TOO MUCH AND PASSED OUT
+      </div>
+      <button id="restart-button" class="restart-button" type="button">
+        Restart game
+      </button>
+    </div>
+  </div>
+
+  <script src="songs.js"></script>
+  <script src="script.js"></script>
+</body>
 </html>
