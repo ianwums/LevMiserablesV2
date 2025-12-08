@@ -66,7 +66,7 @@
               class="environment-hover-label"
             ></div>
 
-            <!-- Map location hover card (e.g. HOME) -->
+            <!-- Map location hover card -->
             <div id="location-hover-card" class="location-hover-card">
               <div class="location-hover-card-inner">
                 <div
@@ -75,6 +75,14 @@
                 >
                   HOME
                 </div>
+                <!-- Placeholder "ICON" box -->
+                <div
+                  id="location-card-placeholder"
+                  class="location-hover-card-placeholder"
+                >
+                  ICON
+                </div>
+                <!-- Real image when available -->
                 <img
                   id="location-card-image"
                   class="location-hover-card-image"
@@ -91,17 +99,13 @@
           <!-- History -->
           <aside class="log-panel">
             <h2 class="panel-title">HISTORY</h2>
-            <ul id="action-log" class="log-list">
-              <!-- Filled by JS -->
-            </ul>
+            <ul id="action-log" class="log-list"></ul>
           </aside>
 
           <!-- Trophies -->
           <aside class="icons-panel">
             <h2 id="trophies-title" class="panel-title">TROPHIES: 0</h2>
-            <div id="icon-row" class="icon-row">
-              <!-- Drink images etc. -->
-            </div>
+            <div id="icon-row" class="icon-row"></div>
           </aside>
         </div>
       </section>
@@ -122,9 +126,7 @@
 
       <!-- Actions -->
       <section id="actions-panel" class="actions-panel">
-        <div id="actions-row" class="actions-row">
-          <!-- Populated by script.js -->
-        </div>
+        <div id="actions-row" class="actions-row"></div>
       </section>
     </main>
   </div>
