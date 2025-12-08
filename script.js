@@ -81,9 +81,9 @@ const HOTSPOT_SIZE = {
   heightPercent: (50 / 600) * 100 // 8.333...
 };
 
-// Map hotspots: 22px radius => 44px diameter
-const MAP_HOTSPOT_WIDTH_PERCENT = (44 / 800) * 100; // 5.5
-const MAP_HOTSPOT_HEIGHT_PERCENT = (44 / 600) * 100; // 7.333...
+// Map hotspots: 22px × 22px (so they neatly fit the green circles)
+const MAP_HOTSPOT_WIDTH_PERCENT = (22 / 800) * 100; // 2.75
+const MAP_HOTSPOT_HEIGHT_PERCENT = (22 / 600) * 100; // 3.6667
 
 const HOTSPOTS = {
   // MAP: each green circle on the map
@@ -91,7 +91,7 @@ const HOTSPOTS = {
     {
       id: "map-bakery",
       xPercent: 15.75,
-      yPercent: 0, // clamped to top
+      yPercent: 0,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
       heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
       hoverText: "Levenshulme Bakery",
@@ -144,7 +144,7 @@ const HOTSPOTS = {
     },
     {
       id: "map-long-bois",
-      xPercent: 0, // clamped from -0.875
+      xPercent: 0,
       yPercent: 70.0,
       widthPercent: MAP_HOTSPOT_WIDTH_PERCENT,
       heightPercent: MAP_HOTSPOT_HEIGHT_PERCENT,
