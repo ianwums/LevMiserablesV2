@@ -189,7 +189,7 @@ body {
   background: #14151f;
   display: flex;
   flex-direction: column;
-  height: 40vh;      /* fixed-ish height */
+  height: 40vh;
   min-height: 150px;
   max-height: 260px;
 }
@@ -215,7 +215,6 @@ body {
   flex: 1;
 }
 
-/* Most recent action bold */
 .log-list li:first-child {
   font-weight: 600;
 }
@@ -377,14 +376,14 @@ body {
 }
 
 .song-list-header h2 {
-  display: none; /* title hidden to save space */
+  display: none;
 }
 
 .song-list-close-button {
   border: none;
   background: transparent;
   padding: 0;
-  cursor: inherit;          /* use custom cursor only */
+  cursor: inherit;
   font-family: inherit;
   font-size: 0.9rem;
   color: #000000;
@@ -452,10 +451,9 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.35);
   background: rgba(255, 255, 255, 0.08);
   padding: 0;
-  cursor: inherit; /* follow custom cursor */
+  cursor: inherit;
 }
 
-/* subtle highlight over bar/karaoke image when hovering a hotspot */
 .hotspot:hover {
   background: rgba(255, 255, 255, 0.18);
   border-color: rgba(255, 255, 255, 0.75);
@@ -503,8 +501,9 @@ body {
 .location-hover-card {
   position: absolute;
   display: none;
-  z-index: 35; /* under cursor, over base image */
+  z-index: 35;
   transform: translate(-50%, -50%);
+  pointer-events: none; /* critical to avoid flicker over hotspots */
 }
 
 .location-hover-card-inner {
@@ -526,7 +525,6 @@ body {
   color: #000000;
 }
 
-/* Shared sizing for icon slot (image or placeholder) */
 .location-hover-card-image,
 .location-hover-card-placeholder {
   width: 110px;
@@ -534,16 +532,14 @@ body {
   border-radius: 6px;
 }
 
-/* Real image (shown only when we have a URL) */
 .location-hover-card-image {
   object-fit: cover;
   border: 3px solid #000000;
-  display: none; /* JS turns this on when needed */
+  display: none;
 }
 
-/* Placeholder "ICON" box for locations with no image yet */
 .location-hover-card-placeholder {
-  display: flex; /* JS toggles between flex and none */
+  display: flex;
   align-items: center;
   justify-content: center;
   border: 3px dashed #000000;
